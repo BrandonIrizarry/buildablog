@@ -51,6 +51,7 @@ func postHandler(reader reader) http.HandlerFunc {
 			)),
 		)
 
+		// Render Markdown as HTML.
 		var buf bytes.Buffer
 		if err := mdRenderer.Convert([]byte(blogText), &buf); err != nil {
 			http.Error(w, "Error converting Markdown", http.StatusInternalServerError)
