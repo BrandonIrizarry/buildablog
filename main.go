@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/yuin/goldmark"
+	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
 func main() {
@@ -43,8 +44,15 @@ func postHandler(reader reader) http.HandlerFunc {
 			return
 		}
 
+		// Enable syntax highlighting in blog posts.
+		mdRenderer := goldmark.New(
+			goldmark.WithExtensions(hl.NewHighlighting(
+				hl.WithStyle("dracula"),
+			)),
+		)
+
 		var buf bytes.Buffer
-		if err := goldmark.Convert([]byte(blogText), &buf); err != nil {
+		if err := mdRenderer.Convert([]byte(blogText), &buf); err != nil {
 			http.Error(w, "Error converting Markdown", http.StatusInternalServerError)
 			return
 		}
