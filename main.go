@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
+	"github.com/adrg/frontmatter"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
@@ -35,12 +37,19 @@ func main() {
 // [http.HandlerFunc].
 func postHandler(reader reader) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Slug: %s", r.PathValue("slug"))
+		var post postData
+		post.Slug = r.PathValue("slug")
+		log.Printf("Slug: %s", post.Slug)
 
-		slug := r.PathValue("slug")
-		blogText, err := reader(slug)
+		whole, err := reader(post.Slug)
 		if err != nil {
 			http.Error(w, "Post not found", http.StatusNotFound)
+			return
+		}
+
+		blogContentBytes, err := frontmatter.Parse(strings.NewReader(whole), &post)
+		if err != nil {
+			http.Error(w, "Error parsing frontmatter", http.StatusInternalServerError)
 			return
 		}
 
@@ -53,7 +62,7 @@ func postHandler(reader reader) http.HandlerFunc {
 
 		// Render Markdown as HTML.
 		var buf bytes.Buffer
-		if err := mdRenderer.Convert([]byte(blogText), &buf); err != nil {
+		if err := mdRenderer.Convert(blogContentBytes, &buf); err != nil {
 			http.Error(w, "Error converting Markdown", http.StatusInternalServerError)
 			return
 		}
@@ -66,12 +75,9 @@ func postHandler(reader reader) http.HandlerFunc {
 			return
 		}
 
-		err = tpl.Execute(w, postData{
-			Title:   "My First Post",
-			Content: template.HTML(buf.String()),
-			Author:  "Brandon Irizarry",
-		})
-		if err != nil {
+		post.Content = template.HTML(buf.String())
+
+		if err := tpl.Execute(w, post); err != nil {
 			log.Printf("error executing template: %v", err)
 			http.Error(w, "error executing template", http.StatusInternalServerError)
 			return

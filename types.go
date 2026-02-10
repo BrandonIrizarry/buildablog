@@ -5,6 +5,13 @@ import "html/template"
 type reader func(string) (string, error)
 
 type postData struct {
-	Title, Author string
-	Content       template.HTML
+	Title   string `toml:"title"`
+	Slug    string `toml:"slug"`
+	Content template.HTML
+	Author  author `toml:"author"`
+}
+
+type author struct {
+	Name  string `toml:"name"`
+	Email string `toml:"email"`
 }
