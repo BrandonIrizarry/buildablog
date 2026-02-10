@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/yuin/goldmark"
 )
 
 func main() {
@@ -39,6 +43,12 @@ func postHandler(reader reader) http.HandlerFunc {
 			return
 		}
 
-		fmt.Fprint(w, blogText)
+		var buf bytes.Buffer
+		if err := goldmark.Convert([]byte(blogText), &buf); err != nil {
+			http.Error(w, "Error converting Markdown", http.StatusInternalServerError)
+			return
+		}
+
+		io.Copy(w, &buf)
 	}
 }
