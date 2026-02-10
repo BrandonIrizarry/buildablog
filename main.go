@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -58,6 +58,23 @@ func postHandler(reader reader) http.HandlerFunc {
 			return
 		}
 
-		io.Copy(w, &buf)
+		// Use the template.
+		tpl, err := template.ParseFiles("post.gohtml")
+		if err != nil {
+			log.Printf("error parsing template: %v", err)
+			http.Error(w, "error parsing template", http.StatusInternalServerError)
+			return
+		}
+
+		err = tpl.Execute(w, postData{
+			Title:   "My First Post",
+			Content: template.HTML(buf.String()),
+			Author:  "Brandon Irizarry",
+		})
+		if err != nil {
+			log.Printf("error executing template: %v", err)
+			http.Error(w, "error executing template", http.StatusInternalServerError)
+			return
+		}
 	}
 }
