@@ -1,0 +1,11 @@
+/* Limit the body element to 30 times the font size. */
+body {
+    max-width: 30em;
+    margin: auto;
+}
+
+
+/* Fit images to column. */
+img {
+    width: 100%;
+}

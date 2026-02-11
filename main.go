@@ -28,6 +28,7 @@ func main() {
 	// Set up the server.
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /posts/{slug}", postHandler(markdownFileHandler))
+	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	if err := http.ListenAndServe(":3030", mux); err != nil {
 		log.Fatal(err)
