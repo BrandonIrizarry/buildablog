@@ -40,6 +40,8 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", postHandler(markdownFileHandler))
+
+	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	if err := http.ListenAndServe(":3030", mux); err != nil {
