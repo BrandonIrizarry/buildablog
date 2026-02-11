@@ -35,10 +35,10 @@ func main() {
 
 	// Serve a blog post.
 	contentPattern := fmt.Sprintf("GET /%s/{slug}", postsLabel)
-	mux.HandleFunc(contentPattern, postHandler(markdownFileHandler, postsLabel))
+	mux.HandleFunc(contentPattern, postHandler(postsLabel))
 
 	// Serve the site's front page.
-	mux.HandleFunc("GET /{$}", postHandler(markdownFileHandler, indexLabel))
+	mux.HandleFunc("GET /{$}", postHandler(indexLabel))
 
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -50,12 +50,12 @@ func main() {
 
 // postHandler "decorates" the given reader using an
 // [http.HandlerFunc].
-func postHandler(reader reader, label string) http.HandlerFunc {
+func postHandler(label string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slug := r.PathValue("slug")
 		log.Printf("Slug: %s", slug)
 
-		fmData, blogContent, err := reader(slug, label)
+		fmData, blogContent, err := markdownFileHandler(slug, label)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
