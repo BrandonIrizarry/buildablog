@@ -1,11 +1,21 @@
-/* See https://visme.co/blog/website-color-schemes/ */
-/* Each prefix represents a theme taken from that page. */
+/* See
+
+https://visme.co/blog/website-color-schemes/
+
+Each prefix represents a theme taken from that page.
+
+Also, I decided to take some more colors from the representative site itself:
+https://www.awwwards.com/sites/veille-reputation-squad
+*/
 :root {
     --gorgeous-contrast-1: #61892f;
     --gorgeous-contrast-2: #86c232;
     --gorgeous-contrast-3: #222629;
     --gorgeous-contrast-4: #474b4f;
     --gorgeous-contrast-5: #6b6e70;
+    --gorgeous-contrast-6: #fff083;
+    --gorgeous-contrast-7: #e9e9e9;
+    --gorgeous-contrast-8: #49c5b6;
 }
 
 /* Limit the body element to 30 times the font size. */
@@ -23,11 +33,11 @@ main {
 nav {
     position: fixed;
     @media (max-width: 67em) {
-	position: static;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+        position: static;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 }
 
@@ -54,12 +64,13 @@ a, a:hover, a:visited {
     color: cyan;
 }
 
-/* Stop our syntax-highlighted material from inheriting color
-   settings. */
-pre {
-    color: initial;
-}
-
 span.date {
     font-style: italic;
+    color: var(--gorgeous-contrast-6);
+}
+
+fieldset {
+    margin: 10px 20px;
+    color: var(--gorgeous-contrast-6);
+    border-color: var(--gorgeous-contrast-6);
 }
