@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
+
+	"github.com/adrg/frontmatter"
 )
 
 // markdownFileHandler returns the blog text found at the given slug
 // path.
-func markdownFileHandler(slug, label string) (string, error) {
+func markdownFileHandler(slug, label string) (frontmatterData, []byte, error) {
+	var data frontmatterData
+
 	if slug == "" {
 		slug = "index"
 	}
@@ -19,14 +22,14 @@ func markdownFileHandler(slug, label string) (string, error) {
 
 	f, err := os.Open(filename)
 	if err != nil {
-		return "", err
+		return frontmatterData{}, nil, err
 	}
 	defer f.Close()
 
-	bytes, err := io.ReadAll(f)
+	blogContent, err := frontmatter.Parse(f, &data)
 	if err != nil {
-		return "", err
+		return frontmatterData{}, nil, err
 	}
 
-	return string(bytes), nil
+	return data, blogContent, nil
 }

@@ -7,9 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
-	"github.com/adrg/frontmatter"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
@@ -54,19 +52,13 @@ func main() {
 // [http.HandlerFunc].
 func postHandler(reader reader, label string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var post postData
 		slug := r.PathValue("slug")
 		log.Printf("Slug: %s", slug)
 
-		whole, err := reader(slug, label)
+		fmData, blogContent, err := reader(slug, label)
 		if err != nil {
-			http.Error(w, "Post not found", http.StatusNotFound)
-			return
-		}
-
-		blogContentBytes, err := frontmatter.Parse(strings.NewReader(whole), &post)
-		if err != nil {
-			http.Error(w, "Error parsing frontmatter", http.StatusInternalServerError)
+			log.Printf("%v", err)
+			http.Error(w, "Error loading post", http.StatusNotFound)
 			return
 		}
 
@@ -95,12 +87,12 @@ func postHandler(reader reader, label string) http.HandlerFunc {
 
 		// Render Markdown as HTML.
 		var buf bytes.Buffer
-		if err := mdRenderer.Convert(blogContentBytes, &buf); err != nil {
+		if err := mdRenderer.Convert(blogContent, &buf); err != nil {
 			http.Error(w, "Error converting Markdown", http.StatusInternalServerError)
 			return
 		}
 
-		// Use the template.
+		// Load the template.
 		tpl, err := template.ParseFiles("post.gohtml")
 		if err != nil {
 			log.Printf("error parsing template: %v", err)
@@ -108,7 +100,11 @@ func postHandler(reader reader, label string) http.HandlerFunc {
 			return
 		}
 
-		post.Content = template.HTML(buf.String())
+		// Use the template.
+		post := postData{
+			frontmatterData: fmData,
+			Content:         template.HTML(buf.String()),
+		}
 
 		if err := tpl.Execute(w, post); err != nil {
 			log.Printf("error executing template: %v", err)
