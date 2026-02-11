@@ -6,14 +6,18 @@ import (
 
 type reader func(string, string) (string, error)
 
-type postData struct {
-	Title   string `toml:"title"`
-	Date    string `toml:"date"`
-	Content template.HTML
-	Author  author `toml:"author"`
+type frontmatterData struct {
+	Title  string `toml:"title"`
+	Date   string `toml:"date"`
+	Author author `toml:"author"`
 }
 
 type author struct {
 	Name  string `toml:"name"`
 	Email string `toml:"email"`
+}
+
+type postData struct {
+	frontmatterData
+	Content template.HTML
 }
