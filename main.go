@@ -93,7 +93,7 @@ func postHandler(reader reader, label string) http.HandlerFunc {
 		}
 
 		// Load the template.
-		tpl, err := template.ParseFiles("post.gohtml")
+		tpl, err := template.ParseFiles("posts.gohtml")
 		if err != nil {
 			log.Printf("error parsing template: %v", err)
 			http.Error(w, "error parsing template", http.StatusInternalServerError)
