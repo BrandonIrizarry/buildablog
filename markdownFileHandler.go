@@ -8,9 +8,9 @@ import (
 	"github.com/adrg/frontmatter"
 )
 
-// markdownFileHandler returns the blog text found at the given slug
+// readMarkdownFile returns the blog text found at the given slug
 // path.
-func markdownFileHandler(slug, label string) (frontmatterData, []byte, error) {
+func readMarkdownFile(slug, label string) (frontmatterData, []byte, error) {
 	var data frontmatterData
 
 	if slug == "" {

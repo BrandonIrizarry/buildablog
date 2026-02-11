@@ -55,7 +55,7 @@ func postHandler(label string) http.HandlerFunc {
 		slug := r.PathValue("slug")
 		log.Printf("Slug: %s", slug)
 
-		fmData, blogContent, err := markdownFileHandler(slug, label)
+		fmData, blogContent, err := readMarkdownFile(slug, label)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
