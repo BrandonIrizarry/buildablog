@@ -1,11 +1,63 @@
+/* See https://visme.co/blog/website-color-schemes/ */
+/* Each prefix represents a theme taken from that page. */
+:root {
+    --gorgeous-contrast-1: #61892f;
+    --gorgeous-contrast-2: #86c232;
+    --gorgeous-contrast-3: #222629;
+    --gorgeous-contrast-4: #474b4f;
+    --gorgeous-contrast-5: #6b6e70;
+}
+
 /* Limit the body element to 30 times the font size. */
-body {
-    max-width: 30em;
+html {
+    color: white;
+    background-color: var(--gorgeous-contrast-3);
+    font-family: sans-serif;
+}
+
+main {
+    max-width: 40em;
     margin: auto;
 }
 
+nav {
+    position: fixed;
+    @media (max-width: 67em) {
+	position: static;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+    }
+}
+
+nav ul {
+    margin: 10px;
+    padding: 0px;
+}
+nav li {
+    list-style: none;
+}
+
+h1 {
+    color: var(--gorgeous-contrast-2)
+}
 
 /* Fit images to column. */
 img {
     width: 100%;
+}
+
+a, a:hover {
+    color: white;
+}
+
+a:visited {
+    color: var(--gorgeous-contrast-5);
+}
+
+/* Stop our syntax-highlighted material from inheriting color
+   settings. */
+pre {
+    color: initial;
 }
