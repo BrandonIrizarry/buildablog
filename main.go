@@ -13,6 +13,7 @@ import (
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 func main() {
@@ -65,6 +66,11 @@ func postHandler(reader reader) http.HandlerFunc {
 					chromahtml.WithLineNumbers(true),
 				),
 			)),
+			// I found this out on https://deepwiki.com/yuin/goldmark/2.1-configuration-options
+			// 😞
+			goldmark.WithRendererOptions(
+				html.WithUnsafe(),
+			),
 		)
 
 		// Render Markdown as HTML.
