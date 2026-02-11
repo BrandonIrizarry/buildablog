@@ -66,7 +66,13 @@ func postHandler(reader reader) http.HandlerFunc {
 					chromahtml.WithLineNumbers(true),
 				),
 			)),
-			// I found this out on https://deepwiki.com/yuin/goldmark/2.1-configuration-options
+			// This enables us to use raw HTML in our
+			// files, such as anchor-tags (for TOC
+			// destinations) and <br> (for adding extra
+			// spaces.)
+			//
+			// I found this out on
+			// https://deepwiki.com/yuin/goldmark/2.1-configuration-options
 			// 😞
 			goldmark.WithRendererOptions(
 				html.WithUnsafe(),
