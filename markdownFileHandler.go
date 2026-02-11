@@ -10,7 +10,11 @@ import (
 // markdownFileHandler returns the blog text found at the given slug
 // path.
 func markdownFileHandler(slug string) (string, error) {
-	filename := fmt.Sprintf("posts/%s.md", slug)
+	if slug == "" {
+		slug = "index"
+	}
+
+	filename := fmt.Sprintf("%s/%s.md", contentDirName, slug)
 	log.Printf("Will attempt to open %s", filename)
 
 	f, err := os.Open(filename)

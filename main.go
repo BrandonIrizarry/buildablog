@@ -16,6 +16,11 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
+const (
+	contentDirName = "content"
+	postsPrefix    = "posts"
+)
+
 func main() {
 	// Set up logging.
 	logFile, err := os.OpenFile("buildablog.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
@@ -28,7 +33,13 @@ func main() {
 
 	// Set up the server.
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /posts/{slug}", postHandler(markdownFileHandler))
+
+	// Serve a blog post.
+	contentPattern := fmt.Sprintf("GET /%s/{slug}", postsPrefix)
+	mux.HandleFunc(contentPattern, postHandler(markdownFileHandler))
+
+	// Serve the site's front page.
+	mux.HandleFunc("GET /{$}", postHandler(markdownFileHandler))
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	if err := http.ListenAndServe(":3030", mux); err != nil {
