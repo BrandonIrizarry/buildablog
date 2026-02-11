@@ -61,7 +61,7 @@ func postHandler(reader reader) http.HandlerFunc {
 		// For available styles, see https://xyproto.github.io/splash/docs/
 		mdRenderer := goldmark.New(
 			goldmark.WithExtensions(hl.NewHighlighting(
-				hl.WithStyle("algol"),
+				hl.WithStyle("gruvbox"),
 				hl.WithFormatOptions(
 					chromahtml.WithLineNumbers(true),
 				),
