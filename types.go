@@ -9,7 +9,6 @@ type reader func(string, string) (string, error)
 type postData struct {
 	Title   string `toml:"title"`
 	Date    string `toml:"date"`
-	Slug    string `toml:"slug"`
 	Content template.HTML
 	Author  author `toml:"author"`
 }

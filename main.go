@@ -55,10 +55,10 @@ func main() {
 func postHandler(reader reader, label string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var post postData
-		post.Slug = r.PathValue("slug")
-		log.Printf("Slug: %s", post.Slug)
+		slug := r.PathValue("slug")
+		log.Printf("Slug: %s", slug)
 
-		whole, err := reader(post.Slug, label)
+		whole, err := reader(slug, label)
 		if err != nil {
 			http.Error(w, "Post not found", http.StatusNotFound)
 			return
