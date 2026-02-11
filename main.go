@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/adrg/frontmatter"
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
@@ -54,9 +55,14 @@ func postHandler(reader reader) http.HandlerFunc {
 		}
 
 		// Enable syntax highlighting in blog posts.
+		//
+		// For available styles, see https://xyproto.github.io/splash/docs/
 		mdRenderer := goldmark.New(
 			goldmark.WithExtensions(hl.NewHighlighting(
-				hl.WithStyle("dracula"),
+				hl.WithStyle("algol"),
+				hl.WithFormatOptions(
+					chromahtml.WithLineNumbers(true),
+				),
 			)),
 		)
 
