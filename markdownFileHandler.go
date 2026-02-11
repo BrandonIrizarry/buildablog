@@ -9,12 +9,12 @@ import (
 
 // markdownFileHandler returns the blog text found at the given slug
 // path.
-func markdownFileHandler(slug string) (string, error) {
+func markdownFileHandler(slug, label string) (string, error) {
 	if slug == "" {
 		slug = "index"
 	}
 
-	filename := fmt.Sprintf("%s/%s.md", contentDirName, slug)
+	filename := fmt.Sprintf("%s/%s/%s.md", contentDirName, label, slug)
 	log.Printf("Will attempt to open %s", filename)
 
 	f, err := os.Open(filename)

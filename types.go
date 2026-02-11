@@ -4,7 +4,7 @@ import (
 	"html/template"
 )
 
-type reader func(string) (string, error)
+type reader func(string, string) (string, error)
 
 type postData struct {
 	Title   string `toml:"title"`

@@ -19,6 +19,7 @@ import (
 const (
 	contentDirName = "content"
 	postsLabel     = "posts"
+	indexLabel     = "index"
 )
 
 func main() {
@@ -36,10 +37,10 @@ func main() {
 
 	// Serve a blog post.
 	contentPattern := fmt.Sprintf("GET /%s/{slug}", postsLabel)
-	mux.HandleFunc(contentPattern, postHandler(markdownFileHandler))
+	mux.HandleFunc(contentPattern, postHandler(markdownFileHandler, postsLabel))
 
 	// Serve the site's front page.
-	mux.HandleFunc("GET /{$}", postHandler(markdownFileHandler))
+	mux.HandleFunc("GET /{$}", postHandler(markdownFileHandler, indexLabel))
 
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -51,13 +52,13 @@ func main() {
 
 // postHandler "decorates" the given reader using an
 // [http.HandlerFunc].
-func postHandler(reader reader) http.HandlerFunc {
+func postHandler(reader reader, label string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var post postData
 		post.Slug = r.PathValue("slug")
 		log.Printf("Slug: %s", post.Slug)
 
-		whole, err := reader(post.Slug)
+		whole, err := reader(post.Slug, label)
 		if err != nil {
 			http.Error(w, "Post not found", http.StatusNotFound)
 			return
