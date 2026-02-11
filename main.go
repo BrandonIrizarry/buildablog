@@ -18,7 +18,7 @@ import (
 
 const (
 	contentDirName = "content"
-	postsPrefix    = "posts"
+	postsLabel     = "posts"
 )
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Serve a blog post.
-	contentPattern := fmt.Sprintf("GET /%s/{slug}", postsPrefix)
+	contentPattern := fmt.Sprintf("GET /%s/{slug}", postsLabel)
 	mux.HandleFunc(contentPattern, postHandler(markdownFileHandler))
 
 	// Serve the site's front page.
