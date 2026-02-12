@@ -53,7 +53,9 @@ func main() {
 	}
 	defer f.Close()
 
-	// Append a newline for human-readability purposes.
+	// Append a newline for human-readability purposes, as well as
+	// for the 'GET /archives' endpoint to be able to read this
+	// file line by line.
 	b = append(b, '\n')
 
 	_, err = f.Write(b)
