@@ -16,6 +16,7 @@ https://www.awwwards.com/sites/veille-reputation-squad
     --gorgeous-contrast-6: #fff083;
     --gorgeous-contrast-7: #e9e9e9;
     --gorgeous-contrast-8: #49c5b6;
+    --gorgeous-contrast-9: cyan;
 }
 
 /* Limit the body element to 30 times the font size. */
@@ -73,7 +74,7 @@ img {
 
 /* Styling for links. */
 a, a:hover, a:visited {
-    color: cyan;
+    color: var(--gorgeous-contrast-9);
 }
 
 span.date {
