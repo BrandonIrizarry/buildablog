@@ -59,10 +59,6 @@ nav ul {
     padding: 0px;
 }
 
-nav li {
-    list-style: none;
-}
-
 h1 {
     color: var(--gorgeous-contrast-2)
 }
