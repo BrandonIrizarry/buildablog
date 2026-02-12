@@ -26,6 +26,11 @@ func main() {
 		log.Fatal("couldn't read content/posts/" + candidate)
 	}
 
+	if !fmData.Publish {
+		log.Printf("'%s' is a draft, and so will not be published", candidate)
+		os.Exit(0)
+	}
+
 	// Create this type on the fly, so that we don't have to
 	// marshal the entire frontmatter struct. The idea is that
 	// each entry in the archive will only use these fields.

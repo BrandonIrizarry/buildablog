@@ -7,6 +7,7 @@ import (
 type FrontmatterData struct {
 	Title   string `toml:"title"`
 	Summary string `toml:"summary"`
+	Publish bool   `toml:"publish"`
 	Date    string `toml:"date"`
 	Author  author `toml:"author"`
 	Style   style  `toml:"style"`
