@@ -8,16 +8,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/BrandonIrizarry/buildablog/internal/constants"
+	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/renderer/html"
-)
-
-const (
-	contentDirName = "content"
-	postsLabel     = "posts"
-	indexLabel     = "index"
 )
 
 func main() {
@@ -34,11 +30,11 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Serve a blog post.
-	contentPattern := fmt.Sprintf("GET /%s/{slug}", postsLabel)
-	mux.HandleFunc(contentPattern, postHandler(postsLabel))
+	contentPattern := fmt.Sprintf("GET /%s/{slug}", constants.PostsLabel)
+	mux.HandleFunc(contentPattern, postHandler(constants.PostsLabel))
 
 	// Serve the site's front page.
-	mux.HandleFunc("GET /{$}", postHandler(indexLabel))
+	mux.HandleFunc("GET /{$}", postHandler(constants.IndexLabel))
 
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -55,7 +51,7 @@ func postHandler(label string) http.HandlerFunc {
 		slug := r.PathValue("slug")
 		log.Printf("Slug: %s", slug)
 
-		fmData, blogContent, err := readMarkdownFile(slug, label)
+		fmData, blogContent, err := readers.ReadMarkdownFile(slug, label)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
@@ -112,8 +108,8 @@ func postHandler(label string) http.HandlerFunc {
 		}
 
 		// Use the template.
-		post := postData{
-			frontmatterData: fmData,
+		post := readers.PostData{
+			FrontmatterData: fmData,
 			Content:         template.HTML(buf.String()),
 		}
 

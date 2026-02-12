@@ -1,10 +1,10 @@
-package main
+package readers
 
 import (
 	"html/template"
 )
 
-type frontmatterData struct {
+type FrontmatterData struct {
 	Title  string `toml:"title"`
 	Date   string `toml:"date"`
 	Author author `toml:"author"`
@@ -20,7 +20,7 @@ type style struct {
 	Syntax string `toml:"syntax"`
 }
 
-type postData struct {
-	frontmatterData
+type PostData struct {
+	FrontmatterData
 	Content template.HTML
 }
