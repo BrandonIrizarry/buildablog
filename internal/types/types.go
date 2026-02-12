@@ -5,10 +5,11 @@ import (
 )
 
 type FrontmatterData struct {
-	Title  string `toml:"title"`
-	Date   string `toml:"date"`
-	Author author `toml:"author"`
-	Style  style  `toml:"style"`
+	Title   string `toml:"title"`
+	Summary string `toml:"summary"`
+	Date    string `toml:"date"`
+	Author  author `toml:"author"`
+	Style   style  `toml:"style"`
 }
 
 type author struct {
