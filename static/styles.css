@@ -20,9 +20,21 @@ https://www.awwwards.com/sites/veille-reputation-squad
 
 /* Limit the body element to 30 times the font size. */
 html {
-    color: white;
     background-color: var(--gorgeous-contrast-3);
     font-family: sans-serif;
+}
+
+p {
+    color: var(--gorgeous-contrast-7);
+}
+
+ul li {
+    list-style-type: "🙦";
+    padding-left: 5px;
+}
+
+ul li::marker {
+    color: var(--gorgeous-contrast-2);
 }
 
 main {
@@ -74,3 +86,5 @@ fieldset {
     color: var(--gorgeous-contrast-6);
     border-color: var(--gorgeous-contrast-6);
 }
+
+

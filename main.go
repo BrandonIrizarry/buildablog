@@ -64,12 +64,23 @@ func postHandler(label string) http.HandlerFunc {
 
 		// Enable syntax highlighting in blog posts.
 		//
-		// For available styles, see https://xyproto.github.io/splash/docs/
+		// For available styles, see https://github.com/alecthomas/chroma/tree/master/styles
+		//
+		// See also https://xyproto.github.io/splash/docs/ for
+		// a list of canonical themes (though some may not be
+		// available here; try 'go get -u' to update chroma
+		// and friends.)
+		syntaxStyle := fmData.Style.Syntax
+		if syntaxStyle == "" {
+			syntaxStyle = "gruvbox"
+		}
+
 		mdRenderer := goldmark.New(
 			goldmark.WithExtensions(hl.NewHighlighting(
-				hl.WithStyle("gruvbox"),
+				hl.WithStyle(syntaxStyle),
 				hl.WithFormatOptions(
 					chromahtml.WithLineNumbers(true),
+					chromahtml.ClassPrefix("content"),
 				),
 			)),
 			// This enables us to use raw HTML in our
