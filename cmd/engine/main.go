@@ -48,6 +48,9 @@ func main() {
 	}
 	defer f.Close()
 
+	// Append a newline for human-readability purposes.
+	b = append(b, '\n')
+
 	_, err = f.Write(b)
 	if err != nil {
 		log.Fatal("couldn't write to 'published' file")
