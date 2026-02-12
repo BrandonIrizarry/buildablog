@@ -1,4 +1,4 @@
-package readers
+package types
 
 import (
 	"html/template"

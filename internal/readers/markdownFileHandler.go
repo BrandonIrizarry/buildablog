@@ -6,13 +6,14 @@ import (
 	"os"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
+	"github.com/BrandonIrizarry/buildablog/internal/types"
 	"github.com/adrg/frontmatter"
 )
 
 // readMarkdownFile returns the blog text found at the given slug
 // path.
-func ReadMarkdownFile(slug, label string) (FrontmatterData, []byte, error) {
-	var data FrontmatterData
+func ReadMarkdownFile(slug, label string) (types.FrontmatterData, []byte, error) {
+	var data types.FrontmatterData
 
 	if slug == "" {
 		slug = "index"
@@ -23,13 +24,13 @@ func ReadMarkdownFile(slug, label string) (FrontmatterData, []byte, error) {
 
 	f, err := os.Open(filename)
 	if err != nil {
-		return FrontmatterData{}, nil, err
+		return types.FrontmatterData{}, nil, err
 	}
 	defer f.Close()
 
 	blogContent, err := frontmatter.Parse(f, &data)
 	if err != nil {
-		return FrontmatterData{}, nil, err
+		return types.FrontmatterData{}, nil, err
 	}
 
 	return data, blogContent, nil

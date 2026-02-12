@@ -10,6 +10,7 @@ import (
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
+	"github.com/BrandonIrizarry/buildablog/internal/types"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
@@ -108,7 +109,7 @@ func postHandler(label string) http.HandlerFunc {
 		}
 
 		// Use the template.
-		post := readers.PostData{
+		post := types.PostData{
 			FrontmatterData: fmData,
 			Content:         template.HTML(buf.String()),
 		}
