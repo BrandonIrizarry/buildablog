@@ -36,15 +36,15 @@ func main() {
 	// marshal the entire FrontmatterData struct. The idea is that
 	// each entry in the archive will only use these fields.
 	type publishData struct {
+		Date    string `json:"date"`
 		Title   string `json:"title"`
 		Summary string `json:"summary"`
-		Date    string `json:"date"`
 	}
 
 	b, err := json.Marshal(publishData{
+		Date:    time.Now().Format(time.DateOnly),
 		Title:   fmData.Title,
 		Summary: fmData.Summary,
-		Date:    time.Now().Format(time.DateOnly),
 	})
 	if err != nil {
 		log.Fatal("couldn't marshal title and summary")
