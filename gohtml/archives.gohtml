@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/styles.css">
+        <title>Archives | Biome of Ideas</title>
+    </head>
+    <body>
+        <nav>
+            <fieldset>
+	        <legend>Navigation</legend>
+                <ul>
+                    <li><a href="/">Homepage</a></li>
+	            <li><a href="/tags">All Tags</a></li>
+	            <li><a href="/about">About This Site</a></li>
+                </ul>
+	    </fieldset>
+        </nav>
+        <main>
+            {{ range . }}
+                <p>{{ .Date }}</p>
+                <p>{{ .Title }}</p>
+                <p>{{ .Summary }}</p>
+            {{ end }}
+        </main>
+    </body>
+</html>

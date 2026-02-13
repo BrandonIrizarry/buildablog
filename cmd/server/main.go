@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
@@ -36,6 +38,56 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", postHandler(constants.IndexLabel))
+
+	// Serve the archives page.
+	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
+		// Read what's currently published. We load each line
+		// of 'published' into a slice of [types.PublishData],
+		// which is then tossed into the archives.gohtml
+		// template.
+		f, err := os.Open("published")
+		if err != nil {
+			log.Printf("error opening 'published' file: %v", err)
+			http.Error(w, "it looks like nothing is published yet.", http.StatusInternalServerError)
+			return
+		}
+		defer f.Close()
+
+		var archiveData []types.PublishData
+
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			var data types.PublishData
+			entry := scanner.Text()
+
+			if err := json.Unmarshal([]byte(entry), &data); err != nil {
+				log.Printf("error unmarshaling entry: %v", err)
+				http.Error(w, "oops, something happened", http.StatusInternalServerError)
+				return
+			}
+
+			archiveData = append(archiveData, data)
+		}
+		if err := scanner.Err(); err != nil {
+			log.Printf("error while scanning 'published' file")
+			http.Error(w, "oops, something happened", http.StatusInternalServerError)
+			return
+		}
+
+		// Load the template.
+		tpl, err := template.ParseFiles("gohtml/archives.gohtml")
+		if err != nil {
+			log.Printf("error parsing template: %v", err)
+			http.Error(w, "error parsing template", http.StatusInternalServerError)
+			return
+		}
+
+		if err := tpl.Execute(w, archiveData); err != nil {
+			log.Printf("error executing template: %v", err)
+			http.Error(w, "error executing template", http.StatusInternalServerError)
+			return
+		}
+	})
 
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
