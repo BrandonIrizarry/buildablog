@@ -32,7 +32,7 @@ func main() {
 	}
 
 	// Create this type on the fly, so that we don't have to
-	// marshal the entire frontmatter struct. The idea is that
+	// marshal the entire FrontmatterData struct. The idea is that
 	// each entry in the archive will only use these fields.
 	type publishData struct {
 		Title   string `json:"title"`
