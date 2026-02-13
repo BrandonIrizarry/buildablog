@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
+	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func main() {
@@ -32,16 +33,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Create this type on the fly, so that we don't have to
-	// marshal the entire FrontmatterData struct. The idea is that
-	// each entry in the archive will only use these fields.
-	type publishData struct {
-		Date    string `json:"date"`
-		Title   string `json:"title"`
-		Summary string `json:"summary"`
-	}
-
-	b, err := json.Marshal(publishData{
+	b, err := json.Marshal(types.PublishData{
 		Date:    time.Now().Format(time.DateOnly),
 		Title:   fmData.Title,
 		Summary: fmData.Summary,
