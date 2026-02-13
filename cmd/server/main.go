@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"slices"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
@@ -81,6 +82,13 @@ func main() {
 			http.Error(w, "error parsing template", http.StatusInternalServerError)
 			return
 		}
+
+		// Note that published items are appended to the
+		// 'published' file, meaning that the file is in
+		// chronological order. But we want to list archive
+		// entries in reverse chronological order, as is the
+		// custom.
+		slices.Reverse(archiveData)
 
 		if err := tpl.Execute(w, archiveData); err != nil {
 			log.Printf("error executing template: %v", err)
