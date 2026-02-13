@@ -5,8 +5,11 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
+	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
@@ -20,10 +23,24 @@ func main() {
 	// the /archives endpoint reads and uses to define its
 	// content.
 	var candidate string
-	flag.StringVar(&candidate, "publish", "", "Publish content/posts/<post>")
+	flag.StringVar(&candidate, "publish", "", "Publish this post")
 	flag.Parse()
 
-	fmData, _, err := readers.ReadMarkdownFile(candidate, "posts")
+	// We want to take advantage of terminal auto-completion,
+	// since blog slugs are often long and bespoke, often closely
+	// mirroring their actual titles. Because of this, candidate
+	// is read in as a relative path starting from
+	// [constants.ContentDirName]. But now we need to do extra
+	// work to split this apart.
+	dir, file := filepath.Split(candidate)
+	if !strings.HasPrefix(dir, constants.ContentDirName) {
+		log.Fatalf("'%s' isn't inside %s", dir, constants.ContentDirName)
+	}
+
+	label := strings.TrimPrefix(dir, constants.ContentDirName)
+	slug := strings.TrimSuffix(file, ".md")
+
+	fmData, _, err := readers.ReadMarkdownFile(slug, label)
 	if err != nil {
 		log.Fatalf("couldn't read content/posts/%s: %v", candidate, err)
 	}
@@ -35,7 +52,7 @@ func main() {
 
 	b, err := json.Marshal(types.PublishData{
 		Date:    time.Now().Format(time.DateOnly),
-		Slug:    candidate,
+		Slug:    slug,
 		Title:   fmData.Title,
 		Summary: fmData.Summary,
 	})
