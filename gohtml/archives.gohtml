@@ -9,22 +9,26 @@
     <body>
         <nav>
             <fieldset>
-	        <legend>Navigation</legend>
+                <legend>Navigation</legend>
                 <ul>
                     <li><a href="/">Homepage</a></li>
-	            <li><a href="/tags">All Tags</a></li>
-	            <li><a href="/about">About This Site</a></li>
+                    <li><a href="/tags">All Tags</a></li>
+                    <li><a href="/about">About This Site</a></li>
                 </ul>
-	    </fieldset>
+            </fieldset>
         </nav>
         <main>
-            {{ range . }}
-                <p>{{ .Date }}</p>
-                <a href="posts/{{ .Slug }}">
-                    {{ .Title }}
-                </a>
-                <p>{{ .Summary }}</p>
-            {{ end }}
+            <ul>
+                {{ range . }}
+                    <li>
+                        <span class="header">{{ .Date }}: </span>
+                        <a href="posts/{{ .Slug }}">{{ .Title }}</a>
+
+                            <p>{{ .Summary }}</p>
+
+                    </li>
+                {{ end }}
+            </ul>
         </main>
     </body>
 </html>
