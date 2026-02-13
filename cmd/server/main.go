@@ -76,7 +76,7 @@ func main() {
 		}
 
 		// Load the template.
-		tpl, err := template.ParseFiles("gohtml/archives.gohtml")
+		tpl, err := template.ParseFiles("gohtml/archives.gohtml", "html/nav.html")
 		if err != nil {
 			log.Printf("error parsing template: %v", err)
 			http.Error(w, "error parsing template", http.StatusInternalServerError)
