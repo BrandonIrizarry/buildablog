@@ -75,8 +75,7 @@ a, a:hover, a:visited {
     color: var(--gorgeous-contrast-9);
 }
 
-span.date {
-    font-style: italic;
+span.header {
     color: var(--gorgeous-contrast-6);
 }
 
