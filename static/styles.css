@@ -20,6 +20,12 @@ https://www.awwwards.com/sites/veille-reputation-squad
     --flower: "🙦";
 }
 
+/* Reset all margins, since this affects how the nav is displayed,
+   depending on the page. */
+body, h1, ul {
+    margin: 0;
+}
+
 /* Limit the body element to 30 times the font size. */
 html {
     background-color: var(--gorgeous-contrast-3);
