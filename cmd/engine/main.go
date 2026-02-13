@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 )
@@ -37,11 +38,13 @@ func main() {
 	type publishData struct {
 		Title   string `json:"title"`
 		Summary string `json:"summary"`
+		Date    string `json:"date"`
 	}
 
 	b, err := json.Marshal(publishData{
 		Title:   fmData.Title,
 		Summary: fmData.Summary,
+		Date:    time.Now().Format(time.DateOnly),
 	})
 	if err != nil {
 		log.Fatal("couldn't marshal title and summary")
