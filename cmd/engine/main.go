@@ -25,7 +25,7 @@ func main() {
 
 	fmData, _, err := readers.ReadMarkdownFile(candidate, "posts")
 	if err != nil {
-		log.Fatal("couldn't read content/posts/" + candidate)
+		log.Fatalf("couldn't read content/posts/%s: %v", candidate, err)
 	}
 
 	if !fmData.Publish {
@@ -40,12 +40,12 @@ func main() {
 		Summary: fmData.Summary,
 	})
 	if err != nil {
-		log.Fatal("couldn't marshal title and summary")
+		log.Fatalf("couldn't marshal title and summary: %v", err)
 	}
 
 	f, err := os.OpenFile("published", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatal("couldn't open 'published' file")
+		log.Fatalf("couldn't open 'published' file: %v", err)
 	}
 	defer f.Close()
 
@@ -56,6 +56,6 @@ func main() {
 
 	_, err = f.Write(b)
 	if err != nil {
-		log.Fatal("couldn't write to 'published' file")
+		log.Fatalf("couldn't write to 'published' file: %v", err)
 	}
 }
