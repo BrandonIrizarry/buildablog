@@ -31,6 +31,7 @@ type PostData struct {
 // the archive will depend only on these fields.
 type PublishData struct {
 	Date    string `json:"date"`
+	Slug    string `json:"slug"`
 	Title   string `json:"title"`
 	Summary string `json:"summary"`
 }

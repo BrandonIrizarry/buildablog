@@ -20,7 +20,9 @@
         <main>
             {{ range . }}
                 <p>{{ .Date }}</p>
-                <p>{{ .Title }}</p>
+                <a href="posts/{{ .Slug }}">
+                    {{ .Title }}
+                </a>
                 <p>{{ .Summary }}</p>
             {{ end }}
         </main>

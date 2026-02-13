@@ -35,6 +35,7 @@ func main() {
 
 	b, err := json.Marshal(types.PublishData{
 		Date:    time.Now().Format(time.DateOnly),
+		Slug:    candidate,
 		Title:   fmData.Title,
 		Summary: fmData.Summary,
 	})
