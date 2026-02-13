@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -14,10 +13,6 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
-	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
-	"github.com/yuin/goldmark"
-	hl "github.com/yuin/goldmark-highlighting/v2"
-	"github.com/yuin/goldmark/renderer/html"
 )
 
 func main() {
@@ -58,51 +53,12 @@ func gohtmlHandler(label string) http.HandlerFunc {
 		slug := r.PathValue("slug")
 		log.Printf("Slug: %s", slug)
 
+		// FIXME: this could just return the fully-formed
+		// [types.PostData] struct.
 		fmData, blogContent, err := readers.ReadMarkdownFile(slug, label)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
-			return
-		}
-
-		// Enable syntax highlighting in blog posts.
-		//
-		// For available styles, see https://github.com/alecthomas/chroma/tree/master/styles
-		//
-		// See also https://xyproto.github.io/splash/docs/ for
-		// a list of canonical themes (though some may not be
-		// available here; try 'go get -u' to update chroma
-		// and friends.)
-		syntaxStyle := fmData.Style.Syntax
-		if syntaxStyle == "" {
-			syntaxStyle = "gruvbox"
-		}
-
-		mdRenderer := goldmark.New(
-			goldmark.WithExtensions(hl.NewHighlighting(
-				hl.WithStyle(syntaxStyle),
-				hl.WithFormatOptions(
-					chromahtml.WithLineNumbers(true),
-					chromahtml.ClassPrefix("content"),
-				),
-			)),
-			// This enables us to use raw HTML in our
-			// files, such as anchor-tags (for TOC
-			// destinations) and <br> (for adding extra
-			// spaces.)
-			//
-			// I found this out on
-			// https://deepwiki.com/yuin/goldmark/2.1-configuration-options
-			// 😞
-			goldmark.WithRendererOptions(
-				html.WithUnsafe(),
-			),
-		)
-
-		// Render Markdown as HTML.
-		var buf bytes.Buffer
-		if err := mdRenderer.Convert(blogContent, &buf); err != nil {
-			http.Error(w, "Error converting Markdown", http.StatusInternalServerError)
 			return
 		}
 
@@ -117,7 +73,7 @@ func gohtmlHandler(label string) http.HandlerFunc {
 		// Use the template.
 		post := types.PostData{
 			FrontmatterData: fmData,
-			Content:         template.HTML(buf.String()),
+			Content:         blogContent,
 		}
 
 		if err := tpl.Execute(w, post); err != nil {
