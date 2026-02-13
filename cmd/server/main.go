@@ -35,10 +35,10 @@ func main() {
 
 	// Serve a blog post.
 	contentPattern := fmt.Sprintf("GET /%s/{slug}", constants.PostsLabel)
-	mux.HandleFunc(contentPattern, postHandler(constants.PostsLabel))
+	mux.HandleFunc(contentPattern, gohtmlHandler(constants.PostsLabel))
 
 	// Serve the site's front page.
-	mux.HandleFunc("GET /{$}", postHandler(constants.IndexLabel))
+	mux.HandleFunc("GET /{$}", gohtmlHandler(constants.IndexLabel))
 
 	// Serve the archives page.
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
@@ -105,9 +105,9 @@ func main() {
 	}
 }
 
-// postHandler "decorates" the given reader using an
+// gohtmlHandler "decorates" the given reader using an
 // [http.HandlerFunc].
-func postHandler(label string) http.HandlerFunc {
+func gohtmlHandler(label string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slug := r.PathValue("slug")
 		log.Printf("Slug: %s", slug)
