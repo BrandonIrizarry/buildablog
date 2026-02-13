@@ -161,7 +161,7 @@ func postHandler(label string) http.HandlerFunc {
 		}
 
 		// Load the template.
-		tpl, err := template.ParseFiles("gohtml/" + label + ".gohtml")
+		tpl, err := template.ParseFiles("gohtml/"+label+".gohtml", "html/nav.html")
 		if err != nil {
 			log.Printf("error parsing template: %v", err)
 			http.Error(w, "error parsing template", http.StatusInternalServerError)
