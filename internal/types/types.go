@@ -8,13 +8,7 @@ type FrontmatterData struct {
 	Title   string `toml:"title"`
 	Summary string `toml:"summary"`
 	Publish bool   `toml:"publish"`
-	Author  author `toml:"author"`
 	Style   style  `toml:"style"`
-}
-
-type author struct {
-	Name  string `toml:"name"`
-	Email string `toml:"email"`
 }
 
 type style struct {
