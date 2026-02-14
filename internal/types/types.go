@@ -4,14 +4,14 @@ import (
 	"html/template"
 )
 
-type FrontmatterData struct {
+type Metadata struct {
 	Title   string `toml:"title"`
 	Summary string `toml:"summary"`
 	Publish bool   `toml:"publish"`
 }
 
 type PostData struct {
-	FrontmatterData
+	Metadata
 	Content template.HTML
 }
 

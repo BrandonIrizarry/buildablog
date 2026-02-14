@@ -18,8 +18,8 @@ import (
 
 // readMarkdownFile returns the blog text found at the given slug
 // path.
-func ReadMarkdownFile(slug, label string) (types.FrontmatterData, template.HTML, error) {
-	var data types.FrontmatterData
+func ReadMarkdownFile(slug, label string) (types.Metadata, template.HTML, error) {
+	var data types.Metadata
 
 	if slug == "" {
 		slug = "index"
@@ -30,13 +30,13 @@ func ReadMarkdownFile(slug, label string) (types.FrontmatterData, template.HTML,
 
 	f, err := os.Open(filename)
 	if err != nil {
-		return types.FrontmatterData{}, "", err
+		return types.Metadata{}, "", err
 	}
 	defer f.Close()
 
 	blogContent, err := frontmatter.Parse(f, &data)
 	if err != nil {
-		return types.FrontmatterData{}, "", err
+		return types.Metadata{}, "", err
 	}
 
 	// Enable syntax highlighting in blog posts.
@@ -73,7 +73,7 @@ func ReadMarkdownFile(slug, label string) (types.FrontmatterData, template.HTML,
 	// Render Markdown as HTML.
 	var buf bytes.Buffer
 	if err := mdRenderer.Convert(blogContent, &buf); err != nil {
-		return types.FrontmatterData{}, "", err
+		return types.Metadata{}, "", err
 	}
 
 	return data, template.HTML(buf.String()), nil

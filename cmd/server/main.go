@@ -72,8 +72,8 @@ func gohtmlHandler(label string) http.HandlerFunc {
 
 		// Use the template.
 		post := types.PostData{
-			FrontmatterData: fmData,
-			Content:         blogContent,
+			Metadata: fmData,
+			Content:  blogContent,
 		}
 
 		if err := tpl.Execute(w, post); err != nil {
