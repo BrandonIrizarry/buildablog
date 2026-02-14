@@ -30,13 +30,13 @@ func main() {
 
 	// Serve a blog post.
 	contentPattern := fmt.Sprintf("GET /%s/{slug}", constants.PostsLabel)
-	mux.HandleFunc(contentPattern, gohtmlHandler(constants.PostsLabel))
+	mux.HandleFunc(contentPattern, gohtmlHandler(constants.PostsLabel, readers.ReadMarkdownFile))
 
 	// Serve the site's front page.
-	mux.HandleFunc("GET /{$}", gohtmlHandler(constants.IndexLabel))
+	mux.HandleFunc("GET /{$}", gohtmlHandler(constants.IndexLabel, readers.ReadMarkdownFile))
 
 	// Serve the archives page.
-	mux.HandleFunc("GET /archives", archivesHandler())
+	mux.HandleFunc("GET /archives", gohtmlHandler(constants.ArchivesLabel, readers.ReadPublished))
 
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -48,14 +48,14 @@ func main() {
 
 // gohtmlHandler "decorates" the given reader using an
 // [http.HandlerFunc].
-func gohtmlHandler(label string) http.HandlerFunc {
+func gohtmlHandler(label string, reader types.Reader) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slug := r.PathValue("slug")
 		log.Printf("Slug: %s", slug)
 
 		// FIXME: this could just return the fully-formed
 		// [types.PostData] struct.
-		fmData, blogContent, err := readers.ReadMarkdownFile(slug, label)
+		fmData, blogContent, err := reader(slug, label)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
@@ -71,12 +71,14 @@ func gohtmlHandler(label string) http.HandlerFunc {
 		}
 
 		// Use the template.
-		post := types.Data{
-			Metadata: fmData,
+		err = tpl.Execute(w, struct {
+			Content  template.HTML
+			Metadata any
+		}{
 			Content:  blogContent,
-		}
-
-		if err := tpl.Execute(w, post); err != nil {
+			Metadata: fmData,
+		})
+		if err != nil {
 			log.Printf("error executing template: %v", err)
 			http.Error(w, "error executing template", http.StatusInternalServerError)
 			return

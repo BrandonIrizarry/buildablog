@@ -4,15 +4,12 @@ import (
 	"html/template"
 )
 
+type Reader func(string, string) (any, template.HTML, error)
+
 type Metadata struct {
 	Title   string `toml:"title"`
 	Summary string `toml:"summary"`
 	Publish bool   `toml:"publish"`
-}
-
-type Data struct {
-	Metadata
-	Content template.HTML
 }
 
 // PublishData lets us not have to marshal the entire FrontmatterData

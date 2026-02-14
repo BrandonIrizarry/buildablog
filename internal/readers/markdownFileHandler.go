@@ -18,7 +18,7 @@ import (
 
 // readMarkdownFile returns the blog text found at the given slug
 // path.
-func ReadMarkdownFile(slug, label string) (types.Metadata, template.HTML, error) {
+func ReadMarkdownFile(slug, label string) (any, template.HTML, error) {
 	var data types.Metadata
 
 	if slug == "" {
