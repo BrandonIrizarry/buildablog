@@ -71,7 +71,7 @@ func gohtmlHandler(label string) http.HandlerFunc {
 		}
 
 		// Use the template.
-		post := types.PostData{
+		post := types.Data{
 			Metadata: fmData,
 			Content:  blogContent,
 		}

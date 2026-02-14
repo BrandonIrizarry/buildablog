@@ -10,7 +10,7 @@ type Metadata struct {
 	Publish bool   `toml:"publish"`
 }
 
-type PostData struct {
+type Data struct {
 	Metadata
 	Content template.HTML
 }
