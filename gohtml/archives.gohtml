@@ -10,7 +10,7 @@
         {{ template "nav.html" . }}
         <main>
             <ul>
-                {{ range . }}
+                {{ range .Published }}
                     <li>
                         <span class="header">{{ .Date }}: </span>
                         <a href="posts/{{ .Slug }}">{{ .Title }}</a>

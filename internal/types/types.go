@@ -1,15 +1,16 @@
 package types
 
-import (
-	"html/template"
-)
+import "html/template"
 
-type Reader func(string, string) (any, template.HTML, error)
-
-type Metadata struct {
+type FrontmatterData struct {
 	Title   string `toml:"title"`
 	Summary string `toml:"summary"`
 	Publish bool   `toml:"publish"`
+}
+
+type PostData struct {
+	FrontmatterData
+	Content template.HTML
 }
 
 // PublishData lets us not have to marshal the entire FrontmatterData

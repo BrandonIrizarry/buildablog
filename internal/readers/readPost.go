@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"log"
 	"os"
 
-	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 	"github.com/adrg/frontmatter"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
@@ -16,27 +14,21 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
-// readMarkdownFile returns the blog text found at the given slug
-// path.
-func ReadMarkdownFile(slug, label string) (any, template.HTML, error) {
-	var data types.Metadata
+func ReadPage(slug, label string) (types.PostData, error) {
+	var data types.PostData
 
-	if slug == "" {
-		slug = "index"
-	}
-
-	filename := fmt.Sprintf("%s/%s/%s.md", constants.ContentDirName, label, slug)
-	log.Printf("Will attempt to open %s", filename)
-
+	filename := fmt.Sprintf("content/%s/%s.md", label, slug)
 	f, err := os.Open(filename)
 	if err != nil {
-		return types.Metadata{}, "", err
+		return types.PostData{}, err
 	}
 	defer f.Close()
 
+	// This works because [types.FrontmatterData] is embedded
+	// inside [types.PostData].
 	blogContent, err := frontmatter.Parse(f, &data)
 	if err != nil {
-		return types.Metadata{}, "", err
+		return types.PostData{}, err
 	}
 
 	// Enable syntax highlighting in blog posts.
@@ -73,8 +65,10 @@ func ReadMarkdownFile(slug, label string) (any, template.HTML, error) {
 	// Render Markdown as HTML.
 	var buf bytes.Buffer
 	if err := mdRenderer.Convert(blogContent, &buf); err != nil {
-		return types.Metadata{}, "", err
+		return types.PostData{}, err
 	}
 
-	return data, template.HTML(buf.String()), nil
+	data.Content = template.HTML(buf.String())
+
+	return data, nil
 }

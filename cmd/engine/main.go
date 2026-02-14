@@ -40,12 +40,12 @@ func main() {
 	label := strings.TrimPrefix(dir, constants.ContentDirName)
 	slug := strings.TrimSuffix(file, ".md")
 
-	fmData, _, err := readers.ReadMarkdownFile(slug, label)
+	data, err := readers.ReadPage(slug, label)
 	if err != nil {
 		log.Fatalf("couldn't read content/posts/%s: %v", candidate, err)
 	}
 
-	if !fmData.Publish {
+	if !data.Publish {
 		log.Printf("'%s' is a draft, and so will not be published", candidate)
 		os.Exit(0)
 	}
@@ -53,8 +53,8 @@ func main() {
 	b, err := json.Marshal(types.PublishData{
 		Date:    time.Now().Format(time.DateOnly),
 		Slug:    slug,
-		Title:   fmData.Title,
-		Summary: fmData.Summary,
+		Title:   data.Title,
+		Summary: data.Summary,
 	})
 	if err != nil {
 		log.Fatalf("couldn't marshal title and summary: %v", err)
