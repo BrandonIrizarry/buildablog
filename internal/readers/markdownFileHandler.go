@@ -47,10 +47,7 @@ func ReadMarkdownFile(slug, label string) (types.FrontmatterData, template.HTML,
 	// a list of canonical themes (though some may not be
 	// available here; try 'go get -u' to update chroma
 	// and friends.)
-	syntaxStyle := data.Style.Syntax
-	if syntaxStyle == "" {
-		syntaxStyle = "gruvbox"
-	}
+	syntaxStyle := "catppuccin-macchiato"
 
 	mdRenderer := goldmark.New(
 		goldmark.WithExtensions(hl.NewHighlighting(

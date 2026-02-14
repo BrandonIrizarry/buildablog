@@ -8,11 +8,6 @@ type FrontmatterData struct {
 	Title   string `toml:"title"`
 	Summary string `toml:"summary"`
 	Publish bool   `toml:"publish"`
-	Style   style  `toml:"style"`
-}
-
-type style struct {
-	Syntax string `toml:"syntax"`
 }
 
 type PostData struct {
