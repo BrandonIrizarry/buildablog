@@ -89,8 +89,7 @@ func main() {
 			return
 		}
 
-		json.Unmarshal(rawJSON, &publishedContent)
-		if err != nil {
+		if err := json.Unmarshal(rawJSON, &publishedContent); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
 			return
