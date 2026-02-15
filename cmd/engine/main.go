@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -59,12 +60,35 @@ func main() {
 	}
 
 	if len(candidates) > 0 {
-		updateCandidates(candidates)
+		if err := updateCandidates(candidates); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
-func updateCandidates(candidates candidatesList) {
-	fmt.Println(candidates)
+func updateCandidates(candidates candidatesList) error {
+	// Read the current published data into a slice of
+	// [types.PublishData].
+	f, err := os.OpenFile("published", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	if err != nil {
+		return fmt.Errorf("can't open file: %w", err)
+	}
+	defer f.Close()
+
+	fileContent, err := io.ReadAll(f)
+	if err != nil {
+		return fmt.Errorf("can't read file: %w", err)
+	}
+
+	// Load any existing entries.
+	var entries []types.PublishData
+	if err := json.Unmarshal(fileContent, &entries); err != nil {
+		return fmt.Errorf("can't unmarshal: %w", err)
+	}
+
+	fmt.Fprintln(os.Stderr, entries)
+
+	return nil
 }
 
 // publish publishes the given candidate.
