@@ -156,7 +156,18 @@ func updateCandidates(candidates candidatesList) error {
 	// Here should appear only new posts.
 	// NEW POSTS:
 	for slug := range candidateSlugSet {
-		fmt.Println("new blog post" + slug)
+		data, err := readers.ReadPage(slug, "posts")
+		if err != nil {
+			return fmt.Errorf("can't read candidate slug '%s' (new post): %w", slug, err)
+		}
+
+		newPublishedData := types.PublishData{
+			Date:  time.Now().Format(time.DateOnly),
+			Slug:  slug,
+			Title: data.Title,
+		}
+
+		putItBack = append(putItBack, newPublishedData)
 	}
 
 	newContent, err := json.MarshalIndent(putItBack, "", strings.Repeat(" ", 4))
