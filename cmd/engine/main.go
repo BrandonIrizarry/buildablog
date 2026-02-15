@@ -21,7 +21,9 @@ func main() {
 	flag.StringVar(&candidate, "publish", "", "Publish this post")
 	flag.Parse()
 
-	publish(candidate)
+	if candidate != "" {
+		publish(candidate)
+	}
 }
 
 // publish publishes the given candidate.
