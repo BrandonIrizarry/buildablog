@@ -4,8 +4,8 @@ files := $(wildcard content/posts/*.md)
 clean:
 	mv candidates.txt /tmp
 
-candidates.txt: $(files)
-	@go run ./cmd/engine -candidates $$(echo $? | tr ' ' ',') > $@
+published.json: $(files)
+	@go run ./cmd/engine -candidates $$(echo $? | tr ' ' ',')
 
 content/posts/%.md::
 

@@ -68,6 +68,8 @@ func main() {
 }
 
 func updateCandidates(candidates candidatesList) error {
+	log.Printf("Candidates are: %v", candidates)
+
 	const publishedFile = "published.json"
 
 	// If publishedFile doesn't exist, create a new one whose sole
@@ -83,28 +85,84 @@ func updateCandidates(candidates candidatesList) error {
 		}
 	}
 
+	log.Printf("Publishing file %s exists", publishedFile)
+
 	// Read the current published data into a slice of
 	// [types.PublishData]. By now publishedFile should already
 	// exist on disk.
-	f, err := os.OpenFile(publishedFile, os.O_RDWR|os.O_APPEND, 0644)
+	f, err := os.Open(publishedFile)
 	if err != nil {
 		return fmt.Errorf("can't open file: %w", err)
 	}
 	defer f.Close()
+
+	log.Printf("Opened publishing file %s successfully", publishedFile)
 
 	fileContent, err := io.ReadAll(f)
 	if err != nil {
 		return fmt.Errorf("can't read file: %w", err)
 	}
 
-	var entries []types.PublishData
-	if err := json.Unmarshal(fileContent, &entries); err != nil {
+	log.Printf("Current contents of %s: %s", publishedFile, fileContent)
+
+	var alreadyPublished []types.PublishData
+	if err := json.Unmarshal(fileContent, &alreadyPublished); err != nil {
 		return fmt.Errorf("can't unmarshal: %w", err)
 	}
 
-	// GNU Make here looks like it reserves stdout for itself, so
-	// let's use stderr.
-	fmt.Fprintln(os.Stderr, entries)
+	//  By now, the existing published entries have been loaded
+	//  into memory. We trust that Make has provided us only with
+	//  those candidates that have been recently edited.
+	candidateSlugSet := make(map[string]struct{})
+	for _, c := range candidates {
+		slug := strings.TrimSuffix(filepath.Base(c), ".md")
+		candidateSlugSet[slug] = struct{}{}
+	}
+
+	log.Printf("Candidate set is now: %v", candidateSlugSet)
+
+	var putItBack []types.PublishData
+	for _, p := range alreadyPublished {
+		if _, ok := candidateSlugSet[p.Slug]; ok {
+			log.Printf("Caught %s as having been edited", p.Slug)
+			data, err := readers.ReadPage(p.Slug, "posts")
+			if err != nil {
+				return fmt.Errorf("can't read candidate slug '%s': %w", p.Slug, err)
+			}
+
+			// Right now we support only editing the
+			// title, though of course I plan on adding
+			// more stuff here soon.
+			newPublishedData := types.PublishData{
+				Date:  p.Date,
+				Slug:  p.Slug,
+				Title: data.Title,
+			}
+
+			putItBack = append(putItBack, newPublishedData)
+
+			// Remove this slug, since the ones which will
+			// remain at the end are precisely newly
+			// published files.
+			delete(candidateSlugSet, p.Slug)
+		} else {
+			log.Printf("The file having slug %s wasn't edited recently", p.Slug)
+			putItBack = append(putItBack, p)
+		}
+	}
+
+	for slug := range candidateSlugSet {
+		fmt.Println("new blog post" + slug)
+	}
+
+	newContent, err := json.MarshalIndent(putItBack, "", strings.Repeat(" ", 4))
+	if err != nil {
+		return fmt.Errorf("can't marshal updated published content: %w", err)
+	}
+
+	if err := os.WriteFile(publishedFile, newContent, 0644); err != nil {
+		return fmt.Errorf("can't write updated published content to")
+	}
 
 	return nil
 }
