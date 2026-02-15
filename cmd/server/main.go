@@ -1,14 +1,11 @@
 package main
 
 import (
-	"bufio"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"slices"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
@@ -115,62 +112,4 @@ func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	}
 
 	return nil
-}
-
-func archivesHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Read what's currently published. We load each line
-		// of 'published' into a slice of [types.PublishData],
-		// which is then tossed into the archives.gohtml
-		// template.
-		f, err := os.Open("published")
-		if err != nil {
-			log.Printf("error opening 'published' file: %v", err)
-			http.Error(w, "it looks like nothing is published yet.", http.StatusInternalServerError)
-			return
-		}
-		defer f.Close()
-
-		var archiveData []types.PublishData
-
-		scanner := bufio.NewScanner(f)
-		for scanner.Scan() {
-			var data types.PublishData
-			entry := scanner.Text()
-
-			if err := json.Unmarshal([]byte(entry), &data); err != nil {
-				log.Printf("error unmarshaling entry: %v", err)
-				http.Error(w, "oops, something happened", http.StatusInternalServerError)
-				return
-			}
-
-			archiveData = append(archiveData, data)
-		}
-		if err := scanner.Err(); err != nil {
-			log.Printf("error while scanning 'published' file")
-			http.Error(w, "oops, something happened", http.StatusInternalServerError)
-			return
-		}
-
-		// Load the template.
-		tpl, err := template.ParseFiles("gohtml/archives.gohtml", "html/nav.html")
-		if err != nil {
-			log.Printf("error parsing template: %v", err)
-			http.Error(w, "error parsing template", http.StatusInternalServerError)
-			return
-		}
-
-		// Note that published items are appended to the
-		// 'published' file, meaning that the file is in
-		// chronological order. But we want to list archive
-		// entries in reverse chronological order, as is the
-		// custom.
-		slices.Reverse(archiveData)
-
-		if err := tpl.Execute(w, archiveData); err != nil {
-			log.Printf("error executing template: %v", err)
-			http.Error(w, "error executing template", http.StatusInternalServerError)
-			return
-		}
-	}
 }
