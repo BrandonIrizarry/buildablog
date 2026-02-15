@@ -124,10 +124,11 @@ func updateCandidates(candidates candidatesList) error {
 	var putItBack []types.PublishData
 	for _, p := range alreadyPublished {
 		if _, ok := candidateSlugSet[p.Slug]; ok {
+			// UPDATED POSTS
 			log.Printf("Caught %s as having been edited", p.Slug)
 			data, err := readers.ReadPage(p.Slug, "posts")
 			if err != nil {
-				return fmt.Errorf("can't read candidate slug '%s': %w", p.Slug, err)
+				return fmt.Errorf("can't read candidate slug '%s' (updated post): %w", p.Slug, err)
 			}
 
 			// Right now we support only editing the
@@ -146,11 +147,14 @@ func updateCandidates(candidates candidatesList) error {
 			// published files.
 			delete(candidateSlugSet, p.Slug)
 		} else {
+			// INERT POSTS
 			log.Printf("The file having slug %s wasn't edited recently", p.Slug)
 			putItBack = append(putItBack, p)
 		}
 	}
 
+	// Here should appear only new posts.
+	// NEW POSTS:
 	for slug := range candidateSlugSet {
 		fmt.Println("new blog post" + slug)
 	}
