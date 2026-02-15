@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,16 +16,55 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
+type candidatesList []string
+
+// String implements the [flag.Value] interface.
+func (cl *candidatesList) String() string {
+	var printed strings.Builder
+
+	for _, c := range *cl {
+		printed.WriteString(" " + c)
+	}
+
+	return printed.String()
+}
+
+// Set implements the [flag.Value] interface.
+func (cl *candidatesList) Set(value string) error {
+	if len(*cl) > 0 {
+		return errors.New("publishall flag already set")
+	}
+
+	for c := range strings.SplitSeq(value, " ") {
+		*cl = append(*cl, c)
+	}
+
+	return nil
+}
+
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	var candidate string
+	var (
+		candidate  string
+		candidates candidatesList
+	)
+
 	flag.StringVar(&candidate, "publish", "", "Publish this post")
+	flag.Var(&candidates, "candidates", "List of blog posts to update")
 	flag.Parse()
 
 	if candidate != "" {
 		publish(candidate)
 	}
+
+	if len(candidates) > 0 {
+		updateCandidates(candidates)
+	}
+}
+
+func updateCandidates(candidates candidatesList) {
+	fmt.Println(candidates)
 }
 
 // publish publishes the given candidate.
