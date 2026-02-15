@@ -102,6 +102,8 @@ func updateCandidates(candidates candidatesList) error {
 		return fmt.Errorf("can't unmarshal: %w", err)
 	}
 
+	// GNU Make here looks like it reserves stdout for itself, so
+	// let's use stderr.
 	fmt.Fprintln(os.Stderr, entries)
 
 	return nil
