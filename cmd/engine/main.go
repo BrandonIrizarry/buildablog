@@ -35,7 +35,7 @@ func (cl *candidatesList) Set(value string) error {
 		return errors.New("publishall flag already set")
 	}
 
-	for c := range strings.SplitSeq(value, " ") {
+	for c := range strings.SplitSeq(value, ",") {
 		*cl = append(*cl, c)
 	}
 
