@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -69,7 +71,25 @@ func main() {
 			return
 		}
 
-		publishedContent, err := readers.ReadPublished()
+		// FIXME: make a separate function out of this, to
+		// simplify error handling.
+		f, err := os.Open("published.json")
+		if err != nil {
+			log.Printf("%v", err)
+			http.Error(w, "Error loading post", http.StatusNotFound)
+			return
+		}
+		defer f.Close()
+
+		var publishedContent []types.PublishData
+		rawJSON, err := io.ReadAll(f)
+		if err != nil {
+			log.Printf("%v", err)
+			http.Error(w, "Error loading post", http.StatusNotFound)
+			return
+		}
+
+		json.Unmarshal(rawJSON, &publishedContent)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
