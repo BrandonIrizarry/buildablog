@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -67,9 +68,25 @@ func main() {
 }
 
 func updateCandidates(candidates candidatesList) error {
+	const publishedFile = "published.json"
+
+	// If publishedFile doesn't exist, create a new one whose sole
+	// contents are "[]". This makes it a valid JSON data
+	// structure which we can unmarshal later on.
+	if _, err := os.Stat(publishedFile); err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			if err := os.WriteFile(publishedFile, []byte("[]"), 0644); err != nil {
+				return fmt.Errorf("can't write new %s: %w", publishedFile, err)
+			}
+		} else {
+			return fmt.Errorf("can't stat %s: %w", publishedFile, err)
+		}
+	}
+
 	// Read the current published data into a slice of
-	// [types.PublishData].
-	f, err := os.OpenFile("published", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	// [types.PublishData]. By now publishedFile should already
+	// exist on disk.
+	f, err := os.OpenFile(publishedFile, os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		return fmt.Errorf("can't open file: %w", err)
 	}
@@ -80,7 +97,6 @@ func updateCandidates(candidates candidatesList) error {
 		return fmt.Errorf("can't read file: %w", err)
 	}
 
-	// Load any existing entries.
 	var entries []types.PublishData
 	if err := json.Unmarshal(fileContent, &entries); err != nil {
 		return fmt.Errorf("can't unmarshal: %w", err)
