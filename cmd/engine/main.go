@@ -17,15 +17,18 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// Publish the given candidate.
-	//
-	// This marshals the title and description into a file, which
-	// the /archives endpoint reads and uses to define its
-	// content.
 	var candidate string
 	flag.StringVar(&candidate, "publish", "", "Publish this post")
 	flag.Parse()
 
+	publish(candidate)
+}
+
+// publish publishes the given candidate.
+//
+// This marshals the title and description into a file, which the
+// /archives endpoint reads and uses to define its content.
+func publish(candidate string) {
 	// We want to take advantage of terminal auto-completion,
 	// since blog slugs are often long and bespoke, often closely
 	// mirroring their actual titles. Because of this, candidate
