@@ -131,6 +131,10 @@ func updateCandidates(candidates candidatesList) error {
 				return fmt.Errorf("can't read candidate slug '%s' (updated post): %w", p.Slug, err)
 			}
 
+			if !data.Publish {
+				return fmt.Errorf("post '%s' was never marked for publishing!", data.Title)
+			}
+
 			// Right now we support only editing the
 			// title, though of course I plan on adding
 			// more stuff here soon.
@@ -160,6 +164,11 @@ func updateCandidates(candidates candidatesList) error {
 		data, err := readers.ReadPage(slug, "posts")
 		if err != nil {
 			return fmt.Errorf("can't read candidate slug '%s' (new post): %w", slug, err)
+		}
+
+		if !data.Publish {
+			log.Printf("post '%s' isn't marked for publishing; skip", data.Title)
+			continue
 		}
 
 		newPublishedData := types.PublishData{
