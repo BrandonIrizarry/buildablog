@@ -135,9 +135,10 @@ func updateCandidates(candidates candidatesList) error {
 			// title, though of course I plan on adding
 			// more stuff here soon.
 			newPublishedData := types.PublishData{
-				Date:  p.Date,
-				Slug:  p.Slug,
-				Title: data.Title,
+				Date:    p.Date,
+				Slug:    p.Slug,
+				Title:   data.Title,
+				Summary: data.Summary,
 			}
 
 			putItBack = append(putItBack, newPublishedData)
@@ -162,9 +163,10 @@ func updateCandidates(candidates candidatesList) error {
 		}
 
 		newPublishedData := types.PublishData{
-			Date:  time.Now().Format(time.DateOnly),
-			Slug:  slug,
-			Title: data.Title,
+			Date:    time.Now().Format(time.DateOnly),
+			Slug:    slug,
+			Title:   data.Title,
+			Summary: data.Summary,
 		}
 
 		putItBack = append(putItBack, newPublishedData)
