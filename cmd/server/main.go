@@ -34,13 +34,13 @@ func main() {
 		templateContent, err := readers.ReadPage(slug, "posts")
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Error loading post", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
 		if err := feedTemplate(w, "posts", templateContent); err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Templating error", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 	})
@@ -50,14 +50,14 @@ func main() {
 		templateContent, err := readers.ReadPage("index", "index")
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Error loading post", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
 		err = feedTemplate(w, "index", templateContent)
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Templating error", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 	})
@@ -67,21 +67,21 @@ func main() {
 		templateContent, err := readers.ReadPage("index", "archives")
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Error loading post", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
 		rawJSON, err := readPublishedJSON("published.json")
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Error loading post", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
 		var publishedContent []types.PublishData
 		if err := json.Unmarshal(rawJSON, &publishedContent); err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Error loading post", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
@@ -95,7 +95,7 @@ func main() {
 
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, "Templating error", http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 	})
