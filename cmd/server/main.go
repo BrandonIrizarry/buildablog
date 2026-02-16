@@ -71,24 +71,14 @@ func main() {
 			return
 		}
 
-		// FIXME: make a separate function out of this, to
-		// simplify error handling.
-		f, err := os.Open("published.json")
+		rawJSON, err := readPublishedContent("published.json")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
 			return
 		}
-		defer f.Close()
 
 		var publishedContent []types.PublishData
-		rawJSON, err := io.ReadAll(f)
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, "Error loading post", http.StatusNotFound)
-			return
-		}
-
 		if err := json.Unmarshal(rawJSON, &publishedContent); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
@@ -131,4 +121,21 @@ func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	}
 
 	return nil
+}
+
+func readPublishedContent(filename string) ([]byte, error) {
+	// FIXME: make a separate function out of this, to
+	// simplify error handling.
+	f, err := os.Open(filename)
+	if err != nil {
+		return nil, fmt.Errorf("can't open %s: %w", filename, err)
+	}
+	defer f.Close()
+
+	rawJSON, err := io.ReadAll(f)
+	if err != nil {
+		return nil, fmt.Errorf("can't read %s: %w", filename, err)
+	}
+
+	return rawJSON, nil
 }
