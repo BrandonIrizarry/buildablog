@@ -71,7 +71,7 @@ func main() {
 			return
 		}
 
-		rawJSON, err := readPublishedContent("published.json")
+		rawJSON, err := readPublishedJSON("published.json")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, "Error loading post", http.StatusNotFound)
@@ -123,7 +123,7 @@ func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	return nil
 }
 
-func readPublishedContent(filename string) ([]byte, error) {
+func readPublishedJSON(filename string) ([]byte, error) {
 	// FIXME: make a separate function out of this, to
 	// simplify error handling.
 	f, err := os.Open(filename)
