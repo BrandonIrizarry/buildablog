@@ -72,6 +72,16 @@ func main() {
 func updateCandidates(candidates candidatesList) error {
 	log.Printf("Candidates are: %v", candidates)
 
+	// We trust that Make has provided us only with those
+	// candidates that have been recently edited.
+	candidateSlugSet := make(map[string]struct{})
+	for _, c := range candidates {
+		slug := strings.TrimSuffix(filepath.Base(c), ".md")
+		candidateSlugSet[slug] = struct{}{}
+	}
+
+	log.Printf("Candidate set is now: %v", candidateSlugSet)
+
 	const publishedFile = "published.json"
 
 	// If publishedFile doesn't exist, create a new one whose sole
@@ -113,17 +123,6 @@ func updateCandidates(candidates candidatesList) error {
 	if err := json.Unmarshal(fileContent, &alreadyPublished); err != nil {
 		return fmt.Errorf("can't unmarshal: %w", err)
 	}
-
-	//  By now, the existing published entries have been loaded
-	//  into memory. We trust that Make has provided us only with
-	//  those candidates that have been recently edited.
-	candidateSlugSet := make(map[string]struct{})
-	for _, c := range candidates {
-		slug := strings.TrimSuffix(filepath.Base(c), ".md")
-		candidateSlugSet[slug] = struct{}{}
-	}
-
-	log.Printf("Candidate set is now: %v", candidateSlugSet)
 
 	var putItBack []types.PublishData
 	for _, p := range alreadyPublished {
