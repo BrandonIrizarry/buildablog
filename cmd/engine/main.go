@@ -105,6 +105,8 @@ func updateCandidates(candidates candidatesList) error {
 
 	log.Printf("Current contents of %s: %s", publishedFile, fileContent)
 
+	// alreadyPublished represents the current contents of
+	// published.json.
 	var alreadyPublished []types.PublishData
 	if err := json.Unmarshal(fileContent, &alreadyPublished); err != nil {
 		return fmt.Errorf("can't unmarshal: %w", err)
