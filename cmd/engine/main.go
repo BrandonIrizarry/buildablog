@@ -139,8 +139,16 @@ func updateCandidates(candidates candidatesList) error {
 			// title, though of course I plan on adding
 			// more stuff here soon.
 			newPublishedData := types.PublishData{
-				Date:    p.Date,
+				// These two fields are simply
+				// propagated across each update.
+				Created: p.Created,
 				Slug:    p.Slug,
+
+				// The remaining fields are either
+				// modified by necessity, or else are
+				// suitable to have been modified by
+				// the user.
+				Updated: time.Now().Unix(),
 				Title:   data.Title,
 				Summary: data.Summary,
 			}
@@ -174,7 +182,8 @@ func updateCandidates(candidates candidatesList) error {
 		}
 
 		newPublishedData := types.PublishData{
-			Date:    time.Now().Format(time.DateOnly),
+			Created: time.Now().Unix(),
+			Updated: time.Now().Unix(),
 			Slug:    slug,
 			Title:   data.Title,
 			Summary: data.Summary,
