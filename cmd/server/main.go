@@ -108,6 +108,9 @@ func main() {
 	}
 }
 
+// feedTemplate loads and executes a template found under label using
+// the given data parameter (used by [template.Template.Execute] to
+// fill in the template.)
 func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	// Load the template.
 	tpl, err := template.ParseFiles("gohtml/"+label+".gohtml", "html/nav.html")
@@ -123,6 +126,8 @@ func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	return nil
 }
 
+// readPublishedJSON returns the contents of filename as a byte slice
+// (NOTE: such a slice should be marshallable as JSON.)
 func readPublishedJSON(filename string) ([]byte, error) {
 	f, err := os.Open(filename)
 	if err != nil {
