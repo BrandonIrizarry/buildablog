@@ -14,9 +14,11 @@
                     <li class="published">
                         <span class="created">{{ .CreatedHumanReadable }}: </span>
                         <a href="posts/{{ .Slug }}">
-                           {{ .Title }}
+                            {{ .Title }}
                         </a>
-                        <p><span class="updated">Last updated on {{ .UpdatedHumanReadable }}</span></p>
+                        {{ if .DidUpdate }}
+                            <p><span class="updated">Updated on {{ .UpdatedHumanReadable }}</span></p>
+                        {{ end }}
                         <p class="summary">{{ .Summary }}</p>
                     </li>
                 {{ end }}

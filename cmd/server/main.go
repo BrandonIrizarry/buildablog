@@ -84,6 +84,7 @@ func main() {
 			types.PublishData
 			CreatedHumanReadable string
 			UpdatedHumanReadable string
+			DidUpdate            bool
 		}
 
 		var publishedContent []publishDataFormatted
@@ -100,8 +101,12 @@ func main() {
 
 		for i := range publishedContent {
 			pc := &publishedContent[i]
-			(*pc).CreatedHumanReadable = time.Unix(pc.Created, 0).Format(humanReadableFormat)
-			(*pc).UpdatedHumanReadable = time.Unix(pc.Updated, 0).Format(humanReadableFormat)
+			created := pc.Created
+			updated := pc.Updated
+
+			(*pc).CreatedHumanReadable = time.Unix(created, 0).Format(humanReadableFormat)
+			(*pc).UpdatedHumanReadable = time.Unix(updated, 0).Format(humanReadableFormat)
+			(*pc).DidUpdate = (updated > created)
 		}
 
 		err = feedTemplate(w, "archives", struct {
