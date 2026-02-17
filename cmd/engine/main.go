@@ -33,7 +33,7 @@ func (cl *candidatesList) String() string {
 // Set implements the [flag.Value] interface.
 func (cl *candidatesList) Set(value string) error {
 	if len(*cl) > 0 {
-		return errors.New("publishall flag already set")
+		return errors.New("flag already set")
 	}
 
 	for c := range strings.SplitSeq(value, ",") {
