@@ -79,7 +79,14 @@ func main() {
 			return
 		}
 
-		var publishedContent []types.PublishData
+		type publishDataFormatted struct {
+			types.PublishData
+			CreatedHumanReadable string
+			UpdatedHumanReadable string
+		}
+
+		var publishedContent []publishDataFormatted
+
 		if err := json.Unmarshal(rawJSON, &publishedContent); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -88,7 +95,7 @@ func main() {
 
 		err = feedTemplate(w, "archives", struct {
 			Main      types.PostData
-			Published []types.PublishData
+			Published []publishDataFormatted
 		}{
 			Main:      templateContent,
 			Published: publishedContent,
