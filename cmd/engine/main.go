@@ -140,6 +140,7 @@ func updateCandidates(candidates candidatesList) error {
 				// setting the frontmatter 'publish'
 				// bool to false, or else by removing
 				// that line entirely.
+				log.Printf("Revoked post '%s' (%s)", p.Slug, data.Title)
 				continue
 			}
 
