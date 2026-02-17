@@ -96,7 +96,7 @@ func main() {
 
 		// Prepare the human-readable time formats for display
 		// on the archives page.
-		const humanReadableFormat = time.RFC822
+		const humanReadableFormat = time.DateOnly
 
 		for i := range publishedContent {
 			pc := &publishedContent[i]
