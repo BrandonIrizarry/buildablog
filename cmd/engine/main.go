@@ -135,6 +135,11 @@ func updateCandidates(candidates candidatesList) error {
 			}
 
 			if !data.Publish {
+				// This means the post was demoted to
+				// "unpublished" status, either by
+				// setting the frontmatter 'publish'
+				// bool to false, or else by removing
+				// that line entirely.
 				continue
 			}
 
@@ -223,6 +228,8 @@ func publish(candidate string) {
 	}
 
 	if !data.Publish {
+		// Either the file was never published, or else
+		// recently demoted from "published" status.
 		log.Printf("'%s' is a draft, and so will not be published", candidate)
 		os.Exit(0)
 	}
