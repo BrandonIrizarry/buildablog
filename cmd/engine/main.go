@@ -161,7 +161,9 @@ func updateCandidates(candidates candidatesList) error {
 		}
 	}
 
-	// Here should appear only new posts.
+	// candidateSlugSet should now only refer to those candidates
+	// that weren't already listed in published.json.
+	//
 	// NEW POSTS:
 	for slug := range candidateSlugSet {
 		data, err := readers.ReadPage(slug, "posts")
