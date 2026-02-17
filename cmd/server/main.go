@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
@@ -91,6 +92,16 @@ func main() {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
+		}
+
+		// Prepare the human-readable time formats for display
+		// on the archives page.
+		const humanReadableFormat = time.RFC822
+
+		for i := range publishedContent {
+			pc := &publishedContent[i]
+			(*pc).CreatedHumanReadable = time.Unix(pc.Created, 0).Format(humanReadableFormat)
+			(*pc).UpdatedHumanReadable = time.Unix(pc.Updated, 0).Format(humanReadableFormat)
 		}
 
 		err = feedTemplate(w, "archives", struct {

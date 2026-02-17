@@ -13,8 +13,8 @@
                 {{ range .Published }}
                     <li>
                         <a href="posts/{{ .Slug }}">{{ .Title }}</a>
-                        <p><span class="header">First published: {{ .Created }}</span></p>
-                        <p><span class="header">Last updated: {{ .Updated }}</span></p>
+                        <p><span class="header">First published: {{ .CreatedHumanReadable }}</span></p>
+                        <p><span class="header">Last updated: {{ .UpdatedHumanReadable }}</span></p>
                         <p class="summary">{{ .Summary }}</p>
                     </li>
                 {{ end }}
