@@ -169,7 +169,7 @@ func updateCandidates(candidates candidatesList) error {
 		}
 
 		if !data.Publish {
-			log.Printf("post '%s' isn't marked for publishing; skip", data.Title)
+			log.Printf("post '%s' (%s) isn't marked for publishing; skip", slug, data.Title)
 			continue
 		}
 
