@@ -124,8 +124,6 @@ func feedTemplate(w http.ResponseWriter, label string, data any) error {
 }
 
 func readPublishedJSON(filename string) ([]byte, error) {
-	// FIXME: make a separate function out of this, to
-	// simplify error handling.
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("can't open %s: %w", filename, err)
