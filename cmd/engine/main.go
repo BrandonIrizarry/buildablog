@@ -115,7 +115,7 @@ func updateCandidates(candidates candidatesList) error {
 		return fmt.Errorf("can't read file: %w", err)
 	}
 
-	log.Printf("Current contents of %s: %s", publishedFile, fileContent)
+	log.Printf("Successfully read %s", publishedFile)
 
 	// alreadyPublished represents the current contents of
 	// published.json.
