@@ -39,7 +39,6 @@ p {
 ul li {
     list-style-type: var(--flower);
     padding-left: 5px;
-    margin-top: 20px;
 }
 
 ul li::marker {
@@ -89,11 +88,19 @@ fieldset {
 }
 
 /* Custom classes */
-span.header {
+li.published {
+    margin-bottom: 20px;
+}
+
+.created, .updated {
     color: var(--gorgeous-contrast-6);
 }
 
-p.summary {
+.updated {
+    font-style: italic;
+}
+
+.summary {
     margin-top: 20px;
 }
 

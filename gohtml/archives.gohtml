@@ -11,10 +11,12 @@
         <main>
             <ul>
                 {{ range .Published }}
-                    <li>
-                        <a href="posts/{{ .Slug }}">{{ .Title }}</a>
-                        <p><span class="header">First published: {{ .CreatedHumanReadable }}</span></p>
-                        <p><span class="header">Last updated: {{ .UpdatedHumanReadable }}</span></p>
+                    <li class="published">
+                        <span class="created">{{ .CreatedHumanReadable }}: </span>
+                        <a href="posts/{{ .Slug }}">
+                           {{ .Title }}
+                        </a>
+                        <p><span class="updated">Last updated on {{ .UpdatedHumanReadable }}</span></p>
                         <p class="summary">{{ .Summary }}</p>
                     </li>
                 {{ end }}
