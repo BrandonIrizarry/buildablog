@@ -13,9 +13,8 @@ type PostData struct {
 	Content template.HTML
 }
 
-// PublishData lets us not have to marshal the entire FrontmatterData
-// struct when publishing a blog post. The idea is that each entry in
-// the archive will depend only on these fields.
+// PublishData represents a blog post in the archive file
+// (published.json).
 type PublishData struct {
 	Date    string `json:"date"`
 	Slug    string `json:"slug"`
