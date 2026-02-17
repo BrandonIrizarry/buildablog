@@ -22,7 +22,7 @@ https://www.awwwards.com/sites/veille-reputation-squad
 
 /* Reset all margins, since this affects how the nav is displayed,
    depending on the page. */
-body, h1, ul {
+body, h1, ul, p {
     margin: 0;
 }
 
@@ -39,6 +39,7 @@ p {
 ul li {
     list-style-type: var(--flower);
     padding-left: 5px;
+    margin-top: 20px;
 }
 
 ul li::marker {
@@ -81,14 +82,19 @@ a, a:hover, a:visited {
     color: var(--gorgeous-contrast-9);
 }
 
-span.header {
-    color: var(--gorgeous-contrast-6);
-}
-
 fieldset {
     margin: 10px 20px;
     color: var(--gorgeous-contrast-6);
     border-color: var(--gorgeous-contrast-6);
+}
+
+/* Custom classes */
+span.header {
+    color: var(--gorgeous-contrast-6);
+}
+
+p.summary {
+    margin-top: 20px;
 }
 
 

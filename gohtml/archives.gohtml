@@ -12,11 +12,10 @@
             <ul>
                 {{ range .Published }}
                     <li>
-                        <span class="header">{{ .Created }}: </span>
                         <a href="posts/{{ .Slug }}">{{ .Title }}</a>
-
-                            <p>{{ .Summary }}</p>
-
+                        <p><span class="header">First published: {{ .Created }}</span></p>
+                        <p><span class="header">Last updated: {{ .Updated }}</span></p>
+                        <p class="summary">{{ .Summary }}</p>
                     </li>
                 {{ end }}
             </ul>
