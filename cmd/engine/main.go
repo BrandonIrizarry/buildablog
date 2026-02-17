@@ -67,6 +67,8 @@ func main() {
 	}
 }
 
+// updateCandidates revises the contents of published.json to reflect
+// any updates to a blog-post's front matter.
 func updateCandidates(candidates candidatesList) error {
 	log.Printf("Candidates are: %v", candidates)
 
