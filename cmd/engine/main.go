@@ -132,7 +132,7 @@ func updateCandidates(candidates candidatesList) error {
 			}
 
 			if !data.Publish {
-				return fmt.Errorf("post '%s' was never marked for publishing!", data.Title)
+				return fmt.Errorf("post %s ('%s') was never marked for publishing!", p.Slug, data.Title)
 			}
 
 			// Right now we support only editing the
