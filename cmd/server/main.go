@@ -124,6 +124,37 @@ func main() {
 		}
 	})
 
+	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
+		rawJSON, err := readPublishedJSON("published.json")
+		if err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+
+		var publishedList []types.PublishData
+		if err := json.Unmarshal(rawJSON, &publishedList); err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		tagSet := make(map[string]struct{})
+		for _, p := range publishedList {
+			for _, t := range p.Tags {
+				tagSet[t] = struct{}{}
+			}
+		}
+
+		log.Printf("Tag set: %v", tagSet)
+
+		if err := feedTemplate(w, "tags", tagSet); err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
+
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 

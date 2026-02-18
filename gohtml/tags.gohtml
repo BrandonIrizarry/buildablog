@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/styles.css">
+        <title>Archives</title>
+    </head>
+    <body>
+        {{ template "nav.html" . }}
+        <main>
+            <ul>
+                {{ range $key, $value := . }}
+                    <li class="tags">{{ $key }}</li>
+                {{ end }}
+            </ul>
+        </main>
+    </body>
+</html>
