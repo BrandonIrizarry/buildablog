@@ -33,6 +33,9 @@
                     {{ end }}
                 {{ end }}
             </ul>
+            {{ if .FilteringEnabled }}
+                <a href="/archives"><span>Show full archives</span></a>
+            {{ end }}
         </main>
     </body>
 </html>

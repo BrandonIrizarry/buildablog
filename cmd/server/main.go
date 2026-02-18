@@ -72,6 +72,8 @@ func main() {
 		// meaning that we should display all of what's
 		// published.
 		tagValue := r.FormValue("tag")
+		filteringEnabled := (tagValue != "")
+
 		log.Printf("Query: %s", tagValue)
 
 		templateContent, err := readers.ReadPage("index", "archives")
@@ -133,9 +135,15 @@ func main() {
 		err = feedTemplate(w, "archives", struct {
 			Main      types.PostData
 			Published []publishDataFormatted
+
+			// FilteringEnabled tells the template whether
+			// to display a link that would restore the
+			// full set of archive entries.
+			FilteringEnabled bool
 		}{
-			Main:      templateContent,
-			Published: publishedContent,
+			Main:             templateContent,
+			Published:        publishedContent,
+			FilteringEnabled: filteringEnabled,
 		})
 
 		if err != nil {
