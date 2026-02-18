@@ -21,7 +21,7 @@
                             <p>
                                 {{ $numTags := (len .Tags) }}
                                 {{ range $i, $tag := .Tags }}
-                                    <span class="tags">{{ $tag }}</span>{{ if (lt $i (dec $numTags)) }},{{ end }}
+                                    <a href="/archives?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }},{{ end }}
                                 {{ end }}
                             </p>
                         {{ end }}
