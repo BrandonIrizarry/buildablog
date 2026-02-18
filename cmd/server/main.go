@@ -91,7 +91,7 @@ func main() {
 
 		if err := json.Unmarshal(rawJSON, &publishedContent); err != nil {
 			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
