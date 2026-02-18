@@ -116,7 +116,7 @@ func main() {
 
 		// Prepare the human-readable time formats for display
 		// on the archives page.
-		const humanReadableFormat = "2006-1-2 (3:4 PM)"
+		const humanReadableFormat = "2006-1-2 (3:04 PM)"
 
 		for i := range publishedContent {
 			pc := &publishedContent[i]
