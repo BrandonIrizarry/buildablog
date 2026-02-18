@@ -75,6 +75,14 @@ h1 {
     color: var(--gorgeous-contrast-2)
 }
 
+li {
+    color: var(--gorgeous-contrast-7);
+}
+
+pre, code {
+    color: var(--gorgeous-contrast-6);
+}
+
 /* Fit images to column. */
 img {
     width: 100%;
