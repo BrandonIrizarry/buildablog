@@ -18,8 +18,9 @@
                         </a>
                         {{  if (gt (len .Tags) 0) }}
                             <p>
+                                {{ $numTags := (len .Tags) }}
                                 {{ range $i, $tag := .Tags }}
-                                    <span class="created">{{ $tag }},</span>
+                                    <span class="created">{{ $tag }}{{ if (lt $i (dec $numTags)) }},{{ end }}</span>
                                 {{ end }}
                             </p>
                         {{ end }}

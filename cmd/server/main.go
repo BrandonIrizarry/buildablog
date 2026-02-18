@@ -137,7 +137,14 @@ func main() {
 // fill in the template.)
 func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	// Load the template.
-	tpl, err := template.ParseFiles("gohtml/"+label+".gohtml", "html/nav.html")
+	templateName := label + ".gohtml"
+	funcMap := template.FuncMap{
+		"dec": func(value int) int {
+			return value - 1
+		},
+	}
+
+	tpl, err := template.New(templateName).Funcs(funcMap).ParseFiles("gohtml/"+templateName, "html/nav.html")
 	if err != nil {
 		return err
 	}
