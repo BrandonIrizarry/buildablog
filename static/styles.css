@@ -26,6 +26,10 @@ body, ul, p, span {
     margin: 0;
 }
 
+ul {
+    padding-left: 0;
+}
+
 /* Limit the body element to 30 times the font size. */
 html {
     background-color: var(--gorgeous-contrast-3);
