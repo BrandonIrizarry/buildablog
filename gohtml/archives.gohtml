@@ -20,7 +20,7 @@
                             <p>
                                 {{ $numTags := (len .Tags) }}
                                 {{ range $i, $tag := .Tags }}
-                                    <span class="created">{{ $tag }}{{ if (lt $i (dec $numTags)) }},{{ end }}</span>
+                                    <span class="tags">{{ $tag }}</span>{{ if (lt $i (dec $numTags)) }},{{ end }}
                                 {{ end }}
                             </p>
                         {{ end }}
