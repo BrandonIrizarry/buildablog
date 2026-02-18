@@ -89,12 +89,17 @@ func main() {
 		type publishDataFormatted struct {
 			types.PublishData
 
-			// These fields are used specifically from
-			// within archives.gohtml itself.
+			// The rest of the fields are used
+			// specifically from within archives.gohtml
+			// itself.
 			CreatedHumanReadable string
 			UpdatedHumanReadable string
 			DidUpdate            bool
-			Include              bool
+
+			// Include determines whether /archives should
+			// mention a given blog post (determined by
+			// whether a tag-filter is set.)
+			Include bool
 		}
 
 		var publishedContent []publishDataFormatted
