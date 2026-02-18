@@ -11,7 +11,7 @@
         <main>
             <ul>
                 {{ range $key, $value := . }}
-                    <li class="tags">{{ $key }}</li>
+                    <li class="tags"><a href="/archives?tag={{$key}}">{{ $key }}</a></li>
                 {{ end }}
             </ul>
         </main>

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"slices"
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
@@ -66,6 +67,11 @@ func main() {
 
 	// Serve the archives page.
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
+		// tagValue is used to filter this page's content by
+		// tag.
+		tagValue := r.FormValue("tag")
+		log.Printf("Query: %s", tagValue)
+
 		templateContent, err := readers.ReadPage("index", "archives")
 		if err != nil {
 			log.Printf("%v", err)
@@ -82,9 +88,13 @@ func main() {
 
 		type publishDataFormatted struct {
 			types.PublishData
+
+			// These fields are used specifically from
+			// within archives.gohtml itself.
 			CreatedHumanReadable string
 			UpdatedHumanReadable string
 			DidUpdate            bool
+			Include              bool
 		}
 
 		var publishedContent []publishDataFormatted
@@ -107,6 +117,10 @@ func main() {
 			(*pc).CreatedHumanReadable = time.Unix(created, 0).Format(humanReadableFormat)
 			(*pc).UpdatedHumanReadable = time.Unix(updated, 0).Format(humanReadableFormat)
 			(*pc).DidUpdate = (updated > created)
+
+			if tagValue == "" || slices.Contains(pc.Tags, tagValue) {
+				(*pc).Include = true
+			}
 		}
 
 		err = feedTemplate(w, "archives", struct {

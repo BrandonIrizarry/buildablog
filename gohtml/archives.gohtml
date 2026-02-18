@@ -11,6 +11,7 @@
         <main>
             <ul>
                 {{ range .Published }}
+                    {{ if .Include }}
                     <li class="published">
                         <span class="created">{{ .CreatedHumanReadable }}: </span>
                         <a href="posts/{{ .Slug }}">
@@ -29,6 +30,7 @@
                         {{ end }}
                         <p class="summary">{{ .Summary }}</p>
                     </li>
+                    {{ end }}
                 {{ end }}
             </ul>
         </main>
