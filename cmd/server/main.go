@@ -76,7 +76,11 @@ func main() {
 		tagValue := r.FormValue("tag")
 		filteringEnabled := (tagValue != "")
 
-		log.Printf("Query: %s", tagValue)
+		if filteringEnabled {
+			log.Printf("Query: %s", tagValue)
+		} else {
+			log.Printf("No query")
+		}
 
 		templateContent, err := readers.ReadPage("index", "archives")
 		if err != nil {
