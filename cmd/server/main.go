@@ -68,7 +68,9 @@ func main() {
 	// Serve the archives page.
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
 		// tagValue is used to filter this page's content by
-		// tag.
+		// tag. A zero form value means that no tag is set,
+		// meaning that we should display all of what's
+		// published.
 		tagValue := r.FormValue("tag")
 		log.Printf("Query: %s", tagValue)
 
