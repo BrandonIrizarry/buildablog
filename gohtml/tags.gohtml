@@ -9,6 +9,7 @@
     <body>
         {{ template "nav.html" . }}
         <main>
+            <h1>Tags</h1>
             <ul>
                 {{ range $key, $value := . }}
                     <li class="tags"><a href="/archives?tag={{$key}}">{{ $key }}</a></li>

@@ -22,9 +22,8 @@ https://www.awwwards.com/sites/veille-reputation-squad
 
 /* Reset all margins, since this affects how the nav is displayed,
    depending on the page. */
-body, h1, ul, p, span {
+body, ul, p, span {
     margin: 0;
-    padding: 0;
 }
 
 /* Limit the body element to 30 times the font size. */
