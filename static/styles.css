@@ -112,3 +112,7 @@ li.published {
     color: var(--gorgeous-contrast-6);
     text-decoration: underline;
 }
+
+h1.page-title {
+    text-decoration: underline;
+}
