@@ -174,6 +174,10 @@ func main() {
 			return
 		}
 
+		// Since different blog posts will (as is desirable)
+		// intersect across various tags, we need to
+		// deduplicate them using a set, which is in turn fed
+		// into the tags.gohtml template.
 		tagSet := make(map[string]struct{})
 		for _, p := range publishedList {
 			for _, t := range p.Tags {
