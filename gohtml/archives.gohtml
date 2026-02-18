@@ -16,6 +16,13 @@
                         <a href="posts/{{ .Slug }}">
                             {{ .Title }}
                         </a>
+                        {{  if (gt (len .Tags) 0) }}
+                            <p>
+                                {{ range $i, $tag := .Tags }}
+                                    <span class="created">{{ $tag }},</span>
+                                {{ end }}
+                            </p>
+                        {{ end }}
                         {{ if .DidUpdate }}
                             <p><span class="updated">Updated on {{ .UpdatedHumanReadable }}</span></p>
                         {{ end }}

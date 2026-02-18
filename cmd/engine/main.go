@@ -151,6 +151,7 @@ func updateCandidates(candidates candidatesList) error {
 				Updated: time.Now().Unix(),
 				Title:   data.Title,
 				Summary: data.Summary,
+				Tags:    data.Tags,
 			}
 
 			putItBack = append(putItBack, newPublishedData)
@@ -187,6 +188,7 @@ func updateCandidates(candidates candidatesList) error {
 			Slug:    slug,
 			Title:   data.Title,
 			Summary: data.Summary,
+			Tags:    data.Tags,
 		}
 
 		putItBack = append(putItBack, newPublishedData)

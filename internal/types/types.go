@@ -3,9 +3,10 @@ package types
 import "html/template"
 
 type FrontmatterData struct {
-	Title   string `toml:"title"`
-	Summary string `toml:"summary"`
-	Publish bool   `toml:"publish"`
+	Title   string   `toml:"title"`
+	Summary string   `toml:"summary"`
+	Publish bool     `toml:"publish"`
+	Tags    []string `toml:"tags"`
 }
 
 type PostData struct {
@@ -35,4 +36,7 @@ type PublishData struct {
 	// Summary is (by convention) a blurb summary of the post,
 	// used in the archives listing.
 	Summary string `json:"summary"`
+
+	// Tags: a post's list of tags.
+	Tags []string `json:"tags"`
 }
