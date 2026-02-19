@@ -83,19 +83,6 @@ func main() {
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("GET /archives")
 
-		// tagValue is used to filter this page's content by
-		// tag. A zero form value means that no tag is set,
-		// meaning that we should display all of what's
-		// published.
-		tagValue := r.FormValue("tag")
-		filteringEnabled := (tagValue != "")
-
-		if filteringEnabled {
-			log.Printf("Query: %s", tagValue)
-		} else {
-			log.Printf("No query")
-		}
-
 		pdataList, err := readers.ReadPublishingFile("published.json")
 		if err != nil {
 			log.Printf("%v", err)
@@ -108,7 +95,7 @@ func main() {
 			Tag       string
 		}{
 			Published: pdataList,
-			Tag:       tagValue,
+			Tag:       r.FormValue("tag"),
 		}
 
 		if err := feedTemplate(w, "archives", data); err != nil {
