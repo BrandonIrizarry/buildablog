@@ -153,6 +153,12 @@ h1.page-title {
     text-decoration: underline;
 }
 
+/* We don't want the Archives title text to turn blue just because
+   we're using an anchor tag there. */
+h1.page-title > a {
+    color: inherit;
+}
+
 /* Posts are allowed to have more conventional, often default styles
    applied to them, since they don't fall under any special UI
    concern; they're just text for mere mortals to consume. */
