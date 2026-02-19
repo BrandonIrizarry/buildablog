@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"strings"
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
@@ -16,6 +15,9 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
+// tpls maps template basenames to actual templates. This is so that
+// we can parse all our templates up front, as opposed to parsing them
+// on each request.
 var tpls = make(map[string]*template.Template)
 
 func main() {
@@ -48,8 +50,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Printf("Template files: %v", gohtmlFiles)
+
 	for _, file := range gohtmlFiles {
-		name := strings.TrimSuffix(filepath.Base(file), ".gohtml")
+		name := filepath.Base(file)
 		tpl, err := template.New(name).Funcs(funcMap).ParseFiles(file, "html/nav.html")
 		if err != nil {
 			log.Fatal(err)
@@ -179,28 +183,14 @@ func main() {
 // fill in the template.)
 func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	// Load the template.
-	templateName := label + ".gohtml"
-	funcMap := template.FuncMap{
-		"dec": func(value int) int {
-			return value - 1
-		},
-		"humanReadable": func(timestamp int64) string {
-			const humanReadableFormat = "2006-1-2 (3:04 PM)"
-			return time.Unix(timestamp, 0).Format(humanReadableFormat)
-		},
-		"hasTag": func(tag string, tags []string) bool {
-			return slices.Contains(tags, tag)
-		},
-	}
-
-	tpl, err := template.New(templateName).Funcs(funcMap).ParseFiles("gohtml/"+templateName, "html/nav.html")
-	if err != nil {
-		return err
+	t, ok := tpls[label+".gohtml"]
+	if !ok {
+		return fmt.Errorf("no template under label '%s'", label)
 	}
 
 	// Use the template.
-	if err := tpl.Execute(w, data); err != nil {
-		return err
+	if err := t.Execute(w, data); err != nil {
+		return fmt.Errorf("can't execute template under label '%s': %w", label, err)
 	}
 
 	return nil
