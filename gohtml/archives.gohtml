@@ -14,15 +14,16 @@
                 {{ $tagFilter := .Tag }}
                 {{ range .Published }}
                     {{ if (or (eq $tagFilter "") (hasTag $tagFilter .Tags)) }}
-                        <li class="published">
-                            <span class="created">{{ (humanReadable .Created) }}: </span>
-                            <a href="posts/{{ .Slug }}">
-                                {{ .Title }}
-                            </a>
-                            <details>
-                                <summary class="meta">[...]</summary>
-                                <p class="summary">{{ .Summary }}</p>
-                            </details>
+                        <details class="published">
+                            <summary>
+                                <span class="created">{{ (humanReadable .Created) }}: </span>
+                                <a href="posts/{{ .Slug }}">
+                                    {{ .Title }}
+                                </a>
+                            </summary>
+
+                            <!-- Content of the details element. -->
+                            <p class="summary">{{ .Summary }}</p>
                             {{  if (gt (len .Tags) 0) }}
                                 {{ $numTags := (len .Tags) }}
                                 <div>
@@ -30,6 +31,7 @@
                                         <a href="/archives?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }},{{ end }}
                                     {{ end }}
                                 </div>
+                        </details>
                             {{ end }}
                             {{ if (gt .Updated .Created) }}
                                 <br>

@@ -84,15 +84,6 @@ pre, code {
     color: var(--gorgeous-contrast-6);
 }
 
-summary {
-    list-style: none;
-}
-
-details {
-    display: inline-block;
-    margin: 0 0 10px 10px;
-}
-
 /* Fit images to column. */
 img {
     width: 100%;
