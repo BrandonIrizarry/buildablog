@@ -14,25 +14,28 @@
                 {{ $tagFilter := .Tag }}
                 {{ range .Published }}
                     {{ if (or (eq $tagFilter "") (hasTag $tagFilter .Tags)) }}
-                    <li class="published">
-                        <span class="created">{{ (humanReadable .Created) }}: </span>
-                        <a href="posts/{{ .Slug }}">
-                            {{ .Title }}
-                        </a>
-                        {{  if (gt (len .Tags) 0) }}
-                            <p>
+                        <li class="published">
+                            <span class="created">{{ (humanReadable .Created) }}: </span>
+                            <a href="posts/{{ .Slug }}">
+                                {{ .Title }}
+                            </a>
+                            <details>
+                                <summary class="meta"><span>[...]</span></summary>
+                                <p class="summary">{{ .Summary }}</p>
+                            </details>
+                            {{  if (gt (len .Tags) 0) }}
                                 {{ $numTags := (len .Tags) }}
-                                {{ range $i, $tag := .Tags }}
-                                    <a href="/archives?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }},{{ end }}
-                                {{ end }}
-                            </p>
-                        {{ end }}
-                        {{ if (gt .Updated .Created) }}
-                            <br>
-                            <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
-                        {{ end }}
-                        <p class="summary">{{ .Summary }}</p>
-                    </li>
+                                <div>
+                                    {{ range $i, $tag := .Tags }}
+                                        <a href="/archives?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }},{{ end }}
+                                    {{ end }}
+                                </div>
+                            {{ end }}
+                            {{ if (gt .Updated .Created) }}
+                                <br>
+                                <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
+                            {{ end }}
+                        </li>
                     {{ end }}
                 {{ end }}
             </ul>

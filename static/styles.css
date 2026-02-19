@@ -84,6 +84,16 @@ pre, code {
     color: var(--gorgeous-contrast-6);
 }
 
+summary {
+    list-style: none;
+}
+
+details {
+    display: flex;
+    flex-direction: row;
+    margin: 0 0 10px 10px;
+}
+
 /* Fit images to column. */
 img {
     width: 100%;
@@ -105,7 +115,7 @@ li.published {
     margin-bottom: 20px;
 }
 
-.created, .updated {
+.meta, .created, .updated {
     color: var(--gorgeous-contrast-6);
 }
 
