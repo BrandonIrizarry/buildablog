@@ -9,7 +9,7 @@
     <body>
         {{ template "nav.html" . }}
         <main>
-            <h1 class="page-title">Archives</h1>
+            <h1 class="page-title"><a href="/archives">Archives</a></h1>
             <section>
                 {{ $tagFilter := .Tag }}
                 {{ range .Published }}
@@ -42,9 +42,6 @@
                     {{ end }}
                 {{ end }}
             </section>
-            {{ if (ne $tagFilter "") }}
-                <a href="/archives"><span>Show full archives</span></a>
-            {{ end }}
         </main>
     </body>
 </html>
