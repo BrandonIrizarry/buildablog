@@ -94,6 +94,10 @@ details {
     margin: 0 0 10px 10px;
 }
 
+details[open] > summary > span {
+    display: none;
+}
+
 /* Fit images to column. */
 img {
     width: 100%;
