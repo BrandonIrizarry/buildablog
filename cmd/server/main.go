@@ -50,9 +50,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Printf("Template files: %v", gohtmlFiles)
-
 	for _, file := range gohtmlFiles {
+		log.Printf("Parsing template file '%s'", file)
+
 		name := filepath.Base(file)
 		tpl, err := template.New(name).Funcs(funcMap).ParseFiles(file, "html/nav.html")
 		if err != nil {
