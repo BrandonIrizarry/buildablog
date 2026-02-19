@@ -41,6 +41,10 @@
                         </details>
                     {{ end }}
                 {{ end }}
+
+                {{ if (ne $tagFilter "") }}
+                    <a href="/archives">(show all archives)</a>
+                {{ end }}
             </section>
         </main>
     </body>
