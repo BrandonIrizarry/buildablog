@@ -173,6 +173,8 @@ func main() {
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	log.Print("Killing any previous server instance; starting server on port 3030")
+
 	if err := http.ListenAndServe(":3030", mux); err != nil {
 		log.Fatal(err)
 	}
