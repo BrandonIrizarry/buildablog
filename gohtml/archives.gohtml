@@ -32,12 +32,11 @@
                                     {{ end }}
                                 </div>
                             {{ end }}
+                            {{ if (gt .Updated .Created) }}
+                                <br>
+                                <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
+                            {{ end }}
                         </details>
-                        {{ if (gt .Updated .Created) }}
-                            <br>
-                            <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
-                        {{ end }}
-                        </li>
                     {{ end }}
                 {{ end }}
             </section>
