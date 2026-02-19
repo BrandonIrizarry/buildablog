@@ -106,6 +106,25 @@ section {
     gap: 10px;
 }
 
+details {
+    transition: 0.2s background linear;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+details:hover {
+  background: var(--gorgeous-contrast-4);
+}
+
+details > summary {
+    list-style-type: var(--flower);
+    transition: 1s;
+}
+
+details > summary::marker {
+    color: var(--gorgeous-contrast-2);
+}
+
 /* Custom classes */
 li.published {
     margin-bottom: 20px;
