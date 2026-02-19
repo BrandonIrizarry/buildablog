@@ -34,14 +34,22 @@ func main() {
 	contentPattern := fmt.Sprintf("GET /%s/{slug}", constants.PostsLabel)
 	mux.HandleFunc(contentPattern, func(w http.ResponseWriter, r *http.Request) {
 		slug := r.PathValue("slug")
-		templateContent, err := readers.ReadPage(slug, "posts")
+		fmdata, content, err := readers.ReadPage(slug, "posts")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
-		if err := feedTemplate(w, "posts", templateContent); err != nil {
+		data := struct {
+			Title   string
+			Content template.HTML
+		}{
+			Title:   fmdata.Title,
+			Content: content,
+		}
+
+		if err := feedTemplate(w, "posts", data); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
@@ -50,14 +58,22 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		templateContent, err := readers.ReadPage("index", "index")
+		fmdata, content, err := readers.ReadPage("index", "index")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
-		err = feedTemplate(w, "index", templateContent)
+		data := struct {
+			Title   string
+			Content template.HTML
+		}{
+			Title:   fmdata.Title,
+			Content: content,
+		}
+
+		err = feedTemplate(w, "index", data)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -82,13 +98,6 @@ func main() {
 			log.Printf("No query")
 		}
 
-		templateContent, err := readers.ReadPage("index", "archives")
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
-
 		rawJSON, err := readPublishedJSON("published.json")
 		if err != nil {
 			log.Printf("%v", err)
@@ -96,63 +105,22 @@ func main() {
 			return
 		}
 
-		type publishDataFormatted struct {
-			types.PublishData
-
-			// The rest of the fields are used
-			// specifically from within archives.gohtml
-			// itself.
-			CreatedHumanReadable string
-			UpdatedHumanReadable string
-			DidUpdate            bool
-
-			// Include determines whether /archives should
-			// mention a given blog post (determined by
-			// whether a tag-filter is set.)
-			Include bool
-		}
-
-		var publishedContent []publishDataFormatted
-
-		if err := json.Unmarshal(rawJSON, &publishedContent); err != nil {
+		var pdataList []types.PublishData
+		if err := json.Unmarshal(rawJSON, &pdataList); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Prepare the human-readable time formats for display
-		// on the archives page.
-		const humanReadableFormat = "2006-1-2 (3:04 PM)"
-
-		for i := range publishedContent {
-			pc := &publishedContent[i]
-			created := pc.Created
-			updated := pc.Updated
-
-			(*pc).CreatedHumanReadable = time.Unix(created, 0).Format(humanReadableFormat)
-			(*pc).UpdatedHumanReadable = time.Unix(updated, 0).Format(humanReadableFormat)
-			(*pc).DidUpdate = (updated > created)
-
-			if tagValue == "" || slices.Contains(pc.Tags, tagValue) {
-				(*pc).Include = true
-			}
+		data := struct {
+			Published []types.PublishData
+			Tag       string
+		}{
+			Published: pdataList,
+			Tag:       tagValue,
 		}
 
-		err = feedTemplate(w, "archives", struct {
-			Main      types.PostData
-			Published []publishDataFormatted
-
-			// FilteringEnabled tells the template whether
-			// to display a link that would restore the
-			// full set of archive entries.
-			FilteringEnabled bool
-		}{
-			Main:             templateContent,
-			Published:        publishedContent,
-			FilteringEnabled: filteringEnabled,
-		})
-
-		if err != nil {
+		if err := feedTemplate(w, "archives", data); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
@@ -211,6 +179,13 @@ func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	funcMap := template.FuncMap{
 		"dec": func(value int) int {
 			return value - 1
+		},
+		"humanReadable": func(timestamp int64) string {
+			const humanReadableFormat = "2006-1-2 (3:04 PM)"
+			return time.Unix(timestamp, 0).Format(humanReadableFormat)
+		},
+		"hasTag": func(tag string, tags []string) bool {
+			return slices.Contains(tags, tag)
 		},
 	}
 

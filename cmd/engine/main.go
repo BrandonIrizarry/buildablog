@@ -120,7 +120,7 @@ func updateCandidates(candidates candidatesList) error {
 		if _, ok := candidateSlugSet[p.Slug]; ok {
 			// UPDATED POSTS
 			log.Printf("Caught %s as having been edited", p.Slug)
-			data, err := readers.ReadPage(p.Slug, "posts")
+			data, _, err := readers.ReadPage(p.Slug, "posts")
 			if err != nil {
 				return fmt.Errorf("can't read candidate slug '%s' (updated post): %w", p.Slug, err)
 			}
@@ -172,7 +172,7 @@ func updateCandidates(candidates candidatesList) error {
 	//
 	// NEW POSTS:
 	for slug := range candidateSlugSet {
-		data, err := readers.ReadPage(slug, "posts")
+		data, _, err := readers.ReadPage(slug, "posts")
 		if err != nil {
 			return fmt.Errorf("can't read candidate slug '%s' (new post): %w", slug, err)
 		}

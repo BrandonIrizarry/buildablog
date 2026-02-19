@@ -14,21 +14,19 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
-func ReadPage(slug, label string) (types.PostData, error) {
-	var data types.PostData
+func ReadPage(slug, label string) (types.FrontmatterData, template.HTML, error) {
+	var fmdata types.FrontmatterData
 
 	filename := fmt.Sprintf("content/%s/%s.md", label, slug)
 	f, err := os.Open(filename)
 	if err != nil {
-		return types.PostData{}, err
+		return types.FrontmatterData{}, "", err
 	}
 	defer f.Close()
 
-	// This works because [types.FrontmatterData] is embedded
-	// inside [types.PostData].
-	blogContent, err := frontmatter.Parse(f, &data)
+	content, err := frontmatter.Parse(f, &fmdata)
 	if err != nil {
-		return types.PostData{}, err
+		return types.FrontmatterData{}, "", err
 	}
 
 	// Enable syntax highlighting in blog posts.
@@ -64,11 +62,9 @@ func ReadPage(slug, label string) (types.PostData, error) {
 
 	// Render Markdown as HTML.
 	var buf bytes.Buffer
-	if err := mdRenderer.Convert(blogContent, &buf); err != nil {
-		return types.PostData{}, err
+	if err := mdRenderer.Convert(content, &buf); err != nil {
+		return types.FrontmatterData{}, "", err
 	}
 
-	data.Content = template.HTML(buf.String())
-
-	return data, nil
+	return fmdata, template.HTML(buf.String()), nil
 }

@@ -11,10 +11,11 @@
         <main>
             <h1 class="page-title">Archives</h1>
             <ul>
+                {{ $tag := .Tag }}
                 {{ range .Published }}
-                    {{ if .Include }}
+                    {{ if (or (eq $tag "") (hasTag $tag .Tags)) }}
                     <li class="published">
-                        <span class="created">{{ .CreatedHumanReadable }}: </span>
+                        <span class="created">{{ (humanReadable .Created) }}: </span>
                         <a href="posts/{{ .Slug }}">
                             {{ .Title }}
                         </a>
@@ -26,16 +27,16 @@
                                 {{ end }}
                             </p>
                         {{ end }}
-                        {{ if .DidUpdate }}
+                        {{ if (gt .Updated .Created) }}
                             <br>
-                            <p><span class="updated">Updated on {{ .UpdatedHumanReadable }}</span></p>
+                            <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
                         {{ end }}
                         <p class="summary">{{ .Summary }}</p>
                     </li>
                     {{ end }}
                 {{ end }}
             </ul>
-            {{ if .FilteringEnabled }}
+            {{ if (ne $tag "") }}
                 <a href="/archives"><span>Show full archives</span></a>
             {{ end }}
         </main>

@@ -1,22 +1,19 @@
 package types
 
-import "html/template"
-
+// frontmatter fields
 type FrontmatterData struct {
 	Title   string   `toml:"title"`
 	Summary string   `toml:"summary"`
-	Publish bool     `toml:"publish"`
 	Tags    []string `toml:"tags"`
+	Publish bool     `toml:"publish"`
 }
 
-type PostData struct {
-	FrontmatterData
-	Content template.HTML
-}
-
-// PublishData represents a blog post in the archive file
-// (published.json).
+// inside published.json
 type PublishData struct {
+	Title   string   `json:"title"`
+	Summary string   `json:"summary"`
+	Tags    []string `json:"tags"`
+
 	// Created details when the post was created (Unix timestamp.)
 	Created int64 `json:"created"`
 
@@ -29,14 +26,4 @@ type PublishData struct {
 	// extension. The various templates use this to generate the
 	// links to the posts.
 	Slug string `json:"slug"`
-
-	// Title is (by convention) the proper title of the post.
-	Title string `json:"title"`
-
-	// Summary is (by convention) a blurb summary of the post,
-	// used in the archives listing.
-	Summary string `json:"summary"`
-
-	// Tags: a post's list of tags.
-	Tags []string `json:"tags"`
 }
