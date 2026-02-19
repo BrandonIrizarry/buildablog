@@ -1,10 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -98,15 +96,8 @@ func main() {
 			log.Printf("No query")
 		}
 
-		rawJSON, err := readPublishedJSON("published.json")
+		pdataList, err := readers.ReadPublishingFile("published.json")
 		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
-
-		var pdataList []types.PublishData
-		if err := json.Unmarshal(rawJSON, &pdataList); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -128,17 +119,10 @@ func main() {
 	})
 
 	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
-		rawJSON, err := readPublishedJSON("published.json")
+		publishedList, err := readers.ReadPublishingFile("published.json")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
-
-		var publishedList []types.PublishData
-		if err := json.Unmarshal(rawJSON, &publishedList); err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -200,21 +184,4 @@ func feedTemplate(w http.ResponseWriter, label string, data any) error {
 	}
 
 	return nil
-}
-
-// readPublishedJSON returns the contents of filename as a byte slice
-// (NOTE: such a slice should be marshallable as JSON.)
-func readPublishedJSON(filename string) ([]byte, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("can't open %s: %w", filename, err)
-	}
-	defer f.Close()
-
-	rawJSON, err := io.ReadAll(f)
-	if err != nil {
-		return nil, fmt.Errorf("can't read %s: %w", filename, err)
-	}
-
-	return rawJSON, nil
 }
