@@ -152,3 +152,10 @@ li.published {
 h1.page-title {
     text-decoration: underline;
 }
+
+/* Posts are allowed to have more conventional, often default styles
+   applied to them, since they don't fall under any special UI
+   concern; they're just text for mere mortals to consume. */
+.post-content p {
+    margin-top: 1rem;
+}
