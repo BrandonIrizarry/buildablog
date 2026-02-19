@@ -92,6 +92,7 @@ img {
 /* Styling for links. */
 a, a:hover, a:visited {
     color: var(--gorgeous-contrast-9);
+    text-decoration: none;
 }
 
 fieldset {
