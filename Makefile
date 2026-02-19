@@ -7,4 +7,10 @@ published.json: $(files)
 
 content/posts/%.md::
 
-.PHONY: all clean publish
+# Server-related targets
+server:
+	@-killall babserver 2>/dev/null
+	@go build  -o babserver ./cmd/server
+	@./babserver&
+
+.PHONY: all clean publish server
