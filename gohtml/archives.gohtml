@@ -31,12 +31,12 @@
                                         <a href="/archives?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }},{{ end }}
                                     {{ end }}
                                 </div>
+                            {{ end }}
                         </details>
-                            {{ end }}
-                            {{ if (gt .Updated .Created) }}
-                                <br>
-                                <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
-                            {{ end }}
+                        {{ if (gt .Updated .Created) }}
+                            <br>
+                            <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
+                        {{ end }}
                         </li>
                     {{ end }}
                 {{ end }}
