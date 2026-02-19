@@ -49,7 +49,7 @@ func main() {
 
 		if err := feedTemplate(w, "posts", data); err != nil {
 			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	})
@@ -74,7 +74,7 @@ func main() {
 		err = feedTemplate(w, "index", data)
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	})
@@ -100,7 +100,7 @@ func main() {
 
 		if err := feedTemplate(w, "archives", data); err != nil {
 			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	})
@@ -109,7 +109,7 @@ func main() {
 		publishedList, err := readers.ReadPublishingFile("published.json")
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
