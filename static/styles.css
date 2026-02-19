@@ -89,13 +89,8 @@ summary {
 }
 
 details {
-    display: flex;
-    flex-direction: row;
+    display: inline-block;
     margin: 0 0 10px 10px;
-}
-
-details[open] > summary > span {
-    display: none;
 }
 
 /* Fit images to column. */
