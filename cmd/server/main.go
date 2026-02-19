@@ -6,13 +6,17 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
+
+var tpls = make(map[string]*template.Template)
 
 func main() {
 	// Set up logging.
@@ -24,6 +28,35 @@ func main() {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	// Parse the templates up front.
+	funcMap := template.FuncMap{
+		"dec": func(value int) int {
+			return value - 1
+		},
+		"humanReadable": func(timestamp int64) string {
+			const humanReadableFormat = "2006-1-2 (3:04 PM)"
+			return time.Unix(timestamp, 0).Format(humanReadableFormat)
+		},
+		"hasTag": func(tag string, tags []string) bool {
+			return slices.Contains(tags, tag)
+		},
+	}
+
+	gohtmlFiles, err := filepath.Glob("gohtml/*")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range gohtmlFiles {
+		name := strings.TrimSuffix(filepath.Base(file), ".gohtml")
+		tpl, err := template.New(name).Funcs(funcMap).ParseFiles(file, "html/nav.html")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		tpls[name] = tpl
+	}
 
 	// Set up the server.
 	mux := http.NewServeMux()
