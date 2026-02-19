@@ -10,7 +10,7 @@
         {{ template "nav.html" . }}
         <main>
             <h1 class="page-title">Archives</h1>
-            <ul>
+            <section>
                 {{ $tagFilter := .Tag }}
                 {{ range .Published }}
                     {{ if (or (eq $tagFilter "") (hasTag $tagFilter .Tags)) }}
@@ -40,7 +40,7 @@
                         </li>
                     {{ end }}
                 {{ end }}
-            </ul>
+            </section>
             {{ if (ne $tagFilter "") }}
                 <a href="/archives"><span>Show full archives</span></a>
             {{ end }}
