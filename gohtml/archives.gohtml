@@ -11,9 +11,9 @@
         <main>
             <h1 class="page-title">Archives</h1>
             <ul>
-                {{ $tag := .Tag }}
+                {{ $tagFilter := .Tag }}
                 {{ range .Published }}
-                    {{ if (or (eq $tag "") (hasTag $tag .Tags)) }}
+                    {{ if (or (eq $tagFilter "") (hasTag $tagFilter .Tags)) }}
                     <li class="published">
                         <span class="created">{{ (humanReadable .Created) }}: </span>
                         <a href="posts/{{ .Slug }}">
@@ -36,7 +36,7 @@
                     {{ end }}
                 {{ end }}
             </ul>
-            {{ if (ne $tag "") }}
+            {{ if (ne $tagFilter "") }}
                 <a href="/archives"><span>Show full archives</span></a>
             {{ end }}
         </main>
