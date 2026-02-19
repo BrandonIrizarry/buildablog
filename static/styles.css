@@ -112,6 +112,12 @@ details {
     padding: 5px;
 }
 
+details > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 details:hover {
   background: var(--gorgeous-contrast-4);
 }
@@ -136,10 +142,6 @@ li.published {
 
 .updated {
     font-style: italic;
-}
-
-.summary {
-    margin-top: 20px;
 }
 
 .tags {
