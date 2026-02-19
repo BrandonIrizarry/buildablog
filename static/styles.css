@@ -150,10 +150,6 @@ li.published {
     text-decoration: underline;
 }
 
-h1.page-title {
-    text-decoration: underline;
-}
-
 /* We don't want the Archives title text to turn blue just because
    we're using an anchor tag there. */
 h1.page-title > a {
