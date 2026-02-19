@@ -22,7 +22,7 @@
 
                             <!-- Content of the details element. -->
                             <div>
-                                <p class="summary">{{ .Summary }}</p>
+                                <p class="summary">{{ .Summary }} <a href="posts/{{ .Slug }}">(more)</a></p>
                                 {{  if (gt (len .Tags) 0) }}
                                     {{ $numTags := (len .Tags) }}
                                     <div>
