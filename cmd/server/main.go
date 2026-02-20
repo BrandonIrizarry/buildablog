@@ -209,7 +209,7 @@ func main() {
 
 		rssChannel := types.RSSChannel{
 			Title:       siteTitle,
-			Link:        "https://brandonirizarry.xyz",
+			Link:        siteURL,
 			Description: "My personal website and blog",
 			Language:    "en-us",
 			Image:       image,
