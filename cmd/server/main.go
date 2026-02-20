@@ -185,7 +185,7 @@ func main() {
 
 		var items []types.RSSItem
 		for _, p := range publishedList {
-			link := fmt.Sprintf("%s/%s", siteURL, p.Slug)
+			link := fmt.Sprintf("posts/%s", p.Slug)
 			pubDate := time.Unix(p.Created, 0).Format(time.RFC1123)
 
 			item := types.RSSItem{
