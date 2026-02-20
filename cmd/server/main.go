@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"html/template"
 	"log"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
@@ -168,6 +170,73 @@ func main() {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+	})
+
+	mux.HandleFunc("GET /rss", func(w http.ResponseWriter, r *http.Request) {
+		siteTitle := "Biome of Ideas"
+		siteURL := "https//brandonirizarry.xyz"
+
+		publishedList, err := readers.ReadPublishingFile("published.json")
+		if err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var items []types.RSSItem
+		for _, p := range publishedList {
+			link := fmt.Sprintf("%s/%s", siteURL, p.Slug)
+			pubDate := time.Unix(p.Created, 0).Format(time.RFC1123)
+
+			item := types.RSSItem{
+				Title:       p.Title,
+				Link:        link,
+				GUID:        link,
+				PubDate:     pubDate,
+				Description: p.Summary,
+			}
+
+			items = append(items, item)
+		}
+
+		image := types.RSSImage{
+			Title:  siteTitle,
+			Link:   siteURL,
+			URL:    fmt.Sprintf("%s/static/bitmap.png", siteURL),
+			Width:  300,
+			Height: 300,
+		}
+
+		rssChannel := types.RSSChannel{
+			Title:       siteTitle,
+			Link:        "https://brandonirizarry.xyz",
+			Description: "My personal website and blog",
+			Language:    "en-us",
+			Image:       image,
+			Items:       items,
+		}
+
+		type rss struct {
+			Channel types.RSSChannel `xml:"channel"`
+			Version string           `xml:"version,attr"`
+		}
+
+		rssPayload := rss{
+			Channel: rssChannel,
+			Version: "2.0",
+		}
+
+		// Marshal the data to XML
+		feed, err := xml.MarshalIndent(rssPayload, "", strings.Repeat(" ", 4))
+		if err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+
+		fmt.Fprint(w, xml.Header+string(feed))
 	})
 
 	// Serve the site's static assets (CSS files etc.)
