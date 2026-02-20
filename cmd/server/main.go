@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/xml"
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -32,6 +33,11 @@ func main() {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	// Flags: if -flagLocal is specified, serve from localhost.
+	var flagLocal bool
+	flag.BoolVar(&flagLocal, "local", false, "Whether we're serving from localhost")
+	flag.Parse()
 
 	// Parse the templates up front.
 	funcMap := template.FuncMap{
@@ -174,7 +180,16 @@ func main() {
 
 	mux.HandleFunc("GET /rss", func(w http.ResponseWriter, r *http.Request) {
 		siteTitle := "Biome of Ideas"
-		siteURL := "https//brandonirizarry.xyz"
+		var siteURL string
+
+		// Use flagLocal to set the correct siteURL for
+		// purposes of testing the RSS feed locally with
+		// something like newsboat.
+		if flagLocal {
+			siteURL = "http://localhost:3030"
+		} else {
+			siteURL = "https://brandonirizarry.xyz"
+		}
 
 		publishedList, err := readers.ReadPublishingFile("published.json")
 		if err != nil {
