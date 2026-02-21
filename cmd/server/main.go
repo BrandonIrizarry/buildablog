@@ -34,7 +34,8 @@ func main() {
 	log.SetOutput(logFile)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// Flags: if -flagLocal is specified, serve from localhost.
+	// Flags: if -flagLocal is specified, set RSS siteURL to
+	// localhost:PORT.
 	var flagLocal bool
 	flag.BoolVar(&flagLocal, "local", false, "Whether we're serving from localhost")
 	flag.Parse()
