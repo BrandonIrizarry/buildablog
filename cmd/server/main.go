@@ -151,6 +151,20 @@ func main() {
 		}
 	})
 
+	mux.HandleFunc("GET /archives2", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("GET /archives2")
+
+		postEntries, err := os.ReadDir("content/posts")
+		if err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "%v", postEntries)
+	})
+
 	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
 		publishedList, err := readers.ReadPublishingFile("published.json")
 		if err != nil {
