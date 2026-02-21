@@ -154,6 +154,7 @@ func main() {
 	mux.HandleFunc("GET /archives2", func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("GET /archives2")
 
+		tag := r.FormValue("tag")
 		postEntries, err := os.ReadDir("content/posts")
 		if err != nil {
 			log.Printf("%v", err)
@@ -161,11 +162,53 @@ func main() {
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
+		var pdataList []types.PublishData
 
 		for _, postEntry := range postEntries {
-			post := postEntry.Name()
-			fmt.Fprintln(w, post)
+			postName := postEntry.Name()
+			slug := strings.TrimSuffix(postName, ".md")
+			fmdata, _, err := readers.ReadPage(slug, "posts")
+			if err != nil {
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			finfo, err := postEntry.Info()
+			if err != nil {
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			updatedTime := finfo.ModTime().Unix()
+
+			publishData := types.PublishData{
+				Title:   fmdata.Title,
+				Summary: fmdata.Summary,
+				Tags:    fmdata.Tags,
+				Slug:    slug,
+				Updated: updatedTime,
+				Created: 0,
+			}
+
+			if fmdata.Publish {
+				pdataList = append(pdataList, publishData)
+			}
+		}
+
+		data := struct {
+			Published []types.PublishData
+			Tag       string
+		}{
+			Published: pdataList,
+			Tag:       tag,
+		}
+
+		if err := feedTemplate(w, "archives", data); err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	})
 
