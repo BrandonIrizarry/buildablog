@@ -162,7 +162,11 @@ func main() {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "%v", postEntries)
+
+		for _, postEntry := range postEntries {
+			post := postEntry.Name()
+			fmt.Fprintln(w, post)
+		}
 	})
 
 	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
