@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"strings"
 
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 	"github.com/adrg/frontmatter"
@@ -59,6 +60,9 @@ func ReadPage(slug, label string) (types.FrontmatterData, template.HTML, error) 
 			html.WithUnsafe(),
 		),
 	)
+
+	// Trim surrounding whitespace from the summary field.
+	fmdata.Summary = strings.TrimSpace(fmdata.Summary)
 
 	// Render Markdown as HTML.
 	var buf bytes.Buffer

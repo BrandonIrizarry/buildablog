@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"sort"
 	"strings"
 	"time"
 
@@ -51,6 +52,9 @@ func main() {
 		},
 		"hasTag": func(tag string, tags []string) bool {
 			return slices.Contains(tags, tag)
+		},
+		"dateOnly": func(timeObj time.Time) string {
+			return timeObj.Format(time.DateOnly)
 		},
 	}
 
@@ -181,25 +185,47 @@ func main() {
 				return
 			}
 
-			updatedTime := finfo.ModTime().Unix()
-
-			publishData := types.PublishData{
-				Title:   fmdata.Title,
-				Summary: fmdata.Summary,
-				Tags:    fmdata.Tags,
-				Slug:    slug,
-				Updated: updatedTime,
-				Created: 0,
-			}
-
 			if fmdata.Publish {
+				updatedTime := finfo.ModTime().Unix()
+
+				date, err := time.Parse(time.DateOnly, fmdata.Date)
+				if err != nil {
+					log.Printf("%v", err)
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				publishData := types.PublishData{
+					Title:   fmdata.Title,
+					Summary: fmdata.Summary,
+					Tags:    fmdata.Tags,
+					Slug:    slug,
+					Updated: updatedTime,
+					Date:    date,
+				}
+
 				pdataList = append(pdataList, publishData)
 			}
 		}
 
+		// Sort the posts by recency (as reported in the
+		// frontmatter.) Newer posts should naturally come
+		// before older posts.
+		sort.Slice(pdataList, func(i int, j int) bool {
+			pdata1 := pdataList[i]
+			pdata2 := pdataList[j]
+
+			if pdata1.Date.Equal(pdata2.Date) {
+				return pdata2.Title < pdata1.Title
+			}
+
+			return pdata2.Date.Before(pdata1.Date)
+		})
+
 		data := struct {
 			Published []types.PublishData
 			Tag       string
+			Date      string
 		}{
 			Published: pdataList,
 			Tag:       tag,

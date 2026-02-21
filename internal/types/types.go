@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 // FrontmatterData is used for unmarshalling blog post frontmatter.
 type FrontmatterData struct {
 	// Title is the blog post's title.
@@ -14,6 +16,12 @@ type FrontmatterData struct {
 	// Publish flags whether to publish the blog post into the
 	// publishing file.
 	Publish bool `toml:"publish"`
+
+	// Created is the user-reported date of the post's
+	// authorship. For parsing purposes, it should be in the form
+	//
+	// YYYY-MM-DD
+	Date string `toml:"date"`
 }
 
 // PublishData is used from marshalling/unmarshalling the currently
@@ -34,6 +42,8 @@ type PublishData struct {
 
 	// Created details when the post was created (Unix timestamp.)
 	Created int64 `json:"created"`
+
+	Date time.Time
 
 	// Updated details when the post was last modified (Unix
 	// timestamp.) Naturally, when a post is first created, this

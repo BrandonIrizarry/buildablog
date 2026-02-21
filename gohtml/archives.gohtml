@@ -16,7 +16,7 @@
                     {{ if (or (eq $tagFilter "") (hasTag $tagFilter .Tags)) }}
                         <details class="published">
                             <summary>
-                                <span class="created">{{ (humanReadable .Created) }}: </span>
+                                <span class="created">{{ (dateOnly .Date) }}: </span>
                                 <a href="posts/{{ .Slug }}">{{ .Title }}</a>
                             </summary>
 
@@ -32,10 +32,6 @@
                                             <a href="/archives?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
                                         {{ end }}
                                     </div>
-                                {{ end }}
-                                {{ if (gt .Updated .Created) }}
-                                    <br>
-                                    <p><span class="updated">Updated on {{ (humanReadable .Updated) }}</span></p>
                                 {{ end }}
                             </div>
                         </details>
