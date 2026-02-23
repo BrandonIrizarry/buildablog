@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"flag"
 	"fmt"
@@ -15,14 +16,23 @@ import (
 
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/google/uuid"
 )
+
+const atomFeedFile = "atom.xml"
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	var candidates candidatesList
 
+	// The reset flag for now lets us test writing the XML
+	// file. It looks like it won't be of much use later on
+	// though.
+	var reset bool
+
 	flag.Var(&candidates, "candidates", "List of blog posts to update")
+	flag.BoolVar(&reset, "reset", false, "Start over with a blank atom feed file.")
 	flag.Parse()
 
 	if len(candidates) > 0 {
@@ -30,6 +40,119 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+
+	// Handle the "reset" flag.
+	if reset {
+		if err := bootstrapAtomXMLFile(); err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+type AtomLink struct {
+	Rel  string `xml:"rel,attr"`
+	Type string `xml:"type,attr"`
+	Href string `xml:"href,attr"`
+}
+
+type AtomAuthor struct {
+	Name  string `xml:"name"`
+	URI   string `xml:"uri"`
+	Email string `xml:"email"`
+}
+
+type AtomCategory struct {
+	Term string `xml:"term,attr"`
+}
+
+type AtomContent struct {
+	Type string `xml:"type,attr"`
+}
+
+type AtomEntry struct {
+	Title      string         `xml:"title"`
+	Link       AtomLink       `xml:"link"`
+	ID         string         `xml:"id"`
+	Updated    string         `xml:"updated"`
+	Categories []AtomCategory `xml:"category"`
+	Content    string         `xml:"content"`
+}
+
+type AtomFeed struct {
+	XMLName xml.Name   `xml:"feed"`
+	Title   string     `xml:"title"`
+	Links   []AtomLink `xml:"link"`
+	Updated string     `xml:"updated"`
+	ID      string     `xml:"id"`
+	Author  AtomAuthor `xml:"author"`
+}
+
+// bootstrapAtomXMLFile sets up atom.xml for the first time with the
+// site's metadata.
+func bootstrapAtomXMLFile() error {
+	atomFeed := AtomFeed{
+		Title: "brandonirizarry.xyz",
+		Links: []AtomLink{
+			{
+				Rel:  "alternate",
+				Type: "text/html",
+				Href: "https://brandonirizarry.xyz",
+			},
+
+			{
+				Rel:  "self",
+				Type: "application/atom+xml",
+				Href: "https://brandonirizarry.xyz/feed",
+			},
+		},
+		Updated: time.Now().Format(time.RFC3339),
+		ID:      uuid.New().URN(),
+		Author: AtomAuthor{
+			Name:  "Brandon Irizarry",
+			URI:   "https://brandonirizarry.xyz",
+			Email: "brandon.irizarry@gmail.com",
+		},
+	}
+
+	xmlBytes, err := xml.MarshalIndent(atomFeed, "", strings.Repeat(" ", 4))
+	if err != nil {
+		return fmt.Errorf("can't marshal atom feed struct: %w", err)
+	}
+
+	if err := os.WriteFile(atomFeedFile, xmlBytes, 0644); err != nil {
+		return fmt.Errorf("can't write atom feed file '%s': %w", atomFeedFile, err)
+	}
+
+	return nil
+}
+
+// updateAtomXML updates the Atom feed for this blog. This XML file is
+// meant to replace the eariler "publish.json" file used.
+func updateAtomXML(candidates candidatesList) error {
+	log.Printf("Candidates are: %v", candidates)
+
+	// We trust that Make has provided us only with those
+	// candidates that have been recently edited.
+	candidateSlugSet := make(map[string]struct{})
+	for _, c := range candidates {
+		slug := strings.TrimSuffix(filepath.Base(c), ".md")
+		candidateSlugSet[slug] = struct{}{}
+	}
+
+	log.Printf("Candidate set is now: %v", candidateSlugSet)
+
+	// If the atom feed file doesn't exist, create a new one.
+	if _, err := os.Stat(atomFeedFile); err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			if err := bootstrapAtomXMLFile(); err != nil {
+				return fmt.Errorf("can't write new %s: %w", atomFeedFile, err)
+			}
+		} else {
+			return fmt.Errorf("can't stat %s: %w", atomFeedFile, err)
+		}
+	}
+
+	return nil
 }
 
 // updateCandidates revises the contents of published.json to reflect
