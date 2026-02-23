@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/BrandonIrizarry/buildablog/internal/atom"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 	"github.com/google/uuid"
@@ -49,50 +50,12 @@ func main() {
 	}
 }
 
-type AtomLink struct {
-	Rel  string `xml:"rel,attr"`
-	Type string `xml:"type,attr"`
-	Href string `xml:"href,attr"`
-}
-
-type AtomAuthor struct {
-	Name  string `xml:"name"`
-	URI   string `xml:"uri"`
-	Email string `xml:"email"`
-}
-
-type AtomCategory struct {
-	Term string `xml:"term,attr"`
-}
-
-type AtomContent struct {
-	Type string `xml:"type,attr"`
-}
-
-type AtomEntry struct {
-	Title      string         `xml:"title"`
-	Link       AtomLink       `xml:"link"`
-	ID         string         `xml:"id"`
-	Updated    string         `xml:"updated"`
-	Categories []AtomCategory `xml:"category"`
-	Content    string         `xml:"content"`
-}
-
-type AtomFeed struct {
-	XMLName xml.Name   `xml:"feed"`
-	Title   string     `xml:"title"`
-	Links   []AtomLink `xml:"link"`
-	Updated string     `xml:"updated"`
-	ID      string     `xml:"id"`
-	Author  AtomAuthor `xml:"author"`
-}
-
 // bootstrapAtomXMLFile sets up atom.xml for the first time with the
 // site's metadata.
 func bootstrapAtomXMLFile() error {
-	atomFeed := AtomFeed{
+	atomFeed := atom.AtomFeed{
 		Title: "brandonirizarry.xyz",
-		Links: []AtomLink{
+		Links: []atom.AtomLink{
 			{
 				Rel:  "alternate",
 				Type: "text/html",
@@ -107,7 +70,7 @@ func bootstrapAtomXMLFile() error {
 		},
 		Updated: time.Now().Format(time.RFC3339),
 		ID:      uuid.New().URN(),
-		Author: AtomAuthor{
+		Author: atom.AtomAuthor{
 			Name:  "Brandon Irizarry",
 			URI:   "https://brandonirizarry.xyz",
 			Email: "brandon.irizarry@gmail.com",
