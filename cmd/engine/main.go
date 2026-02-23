@@ -17,6 +17,14 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
+// A candidate is the relative path to a blog post, starting from the
+// project top-level. For example,
+//
+// content/posts/eleventy.md
+//
+// A separate type is needed here for the candidate list so that we
+// can pass it in as a command-line argument. The list elements are
+// separated by a comma (,), no spaces.
 type candidatesList []string
 
 // String implements the [flag.Value] interface.
