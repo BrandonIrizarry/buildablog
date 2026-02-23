@@ -12,5 +12,6 @@ require (
 require (
 	github.com/BurntSushi/toml v1.6.0 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
