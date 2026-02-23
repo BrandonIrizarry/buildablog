@@ -53,9 +53,9 @@ func main() {
 // bootstrapAtomXMLFile sets up atom.xml for the first time with the
 // site's metadata.
 func bootstrapAtomXMLFile() error {
-	atomFeed := atom.AtomFeed{
+	atomFeed := atom.Feed{
 		Title: "brandonirizarry.xyz",
-		Links: []atom.AtomLink{
+		Links: []atom.Link{
 			{
 				Rel:  "alternate",
 				Type: "text/html",
@@ -70,7 +70,7 @@ func bootstrapAtomXMLFile() error {
 		},
 		Updated: time.Now().Format(time.RFC3339),
 		ID:      uuid.New().URN(),
-		Author: atom.AtomAuthor{
+		Author: atom.Author{
 			Name:  "Brandon Irizarry",
 			URI:   "https://brandonirizarry.xyz",
 			Email: "brandon.irizarry@gmail.com",

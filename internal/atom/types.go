@@ -2,40 +2,40 @@ package atom
 
 import "encoding/xml"
 
-type AtomLink struct {
+type Link struct {
 	Rel  string `xml:"rel,attr"`
 	Type string `xml:"type,attr"`
 	Href string `xml:"href,attr"`
 }
 
-type AtomAuthor struct {
+type Author struct {
 	Name  string `xml:"name"`
 	URI   string `xml:"uri"`
 	Email string `xml:"email"`
 }
 
-type AtomCategory struct {
+type Category struct {
 	Term string `xml:"term,attr"`
 }
 
-type AtomContent struct {
+type Content struct {
 	Type string `xml:"type,attr"`
 }
 
-type AtomEntry struct {
-	Title      string         `xml:"title"`
-	Link       AtomLink       `xml:"link"`
-	ID         string         `xml:"id"`
-	Updated    string         `xml:"updated"`
-	Categories []AtomCategory `xml:"category"`
-	Content    string         `xml:"content"`
+type Entry struct {
+	Title      string     `xml:"title"`
+	Link       Link       `xml:"link"`
+	ID         string     `xml:"id"`
+	Updated    string     `xml:"updated"`
+	Categories []Category `xml:"category"`
+	Content    string     `xml:"content"`
 }
 
-type AtomFeed struct {
-	XMLName xml.Name   `xml:"feed"`
-	Title   string     `xml:"title"`
-	Links   []AtomLink `xml:"link"`
-	Updated string     `xml:"updated"`
-	ID      string     `xml:"id"`
-	Author  AtomAuthor `xml:"author"`
+type Feed struct {
+	XMLName xml.Name `xml:"feed"`
+	Title   string   `xml:"title"`
+	Links   []Link   `xml:"link"`
+	Updated string   `xml:"updated"`
+	ID      string   `xml:"id"`
+	Author  Author   `xml:"author"`
 }
