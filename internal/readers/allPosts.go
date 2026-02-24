@@ -11,7 +11,9 @@ import (
 )
 
 func AllPosts() ([]types.PostData, error) {
-	// FIXME: move TZ string to its own constant.
+	// FIXME: move TZ string to its own constant. Also, replace
+	// log.Fatal with a returned error. Also, if possible, we
+	// should move this definition outside this function.
 	location, err := time.LoadLocation("America/New_York")
 	if err != nil {
 		log.Fatal(err)

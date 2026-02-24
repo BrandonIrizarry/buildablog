@@ -87,6 +87,7 @@ func main() {
 			return
 		}
 
+		// FIXME: use [types.PostData] for this now.
 		payload := struct {
 			Title   string
 			Content template.HTML
@@ -111,6 +112,8 @@ func main() {
 			return
 		}
 
+		// FIXME: use [types.PostData] for this. Also rename
+		// it to MarkdownData, or else PageData.
 		data := struct {
 			Title   string
 			Content template.HTML
