@@ -220,8 +220,8 @@ func main() {
 			Title:  siteTitle,
 			Link:   siteURL,
 			URL:    fmt.Sprintf("%s/static/bitmap.png", siteURL),
-			Width:  300,
-			Height: 300,
+			Width:  80,
+			Height: 80,
 		}
 
 		rssChannel := rss.Channel{
