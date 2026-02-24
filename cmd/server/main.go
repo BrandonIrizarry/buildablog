@@ -80,8 +80,7 @@ func main() {
 	contentPattern := fmt.Sprintf("GET /%s/{date}", constants.PostsLabel)
 	mux.HandleFunc(contentPattern, func(w http.ResponseWriter, r *http.Request) {
 		date := r.PathValue("date")
-		path := fmt.Sprintf("content/%s/%s", constants.PostsLabel, date)
-		fmdata, content, err := readers.ReadPost(path)
+		fmdata, content, err := readers.ReadPost(constants.PostsLabel, date)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -105,8 +104,7 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		path := fmt.Sprintf("content/%s/index.md", constants.IndexLabel)
-		fmdata, content, err := readers.ReadPost(path)
+		fmdata, content, err := readers.ReadPost(constants.IndexLabel, "index.md")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -163,8 +161,7 @@ func main() {
 			}
 
 			// Read the post's frontmatter.
-			path := fmt.Sprintf("content/%s/%s", constants.PostsLabel, filename)
-			fmdata, _, err := readers.ReadPost(path)
+			fmdata, _, err := readers.ReadPost(constants.PostsLabel, filename)
 			if err != nil {
 				log.Printf("%v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -214,8 +211,7 @@ func main() {
 				continue
 			}
 
-			path := fmt.Sprintf("content/%s/%s", constants.PostsLabel, filename)
-			fmdata, _, err := readers.ReadPost(path)
+			fmdata, _, err := readers.ReadPost(constants.PostsLabel, filename)
 			if err != nil {
 				log.Printf("%v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)

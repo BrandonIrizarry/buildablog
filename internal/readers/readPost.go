@@ -2,6 +2,7 @@ package readers
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"os"
 
@@ -13,13 +14,13 @@ import (
 	"github.com/yuin/goldmark/renderer/html"
 )
 
-// ReadPost reads the post at the given path on the local
-// filesystem. It returns it as two separate parts: frontmatter (as a
-// [types.FrontmatterData] struct) and content (as a [template.HTML]
-// string.)
-func ReadPost(path string) (types.FrontmatterData, template.HTML, error) {
+// ReadPost returns blog post data as two separate parts: frontmatter
+// (as a [types.FrontmatterData] struct) and content (as a
+// [template.HTML] string.)
+func ReadPost(label, slug string) (types.FrontmatterData, template.HTML, error) {
 	var fmdata types.FrontmatterData
 
+	path := fmt.Sprintf("content/%s/%s", label, slug)
 	f, err := os.Open(path)
 	if err != nil {
 		return types.FrontmatterData{}, "", err
