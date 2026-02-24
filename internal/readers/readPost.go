@@ -17,10 +17,10 @@ import (
 // ReadPost returns blog post data as two separate parts: frontmatter
 // (as a [types.FrontmatterData] struct) and content (as a
 // [template.HTML] string.)
-func ReadPost(label, slug string) (types.FrontmatterData, template.HTML, error) {
+func ReadPost(label, basename string) (types.FrontmatterData, template.HTML, error) {
 	var fmdata types.FrontmatterData
 
-	path := fmt.Sprintf("content/%s/%s", label, slug)
+	path := fmt.Sprintf("content/%s/%s", label, basename)
 	f, err := os.Open(path)
 	if err != nil {
 		return types.FrontmatterData{}, "", err
