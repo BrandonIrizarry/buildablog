@@ -15,6 +15,7 @@ import (
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
+	"github.com/BrandonIrizarry/buildablog/internal/rss"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
@@ -199,12 +200,12 @@ func main() {
 			return
 		}
 
-		var items []types.RSSItem
+		var items []rss.Item
 		for _, p := range publishedList {
 			link := fmt.Sprintf("posts/%s", p.Slug)
 			pubDate := time.Unix(p.Created, 0).Format(time.RFC1123)
 
-			item := types.RSSItem{
+			item := rss.Item{
 				Title:       p.Title,
 				Link:        link,
 				GUID:        link,
@@ -215,7 +216,7 @@ func main() {
 			items = append(items, item)
 		}
 
-		image := types.RSSImage{
+		image := rss.Image{
 			Title:  siteTitle,
 			Link:   siteURL,
 			URL:    fmt.Sprintf("%s/static/bitmap.png", siteURL),
@@ -223,7 +224,7 @@ func main() {
 			Height: 300,
 		}
 
-		rssChannel := types.RSSChannel{
+		rssChannel := rss.Channel{
 			Title:       siteTitle,
 			Link:        siteURL,
 			Description: "My personal website and blog",
@@ -232,12 +233,12 @@ func main() {
 			Items:       items,
 		}
 
-		type rss struct {
-			Channel types.RSSChannel `xml:"channel"`
-			Version string           `xml:"version,attr"`
+		type rssType struct {
+			Channel rss.Channel `xml:"channel"`
+			Version string      `xml:"version,attr"`
 		}
 
-		rssPayload := rss{
+		rssPayload := rssType{
 			Channel: rssChannel,
 			Version: "2.0",
 		}

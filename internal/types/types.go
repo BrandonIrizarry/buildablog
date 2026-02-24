@@ -45,34 +45,3 @@ type PublishData struct {
 	// links to the posts.
 	Slug string `json:"slug"`
 }
-
-/* The following structs are for handling RSS feeds. Their fields are
-   meant to conform to the RSS specification. */
-
-// Channel is used for marshalling data into the blog's RSS feed.
-type RSSChannel struct {
-	Title       string    `xml:"title"`
-	Link        string    `xml:"link"`
-	Description string    `xml:"description"`
-	Language    string    `xml:"language"`
-	Image       RSSImage  `xml:"image"`
-	Items       []RSSItem `xml:"item"`
-}
-
-// Item is used to enumerate a blog post's mention in the RSS feed.
-type RSSItem struct {
-	Title       string `xml:"title"`
-	Link        string `xml:"link"`
-	GUID        string `xml:"guid"`
-	PubDate     string `xml:"pubDate"`
-	Description string `xml:"description"`
-}
-
-// Image is used to display an image when aggregators present a field.
-type RSSImage struct {
-	Title  string `xml:"title"`
-	Link   string `xml:"link"`
-	URL    string `xml:"url"`
-	Width  int    `xml:"width"`
-	Height int    `xml:"height"`
-}
