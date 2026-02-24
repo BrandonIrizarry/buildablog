@@ -71,6 +71,11 @@ func main() {
 		tpls[name] = tpl
 	}
 
+	location, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// Set up the server.
 	mux := http.NewServeMux()
 
@@ -153,13 +158,6 @@ func main() {
 
 			// This has to do with the convention we use
 			// for naming published posts.
-			location, err := time.LoadLocation("America/New_York")
-			if err != nil {
-				log.Printf("%v", err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
 			filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
 			if err != nil {
 				// Post doesn't count as published, so skip.
@@ -214,7 +212,6 @@ func main() {
 
 			// This has to do with the convention we use
 			// for naming published posts.
-			location, err := time.LoadLocation("America/New_York")
 			if err != nil {
 				log.Printf("%v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
