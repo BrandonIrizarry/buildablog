@@ -52,8 +52,32 @@ func (cl *candidatesList) Set(value string) error {
 	return nil
 }
 
+// ensurePublishedJSON ensures that the [constants.PublishedFile]
+// exists. If it doesn't exist, it creates a new one whose sole
+// contents are "[]". This makes it a valid JSON data structure which
+// we can unmarshal later on.
+func ensurePublishedJSON() error {
+	if _, err := os.Stat(constants.PublishedFile); err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			if err := os.WriteFile(constants.PublishedFile, []byte("[]"), 0644); err != nil {
+				return fmt.Errorf("can't write new %s: %w", constants.PublishedFile, err)
+			}
+		} else {
+			return fmt.Errorf("can't stat %s: %w", constants.PublishedFile, err)
+		}
+	}
+
+	return nil
+}
+
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	if err := ensurePublishedJSON(); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Publishing file %s exists", constants.PublishedFile)
 
 	var candidates candidatesList
 
@@ -81,21 +105,6 @@ func updateCandidates(candidates candidatesList) error {
 	}
 
 	log.Printf("Candidate set is now: %v", candidateSlugSet)
-
-	// If constants.PublishedFile doesn't exist, create a new one whose sole
-	// contents are "[]". This makes it a valid JSON data
-	// structure which we can unmarshal later on.
-	if _, err := os.Stat(constants.PublishedFile); err != nil {
-		if errors.Is(err, fs.ErrNotExist) {
-			if err := os.WriteFile(constants.PublishedFile, []byte("[]"), 0644); err != nil {
-				return fmt.Errorf("can't write new %s: %w", constants.PublishedFile, err)
-			}
-		} else {
-			return fmt.Errorf("can't stat %s: %w", constants.PublishedFile, err)
-		}
-	}
-
-	log.Printf("Publishing file %s exists", constants.PublishedFile)
 
 	// Read the current published data into a slice of
 	// [types.PublishData]. By now constants.PublishedFile should already
