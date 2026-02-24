@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 // FrontmatterData is used for unmarshalling blog post frontmatter.
 type FrontmatterData struct {
 	// Title is the blog post's title.
@@ -14,6 +16,10 @@ type FrontmatterData struct {
 	// Publish flags whether to publish the blog post into the
 	// publishing file.
 	Publish bool `toml:"publish"`
+
+	// Date is the date of the post. It looks like TOML will
+	// accept time.DateOnly as a value, so let's try it.
+	Date time.Time `toml:"date"`
 }
 
 // PublishData is used from marshalling/unmarshalling the currently
