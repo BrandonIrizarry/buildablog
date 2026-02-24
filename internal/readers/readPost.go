@@ -1,0 +1,72 @@
+package readers
+
+import (
+	"bytes"
+	"html/template"
+	"os"
+
+	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/adrg/frontmatter"
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/yuin/goldmark"
+	hl "github.com/yuin/goldmark-highlighting/v2"
+	"github.com/yuin/goldmark/renderer/html"
+)
+
+// ReadPost reads the post at the given path on the local
+// filesystem. It returns it as two separate parts: frontmatter (as a
+// [types.FrontmatterData] struct) and content (as a [template.HTML]
+// string.)
+func ReadPost(path string) (types.FrontmatterData, template.HTML, error) {
+	var fmdata types.FrontmatterData
+
+	f, err := os.Open(path)
+	if err != nil {
+		return types.FrontmatterData{}, "", err
+	}
+	defer f.Close()
+
+	content, err := frontmatter.Parse(f, &fmdata)
+	if err != nil {
+		return types.FrontmatterData{}, "", err
+	}
+
+	// Enable syntax highlighting in blog posts.
+	//
+	// For available styles, see https://github.com/alecthomas/chroma/tree/master/styles
+	//
+	// See also https://xyproto.github.io/splash/docs/ for
+	// a list of canonical themes (though some may not be
+	// available here; try 'go get -u' to update chroma
+	// and friends.)
+	syntaxStyle := "catppuccin-macchiato"
+
+	mdRenderer := goldmark.New(
+		goldmark.WithExtensions(hl.NewHighlighting(
+			hl.WithStyle(syntaxStyle),
+			hl.WithFormatOptions(
+				chromahtml.WithLineNumbers(true),
+				chromahtml.ClassPrefix("content"),
+			),
+		)),
+		// This enables us to use raw HTML in our
+		// files, such as anchor-tags (for TOC
+		// destinations) and <br> (for adding extra
+		// spaces.)
+		//
+		// I found this out on
+		// https://deepwiki.com/yuin/goldmark/2.1-configuration-options
+		// 😞
+		goldmark.WithRendererOptions(
+			html.WithUnsafe(),
+		),
+	)
+
+	// Render Markdown as HTML.
+	var buf bytes.Buffer
+	if err := mdRenderer.Convert(content, &buf); err != nil {
+		return types.FrontmatterData{}, "", err
+	}
+
+	return fmdata, template.HTML(buf.String()), nil
+}

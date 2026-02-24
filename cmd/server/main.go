@@ -46,9 +46,8 @@ func main() {
 		"dec": func(value int) int {
 			return value - 1
 		},
-		"humanReadable": func(timestamp int64) string {
-			const humanReadableFormat = "2006-1-2 (3:04 PM)"
-			return time.Unix(timestamp, 0).Format(humanReadableFormat)
+		"humanReadable": func(t time.Time) string {
+			return t.Format(time.DateOnly)
 		},
 		"hasTag": func(tag string, tags []string) bool {
 			return slices.Contains(tags, tag)
@@ -76,17 +75,18 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Serve a blog post.
-	contentPattern := fmt.Sprintf("GET /%s/{slug}", constants.PostsLabel)
+	contentPattern := fmt.Sprintf("GET /%s/{date}", constants.PostsLabel)
 	mux.HandleFunc(contentPattern, func(w http.ResponseWriter, r *http.Request) {
-		slug := r.PathValue("slug")
-		fmdata, content, err := readers.ReadPage(slug, constants.PostsLabel)
+		date := r.PathValue("date")
+		path := fmt.Sprintf("content/%s/%s", constants.PostsLabel, date)
+		fmdata, content, err := readers.ReadPost(path)
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		data := struct {
+		payload := struct {
 			Title   string
 			Content template.HTML
 		}{
@@ -94,7 +94,7 @@ func main() {
 			Content: content,
 		}
 
-		if err := feedTemplate(w, constants.PostsLabel, data); err != nil {
+		if err := feedTemplate(w, constants.PostsLabel, payload); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -126,49 +126,134 @@ func main() {
 		}
 	})
 
-	// Serve the archives page.
+	// Serve the archives.
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("GET /archives")
-
-		pdataList, err := readers.ReadPublishingFile("published.json")
+		// Thanks to the magic of symbolic links, posts can
+		// have local human-readable names (something I'm
+		// adamant about), and also possess a straightforward
+		// and (sensibly) immutable slug for publication
+		// purposes.
+		postDirEntries, err := os.ReadDir("content/" + constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		data := struct {
-			Published []types.PublishData
-			Tag       string
+		payload := struct {
+			Tag   string
+			Posts []types.FrontmatterData
 		}{
-			Published: pdataList,
-			Tag:       r.FormValue("tag"),
+			Tag:   r.FormValue("tag"),
+			Posts: make([]types.FrontmatterData, 0),
 		}
 
-		if err := feedTemplate(w, "archives", data); err != nil {
+		for _, p := range postDirEntries {
+			filename := p.Name()
+
+			// This has to do with the convention we use
+			// for naming published posts.
+			location, err := time.LoadLocation("America/New_York")
+			if err != nil {
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
+			if err != nil {
+				// Post doesn't count as published, so skip.
+				continue
+			}
+
+			// Read the post's frontmatter.
+			path := fmt.Sprintf("content/%s/%s", constants.PostsLabel, filename)
+			fmdata, _, err := readers.ReadPost(path)
+			if err != nil {
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			//  These should naturally correspond. In the
+			//  future there will be a mechanism to
+			//  automatically generate the needed symbolic
+			//  links.
+			if !fmdata.Date.Equal(filenameDate) {
+				err := fmt.Errorf("Filename %s doesn't match frontmatter date %s", filenameDate, fmdata.Date)
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			payload.Posts = append(payload.Posts, fmdata)
+		}
+
+		if err := feedTemplate(w, "archives", payload); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 	})
 
+	//  Serve the tags page.
 	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
-		publishedList, err := readers.ReadPublishingFile("published.json")
+		postEntries, err := os.ReadDir("content/" + constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Since different blog posts will (as is desirable)
-		// intersect across various tags, we need to
-		// deduplicate them using a set, which is in turn fed
-		// into the tags.gohtml template.
-		tagSet := make(map[string]struct{})
-		for _, p := range publishedList {
-			for _, t := range p.Tags {
-				tagSet[t] = struct{}{}
+		// Accumulate all tags into a list. Naturally there
+		// are duplicates, and so we remove these later using
+		// a set.
+		var tagList []string
+		for _, p := range postEntries {
+			filename := p.Name()
+
+			// This has to do with the convention we use
+			// for naming published posts.
+			location, err := time.LoadLocation("America/New_York")
+			if err != nil {
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 			}
+
+			filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
+			if err != nil {
+				// Post doesn't count as published, so skip.
+				continue
+			}
+
+			path := fmt.Sprintf("content/%s/%s", constants.PostsLabel, filename)
+			fmdata, _, err := readers.ReadPost(path)
+			if err != nil {
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			//  These should naturally correspond. In the
+			//  future there will be a mechanism to
+			//  automatically generate the needed symbolic
+			//  links.
+			if !fmdata.Date.Equal(filenameDate) {
+				err := fmt.Errorf("Filename %s doesn't match frontmatter date %s", filenameDate, fmdata.Date)
+				log.Printf("%v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			tagList = append(tagList, fmdata.Tags...)
+		}
+
+		// Here we remove duplicates, as promised. This is
+		// what gets fed into the appropriate template.
+		tagSet := make(map[string]struct{})
+		for _, t := range tagList {
+			tagSet[t] = struct{}{}
 		}
 
 		log.Printf("Tag set: %v", tagSet)
@@ -180,6 +265,7 @@ func main() {
 		}
 	})
 
+	// Serve the RSS feed.
 	mux.HandleFunc("GET /rss", func(w http.ResponseWriter, r *http.Request) {
 		siteTitle := "Biome of Ideas"
 		var siteURL string
