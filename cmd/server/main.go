@@ -79,7 +79,7 @@ func main() {
 	contentPattern := fmt.Sprintf("GET /%s/{slug}", constants.PostsLabel)
 	mux.HandleFunc(contentPattern, func(w http.ResponseWriter, r *http.Request) {
 		slug := r.PathValue("slug")
-		fmdata, content, err := readers.ReadPage(slug, "posts")
+		fmdata, content, err := readers.ReadPage(slug, constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -94,7 +94,7 @@ func main() {
 			Content: content,
 		}
 
-		if err := feedTemplate(w, "posts", data); err != nil {
+		if err := feedTemplate(w, constants.PostsLabel, data); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -202,7 +202,7 @@ func main() {
 
 		var items []rss.Item
 		for _, p := range publishedList {
-			link := fmt.Sprintf("posts/%s", p.Slug)
+			link := fmt.Sprintf("%s/%s", constants.PostsLabel, p.Slug)
 			pubDate := time.Unix(p.Created, 0).Format(time.RFC1123)
 
 			item := rss.Item{
