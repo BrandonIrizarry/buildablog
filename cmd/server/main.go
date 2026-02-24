@@ -132,64 +132,26 @@ func main() {
 
 	// Serve the archives.
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
-		// Thanks to the magic of symbolic links, posts can
-		// have local human-readable names (something I'm
-		// adamant about), and also possess a straightforward
-		// and (sensibly) immutable slug for publication
-		// purposes.
-		postDirEntries, err := os.ReadDir("content/" + constants.PostsLabel)
+		posts, err := readers.AllPosts()
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		payload := struct {
-			Tag   string
-			Posts []types.FrontmatterData
-		}{
-			Tag:   r.FormValue("tag"),
-			Posts: make([]types.FrontmatterData, 0),
-		}
-
-		for _, p := range postDirEntries {
-			filename := p.Name()
-
-			// This has to do with the convention we use
-			// for naming published posts.
-			filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
-			if err != nil {
-				// Post doesn't count as published, so skip.
-				continue
-			}
-
-			// Read the post's frontmatter.
-			fmdata, _, err := readers.ReadMarkdown(constants.PostsLabel, filename)
-			if err != nil {
-				log.Printf("%v", err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			//  These should naturally correspond. In the
-			//  future there will be a mechanism to
-			//  automatically generate the needed symbolic
-			//  links.
-			if !fmdata.Date.Equal(filenameDate) {
-				err := fmt.Errorf("Filename %s doesn't match frontmatter date %s", filenameDate, fmdata.Date)
-				log.Printf("%v", err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			payload.Posts = append(payload.Posts, fmdata)
-		}
-
 		// The nice thing is that, because of the file naming
 		// convention, posts are already sorted on the
 		// filesystem. However, for display in Archives, the
 		// most recent post should come first.
-		slices.Reverse(payload.Posts)
+		slices.Reverse(posts)
+
+		payload := struct {
+			Posts []types.PostData
+			Tag   string
+		}{
+			Posts: posts,
+			Tag:   r.FormValue("tag"),
+		}
 
 		if err := feedTemplate(w, "archives", payload); err != nil {
 			log.Printf("%v", err)
