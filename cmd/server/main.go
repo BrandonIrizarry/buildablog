@@ -68,11 +68,6 @@ func main() {
 		tpls[name] = tpl
 	}
 
-	location, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// Set up the server.
 	mux := http.NewServeMux()
 
@@ -162,49 +157,20 @@ func main() {
 
 	//  Serve the tags page.
 	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
-		postEntries, err := os.ReadDir("content/" + constants.PostsLabel)
+		posts, err := readers.AllPosts()
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Accumulate all tags into a list. Naturally there
-		// are duplicates, and so we remove these later using
-		// a set.
+		// Dump all tags into a list, then deduplicate using a
+		// set.
 		var tagList []string
-		for _, p := range postEntries {
-			filename := p.Name()
-
-			filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
-			if err != nil {
-				// Post doesn't count as published, so skip.
-				continue
-			}
-
-			fmdata, _, err := readers.ReadMarkdown(constants.PostsLabel, filename)
-			if err != nil {
-				log.Printf("%v", err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			//  These should naturally correspond. In the
-			//  future there will be a mechanism to
-			//  automatically generate the needed symbolic
-			//  links.
-			if !fmdata.Date.Equal(filenameDate) {
-				err := fmt.Errorf("Filename %s doesn't match frontmatter date %s", filenameDate, fmdata.Date)
-				log.Printf("%v", err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			tagList = append(tagList, fmdata.Tags...)
+		for _, p := range posts {
+			tagList = append(tagList, p.Tags...)
 		}
 
-		// Here we remove duplicates, as promised. This is
-		// what gets fed into the appropriate template.
 		tagSet := make(map[string]struct{})
 		for _, t := range tagList {
 			tagSet[t] = struct{}{}
