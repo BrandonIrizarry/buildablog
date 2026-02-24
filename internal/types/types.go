@@ -1,6 +1,9 @@
 package types
 
-import "time"
+import (
+	"html/template"
+	"time"
+)
 
 // FrontmatterData is used for unmarshalling blog post frontmatter.
 type FrontmatterData struct {
@@ -26,4 +29,9 @@ type FrontmatterData struct {
 	// Date is the date of the post. It looks like TOML will
 	// accept time.DateOnly as a value, so let's try it.
 	Date time.Time `toml:"date"`
+}
+
+type PostData struct {
+	FrontmatterData
+	Content template.HTML
 }
