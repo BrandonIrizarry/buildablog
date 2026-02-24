@@ -80,7 +80,7 @@ func main() {
 	contentPattern := fmt.Sprintf("GET /%s/{date}", constants.PostsLabel)
 	mux.HandleFunc(contentPattern, func(w http.ResponseWriter, r *http.Request) {
 		date := r.PathValue("date")
-		fmdata, content, err := readers.ReadPost(constants.PostsLabel, date)
+		fmdata, content, err := readers.ReadMarkdown(constants.PostsLabel, date)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -104,7 +104,7 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		fmdata, content, err := readers.ReadPost(constants.IndexLabel, "index.md")
+		fmdata, content, err := readers.ReadMarkdown(constants.IndexLabel, "index.md")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -161,7 +161,7 @@ func main() {
 			}
 
 			// Read the post's frontmatter.
-			fmdata, _, err := readers.ReadPost(constants.PostsLabel, filename)
+			fmdata, _, err := readers.ReadMarkdown(constants.PostsLabel, filename)
 			if err != nil {
 				log.Printf("%v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -211,7 +211,7 @@ func main() {
 				continue
 			}
 
-			fmdata, _, err := readers.ReadPost(constants.PostsLabel, filename)
+			fmdata, _, err := readers.ReadMarkdown(constants.PostsLabel, filename)
 			if err != nil {
 				log.Printf("%v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
