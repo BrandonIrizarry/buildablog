@@ -105,7 +105,8 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		fmdata, content, err := readers.ReadPage("index", "index")
+		path := fmt.Sprintf("content/%s/index.md", constants.IndexLabel)
+		fmdata, content, err := readers.ReadPost(path)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
