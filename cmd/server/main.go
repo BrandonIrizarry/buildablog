@@ -182,6 +182,12 @@ func main() {
 			payload.Posts = append(payload.Posts, fmdata)
 		}
 
+		// The nice thing is that, because of the file naming
+		// convention, posts are already sorted on the
+		// filesystem. However, for display in Archives, the
+		// most recent post should come first.
+		slices.Reverse(payload.Posts)
+
 		if err := feedTemplate(w, "archives", payload); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
