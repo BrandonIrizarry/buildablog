@@ -1,5 +1,7 @@
 package rss
 
+import "encoding/xml"
+
 // Channel is used for marshalling data into the blog's RSS feed.
 type Channel struct {
 	Title       string `xml:"title"`
@@ -26,4 +28,10 @@ type Image struct {
 	URL    string `xml:"url"`
 	Width  int    `xml:"width"`
 	Height int    `xml:"height"`
+}
+
+type RSS struct {
+	XMLName xml.Name `xml:"rss"`
+	Channel Channel  `xml:"channel"`
+	Version string   `xml:"version,attr"`
 }

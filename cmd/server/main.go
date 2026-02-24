@@ -233,18 +233,13 @@ func main() {
 			Items:       items,
 		}
 
-		type rssType struct {
-			Channel rss.Channel `xml:"channel"`
-			Version string      `xml:"version,attr"`
-		}
-
-		rssPayload := rssType{
+		mainRSS := rss.RSS{
 			Channel: rssChannel,
 			Version: "2.0",
 		}
 
 		// Marshal the data to XML
-		feed, err := xml.MarshalIndent(rssPayload, "", strings.Repeat(" ", 4))
+		feed, err := xml.MarshalIndent(mainRSS, "", strings.Repeat(" ", 4))
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
