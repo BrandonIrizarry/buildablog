@@ -32,10 +32,7 @@ func AllPosts() ([]types.PostData, error) {
 
 		filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
 		if err != nil {
-			// By convention, if the filename doesn't
-			// parse according to the given layout, it's
-			// considered a draft, so skip it.
-			continue
+			return nil, fmt.Errorf("%s isn't in YYYY-MM-DD format: %w", filename, err)
 		}
 
 		postData, err := ReadMarkdown(constants.PostsLabel, filename)
