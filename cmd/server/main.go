@@ -75,23 +75,14 @@ func main() {
 	contentPattern := fmt.Sprintf("GET /%s/{date}", constants.PostsLabel)
 	mux.HandleFunc(contentPattern, func(w http.ResponseWriter, r *http.Request) {
 		date := r.PathValue("date")
-		fmdata, content, err := readers.ReadMarkdown(constants.PostsLabel, date)
+		postData, err := readers.ReadMarkdown(constants.PostsLabel, date)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// FIXME: use [types.PostData] for this now.
-		payload := struct {
-			Title   string
-			Content template.HTML
-		}{
-			Title:   fmdata.Title,
-			Content: content,
-		}
-
-		if err := feedTemplate(w, constants.PostsLabel, payload); err != nil {
+		if err := feedTemplate(w, constants.PostsLabel, postData); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -100,24 +91,14 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		fmdata, content, err := readers.ReadMarkdown(constants.IndexLabel, "index.md")
+		postData, err := readers.ReadMarkdown(constants.IndexLabel, "index.md")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
-		// FIXME: use [types.PostData] for this. Also rename
-		// it to MarkdownData, or else PageData.
-		data := struct {
-			Title   string
-			Content template.HTML
-		}{
-			Title:   fmdata.Title,
-			Content: content,
-		}
-
-		err = feedTemplate(w, "index", data)
+		err = feedTemplate(w, "index", postData)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

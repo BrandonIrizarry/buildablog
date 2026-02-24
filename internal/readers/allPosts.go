@@ -38,7 +38,7 @@ func AllPosts() ([]types.PostData, error) {
 			continue
 		}
 
-		fmdata, content, err := ReadMarkdown(constants.PostsLabel, filename)
+		postData, err := ReadMarkdown(constants.PostsLabel, filename)
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", filename, err)
 		}
@@ -47,13 +47,8 @@ func AllPosts() ([]types.PostData, error) {
 		//  future there will be a mechanism to
 		//  automatically generate the needed symbolic
 		//  links.
-		if !fmdata.Date.Equal(filenameDate) {
-			return nil, fmt.Errorf("filename %s doesn't match frontmatter date %s", filenameDate, fmdata.Date)
-		}
-
-		postData := types.PostData{
-			FrontmatterData: fmdata,
-			Content:         content,
+		if !postData.Date.Equal(filenameDate) {
+			return nil, fmt.Errorf("filename %s doesn't match frontmatter date %s", filenameDate, postData.Date)
 		}
 
 		postDataList = append(postDataList, postData)

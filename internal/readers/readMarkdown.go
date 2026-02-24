@@ -17,19 +17,19 @@ import (
 // ReadMarkdown returns blog post data as two separate parts: frontmatter
 // (as a [types.FrontmatterData] struct) and content (as a
 // [template.HTML] string.)
-func ReadMarkdown(label, basename string) (types.FrontmatterData, template.HTML, error) {
+func ReadMarkdown(label, basename string) (types.PostData, error) {
 	var fmdata types.FrontmatterData
 
 	path := fmt.Sprintf("content/%s/%s", label, basename)
 	f, err := os.Open(path)
 	if err != nil {
-		return types.FrontmatterData{}, "", err
+		return types.PostData{}, err
 	}
 	defer f.Close()
 
 	content, err := frontmatter.Parse(f, &fmdata)
 	if err != nil {
-		return types.FrontmatterData{}, "", err
+		return types.PostData{}, err
 	}
 
 	// Enable syntax highlighting in blog posts.
@@ -66,8 +66,13 @@ func ReadMarkdown(label, basename string) (types.FrontmatterData, template.HTML,
 	// Render Markdown as HTML.
 	var buf bytes.Buffer
 	if err := mdRenderer.Convert(content, &buf); err != nil {
-		return types.FrontmatterData{}, "", err
+		return types.PostData{}, err
 	}
 
-	return fmdata, template.HTML(buf.String()), nil
+	postData := types.PostData{
+		FrontmatterData: fmdata,
+		Content:         template.HTML(buf.String()),
+	}
+
+	return postData, nil
 }
