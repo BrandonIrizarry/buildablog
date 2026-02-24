@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
@@ -81,40 +82,38 @@ func updateCandidates(candidates candidatesList) error {
 
 	log.Printf("Candidate set is now: %v", candidateSlugSet)
 
-	const publishedFile = "published.json"
-
-	// If publishedFile doesn't exist, create a new one whose sole
+	// If constants.PublishedFile doesn't exist, create a new one whose sole
 	// contents are "[]". This makes it a valid JSON data
 	// structure which we can unmarshal later on.
-	if _, err := os.Stat(publishedFile); err != nil {
+	if _, err := os.Stat(constants.PublishedFile); err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			if err := os.WriteFile(publishedFile, []byte("[]"), 0644); err != nil {
-				return fmt.Errorf("can't write new %s: %w", publishedFile, err)
+			if err := os.WriteFile(constants.PublishedFile, []byte("[]"), 0644); err != nil {
+				return fmt.Errorf("can't write new %s: %w", constants.PublishedFile, err)
 			}
 		} else {
-			return fmt.Errorf("can't stat %s: %w", publishedFile, err)
+			return fmt.Errorf("can't stat %s: %w", constants.PublishedFile, err)
 		}
 	}
 
-	log.Printf("Publishing file %s exists", publishedFile)
+	log.Printf("Publishing file %s exists", constants.PublishedFile)
 
 	// Read the current published data into a slice of
-	// [types.PublishData]. By now publishedFile should already
+	// [types.PublishData]. By now constants.PublishedFile should already
 	// exist on disk.
-	f, err := os.Open(publishedFile)
+	f, err := os.Open(constants.PublishedFile)
 	if err != nil {
 		return fmt.Errorf("can't open file: %w", err)
 	}
 	defer f.Close()
 
-	log.Printf("Opened publishing file %s successfully", publishedFile)
+	log.Printf("Opened publishing file %s successfully", constants.PublishedFile)
 
 	fileContent, err := io.ReadAll(f)
 	if err != nil {
 		return fmt.Errorf("can't read file: %w", err)
 	}
 
-	log.Printf("Successfully read %s", publishedFile)
+	log.Printf("Successfully read %s", constants.PublishedFile)
 
 	// alreadyPublished represents the current contents of
 	// published.json.
@@ -207,7 +206,7 @@ func updateCandidates(candidates candidatesList) error {
 		return fmt.Errorf("can't marshal updated published content: %w", err)
 	}
 
-	if err := os.WriteFile(publishedFile, newContent, 0644); err != nil {
+	if err := os.WriteFile(constants.PublishedFile, newContent, 0644); err != nil {
 		return fmt.Errorf("can't write updated published content to")
 	}
 

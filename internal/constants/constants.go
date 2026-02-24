@@ -5,4 +5,5 @@ const (
 	PostsLabel     = "posts"
 	IndexLabel     = "index"
 	ArchivesLabel  = "archives"
+	PublishedFile  = "published.json"
 )
