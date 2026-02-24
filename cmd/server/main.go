@@ -210,14 +210,6 @@ func main() {
 		for _, p := range postEntries {
 			filename := p.Name()
 
-			// This has to do with the convention we use
-			// for naming published posts.
-			if err != nil {
-				log.Printf("%v", err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
 			filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
 			if err != nil {
 				// Post doesn't count as published, so skip.
