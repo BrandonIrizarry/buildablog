@@ -2,7 +2,6 @@ package readers
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
@@ -11,14 +10,6 @@ import (
 )
 
 func AllPosts() ([]types.PostData, error) {
-	// FIXME: move TZ string to its own constant. Also, replace
-	// log.Fatal with a returned error. Also, if possible, we
-	// should move this definition outside this function.
-	location, err := time.LoadLocation("America/New_York")
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	entries, err := os.ReadDir("content/" + constants.PostsLabel)
 	if err != nil {
 		return nil, fmt.Errorf("can't read content directory: %w", err)
@@ -30,7 +21,7 @@ func AllPosts() ([]types.PostData, error) {
 	for _, e := range entries {
 		filename := e.Name()
 
-		filenameDate, err := time.ParseInLocation(time.DateOnly, filename, location)
+		filenameDate, err := time.ParseInLocation(time.DateOnly, filename, constants.TZOffset)
 		if err != nil {
 			return nil, fmt.Errorf("%s isn't in YYYY-MM-DD format: %w", filename, err)
 		}
