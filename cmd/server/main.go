@@ -112,7 +112,7 @@ func main() {
 
 	// Serve the archives.
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
-		posts, err := readers.AllPosts()
+		posts, err := readers.AllPosts(constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -142,7 +142,7 @@ func main() {
 
 	//  Serve the tags page.
 	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
-		posts, err := readers.AllPosts()
+		posts, err := readers.AllPosts(constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -193,7 +193,7 @@ func main() {
 			siteURL = "https://brandonirizarry.xyz"
 		}
 
-		posts, err := readers.AllPosts()
+		posts, err := readers.AllPosts(constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

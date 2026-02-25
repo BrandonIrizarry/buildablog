@@ -9,8 +9,8 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func AllPosts() ([]types.PostData, error) {
-	entries, err := os.ReadDir("content/" + constants.PostsLabel)
+func AllPosts(label string) ([]types.PostData, error) {
+	entries, err := os.ReadDir("content/" + label)
 	if err != nil {
 		return nil, fmt.Errorf("can't read content directory: %w", err)
 	}
