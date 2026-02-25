@@ -162,3 +162,23 @@ h1.page-title > a {
 .post-content p {
     margin-top: 1rem;
 }
+
+main.project-gallery {
+    display: flex;
+    gap: 1rem;
+    max-width: fit-content;
+    margin-top: 1rem;
+}
+
+.project-entry {
+    text-align: center;
+    border: 5px solid var(--gorgeous-contrast-9);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.project-entry > h2 {
+    margin: 0;
+}
+
+

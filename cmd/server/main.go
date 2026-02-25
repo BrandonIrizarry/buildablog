@@ -101,6 +101,7 @@ func main() {
 			return
 		}
 
+		// FIXME: combine into one line.
 		err = feedTemplate(w, "index", postData)
 		if err != nil {
 			log.Printf("%v", err)
@@ -163,6 +164,15 @@ func main() {
 		log.Printf("Tag set: %v", tagSet)
 
 		if err := feedTemplate(w, "tags", tagSet); err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	})
+
+	// Serve the Projects Gallery page.
+	mux.HandleFunc("GET /projects", func(w http.ResponseWriter, r *http.Request) {
+		if err := feedTemplate(w, "projects", struct{}{}); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
