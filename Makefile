@@ -4,4 +4,7 @@ server:
 	@go build  -o babserver ./cmd/server
 	@./babserver&
 
-.PHONY: server
+publish:
+	@go run ./cmd/engine
+
+.PHONY: server publish
