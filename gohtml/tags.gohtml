@@ -12,7 +12,7 @@
             <h1 class="page-title">Tags</h1>
             <ul>
                 {{ range $key, $value := . }}
-                    <li><a href="/archives?tag={{$key}}">{{ $key }}</a></li>
+                    <li><a href="/posts?tag={{$key}}">{{ $key }}</a></li>
                 {{ end }}
             </ul>
         </main>

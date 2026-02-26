@@ -9,7 +9,7 @@
     <body>
         {{ template "nav.html" . }}
         <main>
-            <h1 class="page-title"><a href="archives">Archives</a></h1>
+            <h1 class="page-title"><a href="posts">Archives</a></h1>
             <section>
                 <!-- Range over the slice of posts provided here, which may or may not have been first filtered by tag. -->
                 {{ range . }}
@@ -28,7 +28,7 @@
                                     <span class="meta">Tags: </span>
 
                                     {{ range $i, $tag := .Tags }}
-                                        <a href="archives?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
+                                        <a href="posts?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
                                     {{ end }}
                                 </div>
                             {{ end }}

@@ -106,7 +106,7 @@ func main() {
 	})
 
 	// Serve the archives.
-	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /posts", func(w http.ResponseWriter, r *http.Request) {
 		ps, err := readers.AllPosts(constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
