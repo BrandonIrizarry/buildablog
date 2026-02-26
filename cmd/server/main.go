@@ -125,7 +125,7 @@ func main() {
 		slices.Reverse(ps)
 
 		payload := struct {
-			Posts []posts.PostData
+			Posts []posts.FullData
 			Tag   string
 		}{
 			Posts: ps,

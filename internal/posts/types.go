@@ -21,7 +21,7 @@ type FrontmatterData struct {
 	Date time.Time `toml:"date"`
 }
 
-type PostData struct {
+type FullData struct {
 	FrontmatterData
 	Content template.HTML
 }

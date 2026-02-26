@@ -9,14 +9,14 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 )
 
-func AllPosts(label string) ([]posts.PostData, error) {
+func AllPosts(label string) ([]posts.FullData, error) {
 	entries, err := os.ReadDir("content/" + label)
 	if err != nil {
 		return nil, fmt.Errorf("can't read content directory: %w", err)
 	}
 
 	// Accumulate the return value into this list.
-	var postDataList []posts.PostData
+	var postDataList []posts.FullData
 
 	for _, e := range entries {
 		filename := e.Name()
