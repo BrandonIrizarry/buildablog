@@ -101,9 +101,7 @@ func main() {
 			return
 		}
 
-		// FIXME: combine into one line.
-		err = feedTemplate(w, "index", postData)
-		if err != nil {
+		if err := feedTemplate(w, "index", postData); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
