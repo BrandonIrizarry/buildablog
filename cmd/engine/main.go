@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
+	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
-	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func main() {
@@ -46,7 +46,7 @@ func main() {
 	}
 }
 
-func allDrafts() (map[string]types.PostData, error) {
+func allDrafts() (map[string]posts.Post, error) {
 	// FIXME: replace with constant
 	entries, err := os.ReadDir("content/drafts")
 	if err != nil {
@@ -55,7 +55,7 @@ func allDrafts() (map[string]types.PostData, error) {
 
 	// Here we need to keep the association between filenames and post
 	// data, in order to ultimately create the desired symbolic links.
-	var fileData = make(map[string]types.PostData)
+	var fileData = make(map[string]posts.Post)
 
 	for _, e := range entries {
 		postData, err := readers.ReadMarkdown("drafts", e.Name())
