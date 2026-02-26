@@ -6,9 +6,8 @@ import (
 )
 
 const (
-	ContentDirName = "content"
-	PostsLabel     = "posts"
-	IndexLabel     = "index"
+	PostsLabel = "posts"
+	IndexLabel = "index"
 )
 
 // TZOffset is used for localizing time stamps we create.
