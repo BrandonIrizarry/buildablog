@@ -82,7 +82,7 @@ func main() {
 			return
 		}
 
-		if err := feedTemplate(w, constants.PostsLabel, postData); err != nil {
+		if err := feedTemplate(w, "post", postData); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -130,7 +130,7 @@ func main() {
 			})
 		}
 
-		if err := feedTemplate(w, "archives", ps); err != nil {
+		if err := feedTemplate(w, "posts", ps); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
