@@ -16,12 +16,19 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// For all drafts that have a date field, generate a symbolic
-	// link in the appropriate format (YYYY-MM-DD) if it doesn't
-	// exist already.
+	if err := publish(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// publish generates a symbolic link for all dated posts in the
+// appropriate format (YYYY-MM-DD) if it doesn't exist already. A post
+// is considered dated if its frontmatter's 'date' field is non-zero
+// (i.e. the user has signed it off with a publishing date.)
+func publish() error {
 	fileData, err := allDrafts()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for draftName, postData := range fileData {
@@ -38,12 +45,14 @@ func main() {
 				log.Printf("already published: %s → %s", draftName, publishedName)
 				continue
 			} else {
-				log.Fatal(err)
+				return err
 			}
 		} else {
 			log.Printf("creating: %s → %s", draftName, publishedName)
 		}
 	}
+
+	return nil
 }
 
 func allDrafts() (map[string]posts.Post, error) {
