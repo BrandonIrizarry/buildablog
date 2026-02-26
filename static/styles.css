@@ -23,7 +23,7 @@ even add a few that made sense (e.g. cyan.)
 
 /* Reset all margins, since this affects how the nav is displayed,
    depending on the page. */
-body, ul, p, span {
+body, ul, p, span, h1 {
     margin: 0;
 }
 
@@ -52,7 +52,7 @@ ul li::marker {
 
 main {
     max-width: 40em;
-    margin: auto;
+    margin: 1rem auto;
 }
 
 nav {
@@ -159,15 +159,13 @@ h1.page-title > a {
 /* Posts are allowed to have more conventional, often default styles
    applied to them, since they don't fall under any special UI
    concern; they're just text for mere mortals to consume. */
-.post-content p {
-    margin-top: 1rem;
+.post-content p, h1, ul {
+    margin: 1rem;
 }
 
 main.project-gallery {
     display: flex;
     gap: 1rem;
-    max-width: fit-content;
-    margin-top: 1rem;
 }
 
 .project-entry {
