@@ -19,7 +19,7 @@
                             <a href="posts/{{ (humanReadable .Date) }}">{{ .Title }}</a>
                         </summary>
 
-                        <!-- Content of the details element. -->
+                        <!-- Content of the details element, where we display the summary of the blog post and so forth. -->
                         <div>
                             <p class="summary">{{ .Summary }} <a href="posts/{{ (humanReadable .Date) }}">(more)</a></p>
                             {{  if (gt (len .Tags) 0) }}
