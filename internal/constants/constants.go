@@ -9,7 +9,6 @@ const (
 	ContentDirName = "content"
 	PostsLabel     = "posts"
 	IndexLabel     = "index"
-	ArchivesLabel  = "archives"
 )
 
 // TZOffset is used for localizing time stamps we create.
