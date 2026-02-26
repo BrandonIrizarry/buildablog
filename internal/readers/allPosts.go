@@ -6,17 +6,17 @@ import (
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
-	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/BrandonIrizarry/buildablog/internal/posts"
 )
 
-func AllPosts(label string) ([]types.PostData, error) {
+func AllPosts(label string) ([]posts.PostData, error) {
 	entries, err := os.ReadDir("content/" + label)
 	if err != nil {
 		return nil, fmt.Errorf("can't read content directory: %w", err)
 	}
 
 	// Accumulate the return value into this list.
-	var postDataList []types.PostData
+	var postDataList []posts.PostData
 
 	for _, e := range entries {
 		filename := e.Name()

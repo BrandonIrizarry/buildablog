@@ -14,9 +14,9 @@ import (
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
+	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/rss"
-	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 // tpls maps template basenames to actual templates. This is so that
@@ -110,7 +110,7 @@ func main() {
 
 	// Serve the archives.
 	mux.HandleFunc("GET /archives", func(w http.ResponseWriter, r *http.Request) {
-		posts, err := readers.AllPosts(constants.PostsLabel)
+		ps, err := readers.AllPosts(constants.PostsLabel)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -122,13 +122,13 @@ func main() {
 		// filesystem. However, for display in Archives, the
 		// most recent post should come first, hence this call
 		// to [slices.Reverse].
-		slices.Reverse(posts)
+		slices.Reverse(ps)
 
 		payload := struct {
-			Posts []types.PostData
+			Posts []posts.PostData
 			Tag   string
 		}{
-			Posts: posts,
+			Posts: ps,
 			Tag:   r.FormValue("tag"),
 		}
 
