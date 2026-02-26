@@ -1,10 +1,12 @@
 # Server-related targets
-server:
+build:
+	@go build -o babserver ./cmd/server
+
+server: build
 	@-killall babserver 2>/dev/null
-	@go build  -o babserver ./cmd/server
 	@./babserver&
 
 publish:
 	@go run ./cmd/engine
 
-.PHONY: server publish
+.PHONY: build server publish
