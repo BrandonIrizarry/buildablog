@@ -125,7 +125,7 @@ func main() {
 		tag := r.FormValue("tag")
 
 		if tag != "" {
-			ps = slices.DeleteFunc(ps, func(p posts.FullData) bool {
+			ps = slices.DeleteFunc(ps, func(p posts.Post) bool {
 				return !slices.Contains(p.Tags, tag)
 			})
 		}
