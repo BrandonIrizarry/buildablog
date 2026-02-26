@@ -49,9 +49,6 @@ func main() {
 		"humanReadable": func(t time.Time) string {
 			return t.Format(time.DateOnly)
 		},
-		"hasTag": func(tag string, tags []string) bool {
-			return slices.Contains(tags, tag)
-		},
 	}
 
 	gohtmlFiles, err := filepath.Glob("gohtml/*")
@@ -124,15 +121,16 @@ func main() {
 		// to [slices.Reverse].
 		slices.Reverse(ps)
 
-		payload := struct {
-			Posts []posts.FullData
-			Tag   string
-		}{
-			Posts: ps,
-			Tag:   r.FormValue("tag"),
+		// Filter posts by tag.
+		tag := r.FormValue("tag")
+
+		if tag != "" {
+			ps = slices.DeleteFunc(ps, func(p posts.FullData) bool {
+				return !slices.Contains(p.Tags, tag)
+			})
 		}
 
-		if err := feedTemplate(w, "archives", payload); err != nil {
+		if err := feedTemplate(w, "archives", ps); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
