@@ -2,11 +2,11 @@
 build:
 	@go build -o babserver ./cmd/server
 
-server: build
+serve: build
 	@-killall babserver 2>/dev/null
 	@./babserver&
 
 publish:
 	@go run ./cmd/engine
 
-.PHONY: build server publish
+.PHONY: build serve publish
