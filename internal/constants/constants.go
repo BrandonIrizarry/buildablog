@@ -15,6 +15,10 @@ const (
 	IndexLabel = "index"
 )
 
+const (
+	PostDraftsDir = "drafts/posts"
+)
+
 // TZOffset is used for localizing time stamps we create.
 var TZOffset *time.Location
 
