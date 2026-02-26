@@ -33,7 +33,7 @@ func main() {
 
 		date := postData.Date.Format(time.DateOnly)
 		publishedName := fmt.Sprintf("content/%s/%s", constants.PostsLabel, date)
-		if err := os.Symlink("../drafts/"+draftName, publishedName); err != nil {
+		if err := os.Symlink("../"+constants.PostDraftsDir+"/"+draftName, publishedName); err != nil {
 			if errors.Is(err, fs.ErrExist) {
 				log.Printf("already published: %s → %s", draftName, publishedName)
 				continue
@@ -47,10 +47,9 @@ func main() {
 }
 
 func allDrafts() (map[string]posts.Post, error) {
-	// FIXME: replace with constant
-	entries, err := os.ReadDir("content/drafts")
+	entries, err := os.ReadDir("content/" + constants.PostDraftsDir)
 	if err != nil {
-		return nil, fmt.Errorf("can't read %s directory: %w", "content/drafts", err)
+		return nil, fmt.Errorf("can't read %s directory: %w", "content/"+constants.PostDraftsDir, err)
 	}
 
 	// Here we need to keep the association between filenames and post
@@ -58,7 +57,7 @@ func allDrafts() (map[string]posts.Post, error) {
 	var fileData = make(map[string]posts.Post)
 
 	for _, e := range entries {
-		postData, err := readers.ReadMarkdown("drafts", e.Name())
+		postData, err := readers.ReadMarkdown(constants.PostDraftsDir, e.Name())
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", e.Name(), err)
 		}
