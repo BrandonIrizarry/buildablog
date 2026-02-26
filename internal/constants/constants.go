@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+// Label definitions.
+//
+// Labels help associate various assets into common classes (e.g.,
+// blog posts use a certain set of templates, directories, endpoints
+// etc., as do projects, and so on.q)
 const (
 	PostsLabel = "posts"
 	IndexLabel = "index"
