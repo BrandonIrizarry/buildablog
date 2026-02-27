@@ -98,6 +98,9 @@ func main() {
 		}
 
 		// Fetch the top three most recent posts.
+		//
+		// FIXME: make the argument to AllPosts here
+		// configurable somehow.
 		recentPosts, err := readers.AllPosts(new(3))
 		if err != nil {
 			log.Printf("%v", err)
