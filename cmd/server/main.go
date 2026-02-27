@@ -189,7 +189,7 @@ func main() {
 			siteURL = "https://brandonirizarry.xyz"
 		}
 
-		posts, err := readers.AllPosts()
+		ps, err := readers.AllPosts()
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -197,7 +197,7 @@ func main() {
 		}
 
 		var items []rss.Item
-		for _, post := range posts {
+		for _, post := range ps {
 			link := fmt.Sprintf("%s/posts/%s", siteURL, post.Date.Format(time.DateOnly))
 			pubDate := post.Date.Format(time.RFC1123)
 
