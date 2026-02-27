@@ -10,7 +10,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 )
 
-func AllPosts() ([]posts.Post, error) {
+func AllPosts(numPosts *int) ([]posts.Post, error) {
 	publishedDir := constants.GenrePublished("posts")
 
 	entries, err := os.ReadDir(publishedDir)
@@ -24,10 +24,18 @@ func AllPosts() ([]posts.Post, error) {
 	// should appear from newest to oldest.
 	slices.Reverse(entries)
 
+	if numPosts == nil {
+		numPosts = new(len(entries))
+	}
+
 	// Accumulate the return value into this list.
 	var postDataList []posts.Post
 
-	for _, e := range entries {
+	for i, e := range entries {
+		if i > *numPosts {
+			break
+		}
+
 		filename := e.Name()
 
 		filenameDate, err := time.ParseInLocation(time.DateOnly, filename, constants.TZOffset)
