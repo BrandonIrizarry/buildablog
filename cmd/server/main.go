@@ -105,6 +105,10 @@ func main() {
 			return
 		}
 
+		// For simplicity, reuse the same [posts.Post] slice
+		// datatype, just as we do for the GET /posts
+		// endpoint. The template code will know how to
+		// interpret this ad-hoc scheme.
 		ps := []posts.Post{frontPage}
 		ps = append(ps, recentPosts...)
 
