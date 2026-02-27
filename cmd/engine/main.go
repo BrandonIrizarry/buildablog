@@ -39,8 +39,10 @@ func publish() error {
 		}
 
 		date := postData.Date.Format(time.DateOnly)
+		symlinkTarget := fmt.Sprintf("../../%s/%s", constants.PostDraftsDir, draftName)
 		publishedName := fmt.Sprintf("content/published/%s/%s", constants.PostsLabel, date)
-		if err := os.Symlink("../../"+constants.PostDraftsDir+"/"+draftName, publishedName); err != nil {
+
+		if err := os.Symlink(symlinkTarget, publishedName); err != nil {
 			if errors.Is(err, fs.ErrExist) {
 				log.Printf("already published: %s → %s", draftName, publishedName)
 				continue
