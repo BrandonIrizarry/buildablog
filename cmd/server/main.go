@@ -72,10 +72,9 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Serve a blog post.
-	contentPattern := fmt.Sprintf("GET /%s/{date}", constants.PostsLabel)
-	mux.HandleFunc(contentPattern, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /posts/{date}", func(w http.ResponseWriter, r *http.Request) {
 		date := r.PathValue("date")
-		postData, err := readers.ReadMarkdown(constants.PostsLabel, date)
+		postData, err := readers.ReadMarkdown(constants.GenrePublished("posts"), date)
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -91,7 +90,7 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		postData, err := readers.ReadMarkdown(constants.IndexLabel, "index.md")
+		postData, err := readers.ReadMarkdown(constants.BlogDir, "index.md")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
@@ -107,7 +106,7 @@ func main() {
 
 	// Serve the archives.
 	mux.HandleFunc("GET /posts", func(w http.ResponseWriter, r *http.Request) {
-		ps, err := readers.AllPosts(constants.PostsLabel)
+		ps, err := readers.AllPosts()
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -139,7 +138,7 @@ func main() {
 
 	//  Serve the tags page.
 	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
-		posts, err := readers.AllPosts(constants.PostsLabel)
+		posts, err := readers.AllPosts()
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -190,7 +189,7 @@ func main() {
 			siteURL = "https://brandonirizarry.xyz"
 		}
 
-		posts, err := readers.AllPosts(constants.PostsLabel)
+		posts, err := readers.AllPosts()
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -199,7 +198,7 @@ func main() {
 
 		var items []rss.Item
 		for _, post := range posts {
-			link := fmt.Sprintf("%s/%s/%s", siteURL, constants.PostsLabel, post.Date.Format(time.DateOnly))
+			link := fmt.Sprintf("%s/posts/%s", siteURL, post.Date.Format(time.DateOnly))
 			pubDate := post.Date.Format(time.RFC1123)
 
 			item := rss.Item{

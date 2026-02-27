@@ -9,10 +9,12 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 )
 
-func AllPosts(label string) ([]posts.Post, error) {
-	entries, err := os.ReadDir("content/" + label)
+func AllPosts() ([]posts.Post, error) {
+	publishedDir := constants.GenrePublished("posts")
+
+	entries, err := os.ReadDir(publishedDir)
 	if err != nil {
-		return nil, fmt.Errorf("can't read content directory: %w", err)
+		return nil, fmt.Errorf("can't read %s: %w", publishedDir, err)
 	}
 
 	// Accumulate the return value into this list.
@@ -26,7 +28,7 @@ func AllPosts(label string) ([]posts.Post, error) {
 			return nil, fmt.Errorf("%s isn't in YYYY-MM-DD format: %w", filename, err)
 		}
 
-		postData, err := ReadMarkdown(constants.PostsLabel, filename)
+		postData, err := ReadMarkdown(constants.GenrePublished("posts"), filename)
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", filename, err)
 		}
