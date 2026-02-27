@@ -90,14 +90,14 @@ func main() {
 
 	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		postData, err := readers.ReadMarkdown(constants.BlogDir, "index.md")
+		frontPage, err := readers.ReadMarkdown(constants.BlogDir, "index.md")
 		if err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
-		if err := feedTemplate(w, "index", postData); err != nil {
+		if err := feedTemplate(w, "index", frontPage); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
