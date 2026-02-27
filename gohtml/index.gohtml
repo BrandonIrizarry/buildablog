@@ -4,16 +4,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/static/styles.css">
-        <title>{{ with (index . 0) }}{{.Title}}{{ end }}</title>
+        <!-- By convention, the first element of the Posts slice is the host page's own material,
+             and the rest of the slice comprises any listing of posts to be included (either in their entirety or else in
+             summary form.) -->
+        <title>{{ (index . 0).Title }}</title>
     </head>
     <body>
         {{ template "nav.html" . }}
         <main>
             <h1 class="page-title">Welcome</h1>
-            {{ with (index . 0) }}
-                {{ .Content }}
-            {{ end }}
-
+            {{ (index . 0).Content }}
             <section>
                 {{ range (slice . 1) }}
                     <details class="published">
