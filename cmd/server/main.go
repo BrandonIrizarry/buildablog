@@ -113,13 +113,6 @@ func main() {
 			return
 		}
 
-		// The nice thing is that, because of the file naming
-		// convention, posts are already sorted on the
-		// filesystem. However, for display in Archives, the
-		// most recent post should come first, hence this call
-		// to [slices.Reverse].
-		slices.Reverse(ps)
-
 		// Filter posts by tag.
 		tag := r.FormValue("tag")
 

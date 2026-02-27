@@ -3,6 +3,7 @@ package readers
 import (
 	"fmt"
 	"os"
+	"slices"
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
@@ -43,6 +44,12 @@ func AllPosts() ([]posts.Post, error) {
 
 		postDataList = append(postDataList, postData)
 	}
+
+	// The nice thing is that, thanks to [time.DateOnly], posts
+	// are already sorted on the filesystem in order from oldest
+	// to newest. However, for display in Posts, RSS, etc., posts
+	// should appear from newest to oldest.
+	slices.Reverse(postDataList)
 
 	return postDataList, nil
 }
