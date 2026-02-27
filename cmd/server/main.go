@@ -93,11 +93,22 @@ func main() {
 		frontPage, err := readers.ReadMarkdown(constants.BlogDir, "index.md")
 		if err != nil {
 			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusNotFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if err := feedTemplate(w, "index", frontPage); err != nil {
+		// Fetch the top three most recent posts.
+		recentPosts, err := readers.AllPosts(new(3))
+		if err != nil {
+			log.Printf("%v", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		ps := []posts.Post{frontPage}
+		ps = append(ps, recentPosts...)
+
+		if err := feedTemplate(w, "index", ps); err != nil {
 			log.Printf("%v", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
