@@ -109,8 +109,7 @@ func main() {
 		// datatype, just as we do for the GET /posts
 		// endpoint. The template code will know how to
 		// interpret this ad-hoc scheme.
-		ps := []posts.Post{frontPage}
-		ps = append(ps, recentPosts...)
+		ps := append([]posts.Post{frontPage}, recentPosts...)
 
 		if err := feedTemplate(w, "index", ps); err != nil {
 			log.Printf("%v", err)
