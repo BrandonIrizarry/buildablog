@@ -9,6 +9,8 @@
     <body>
          {{ template "nav.html" . }}
         <main class="post-content">
+            <h1 class="meta">{{ .Title }}</h1>
+            <hr>
            {{.Content}}
         </main>
     </body>
