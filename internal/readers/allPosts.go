@@ -32,7 +32,7 @@ func AllPosts(numPosts *int) ([]posts.Post, error) {
 	var postDataList []posts.Post
 
 	for i, e := range entries {
-		if i > *numPosts {
+		if i >= *numPosts {
 			break
 		}
 
