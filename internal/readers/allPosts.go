@@ -18,6 +18,12 @@ func AllPosts() ([]posts.Post, error) {
 		return nil, fmt.Errorf("can't read %s: %w", publishedDir, err)
 	}
 
+	// The nice thing is that, thanks to [time.DateOnly], posts
+	// are already sorted on the filesystem in order from oldest
+	// to newest. However, for display in Posts, RSS, etc., posts
+	// should appear from newest to oldest.
+	slices.Reverse(entries)
+
 	// Accumulate the return value into this list.
 	var postDataList []posts.Post
 
@@ -44,12 +50,6 @@ func AllPosts() ([]posts.Post, error) {
 
 		postDataList = append(postDataList, postData)
 	}
-
-	// The nice thing is that, thanks to [time.DateOnly], posts
-	// are already sorted on the filesystem in order from oldest
-	// to newest. However, for display in Posts, RSS, etc., posts
-	// should appear from newest to oldest.
-	slices.Reverse(postDataList)
 
 	return postDataList, nil
 }
