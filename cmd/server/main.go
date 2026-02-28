@@ -66,21 +66,15 @@ func main() {
 	}
 
 	// Set up the server.
+	//
+	// The various handlers are named after their endpoints in a
+	// more or less obvious manner.
 	mux := http.NewServeMux()
 
-	// Serve a blog post.
 	mux.HandleFunc("GET /posts/{date}", getPostsDate)
-
-	// Serve the site's front page.
 	mux.HandleFunc("GET /{$}", getIndex)
-
-	// Serve the archives.
 	mux.HandleFunc("GET /posts", getPosts)
-
-	//  Serve the tags page.
 	mux.HandleFunc("GET /tags", getTags)
-
-	// Serve the Projects Gallery page.
 	mux.HandleFunc("GET /projects", getProjects)
 
 	// Serve the RSS feed. For now we need this "config" trick if
@@ -92,9 +86,10 @@ func main() {
 
 	mux.HandleFunc("GET /rss", rssCfg.getRSS)
 
-	// Serve the site's static assets (CSS files etc.)
+	// Static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	// Launch the server.
 	log.Print("Killing any previous server instance; starting server on port 3030")
 
 	if err := http.ListenAndServe(":3030", mux); err != nil {
