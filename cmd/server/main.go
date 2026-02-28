@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/xml"
 	"flag"
 	"fmt"
 	"html/template"
@@ -9,20 +8,18 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"slices"
-	"strings"
 	"time"
-
-	"github.com/BrandonIrizarry/buildablog/internal/constants"
-	"github.com/BrandonIrizarry/buildablog/internal/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/readers"
-	"github.com/BrandonIrizarry/buildablog/internal/rss"
 )
 
 // tpls maps template basenames to actual templates. This is so that
 // we can parse all our templates up front, as opposed to parsing them
 // on each request.
 var tpls = make(map[string]*template.Template)
+
+type rssConfig struct {
+	flagLocal bool
+	handler   http.HandlerFunc
+}
 
 func main() {
 	// Set up logging.
@@ -72,193 +69,28 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Serve a blog post.
-	mux.HandleFunc("GET /posts/{date}", func(w http.ResponseWriter, r *http.Request) {
-		date := r.PathValue("date")
-		postData, err := readers.ReadMarkdown(constants.GenrePublished("posts"), date)
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if err := feedTemplate(w, "post", postData); err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	})
+	mux.HandleFunc("GET /posts/{date}", getPostsDate)
 
 	// Serve the site's front page.
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		frontPage, err := readers.ReadMarkdown(constants.BlogDir, "index.md")
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Fetch the top three most recent posts.
-		//
-		// FIXME: make the argument to AllPosts here
-		// configurable somehow.
-		recentPosts, err := readers.AllPosts(new(3))
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// For simplicity, reuse the same [posts.Post] slice
-		// datatype, just as we do for the GET /posts
-		// endpoint. The template code will know how to
-		// interpret this ad-hoc scheme.
-		ps := append([]posts.Post{frontPage}, recentPosts...)
-
-		if err := feedTemplate(w, "index", ps); err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	})
+	mux.HandleFunc("GET /{$}", getIndex)
 
 	// Serve the archives.
-	mux.HandleFunc("GET /posts", func(w http.ResponseWriter, r *http.Request) {
-		ps, err := readers.AllPosts(nil)
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Filter posts by tag.
-		tag := r.FormValue("tag")
-
-		if tag != "" {
-			ps = slices.DeleteFunc(ps, func(p posts.Post) bool {
-				return !slices.Contains(p.Tags, tag)
-			})
-		}
-
-		if err := feedTemplate(w, "posts", ps); err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	})
+	mux.HandleFunc("GET /posts", getPosts)
 
 	//  Serve the tags page.
-	mux.HandleFunc("GET /tags", func(w http.ResponseWriter, r *http.Request) {
-		posts, err := readers.AllPosts(nil)
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Dump all tags into a list, then deduplicate using a
-		// set.
-		var tagList []string
-		for _, p := range posts {
-			tagList = append(tagList, p.Tags...)
-		}
-
-		tagSet := make(map[string]struct{})
-		for _, t := range tagList {
-			tagSet[t] = struct{}{}
-		}
-
-		log.Printf("Tag set: %v", tagSet)
-
-		if err := feedTemplate(w, "tags", tagSet); err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	})
+	mux.HandleFunc("GET /tags", getTags)
 
 	// Serve the Projects Gallery page.
-	mux.HandleFunc("GET /projects", func(w http.ResponseWriter, r *http.Request) {
-		if err := feedTemplate(w, "projects", struct{}{}); err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	})
+	mux.HandleFunc("GET /projects", getProjects)
 
-	// Serve the RSS feed.
-	mux.HandleFunc("GET /rss", func(w http.ResponseWriter, r *http.Request) {
-		siteTitle := "Biome of Ideas"
-		var siteURL string
+	// Serve the RSS feed. For now we need this "config" trick if
+	// we're going to pass state to the handler now. Hopefully in
+	// production we won't need anything like this.
+	rssCfg := rssConfig{
+		flagLocal: flagLocal,
+	}
 
-		// Use flagLocal to set the correct siteURL for
-		// purposes of testing the RSS feed locally with
-		// something like newsboat.
-		if flagLocal {
-			siteURL = "http://localhost:3030"
-		} else {
-			siteURL = "https://brandonirizarry.xyz"
-		}
-
-		ps, err := readers.AllPosts(nil)
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		var items []rss.Item
-		for _, post := range ps {
-			link := fmt.Sprintf("%s/posts/%s", siteURL, post.Date.Format(time.DateOnly))
-			pubDate := post.Date.Format(time.RFC1123)
-
-			item := rss.Item{
-				Title:   post.Title,
-				Link:    link,
-				GUID:    link,
-				PubDate: pubDate,
-				Description: rss.Description{
-					Type: "html",
-					Text: post.Content,
-				},
-			}
-
-			items = append(items, item)
-		}
-
-		image := rss.Image{
-			Title:  siteTitle,
-			Link:   siteURL,
-			URL:    fmt.Sprintf("%s/static/bitmap.png", siteURL),
-			Width:  80,
-			Height: 80,
-		}
-
-		rssChannel := rss.Channel{
-			Title:       siteTitle,
-			Link:        siteURL,
-			Description: "My personal website and blog",
-			Language:    "en-us",
-			Image:       image,
-			Items:       items,
-		}
-
-		mainRSS := rss.RSS{
-			Channel: rssChannel,
-			Version: "2.0",
-		}
-
-		// Marshal the data to XML
-		feed, err := xml.MarshalIndent(mainRSS, "", strings.Repeat(" ", 4))
-		if err != nil {
-			log.Printf("%v", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-
-		fmt.Fprint(w, xml.Header+string(feed))
-	})
+	mux.HandleFunc("GET /rss", rssCfg.getRSS)
 
 	// Serve the site's static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -268,22 +100,4 @@ func main() {
 	if err := http.ListenAndServe(":3030", mux); err != nil {
 		log.Fatal(err)
 	}
-}
-
-// feedTemplate loads and executes a template found under label using
-// the given data parameter (used by [template.Template.Execute] to
-// fill in the template.)
-func feedTemplate(w http.ResponseWriter, label string, data any) error {
-	// Load the template.
-	t, ok := tpls[label+".gohtml"]
-	if !ok {
-		return fmt.Errorf("no template under label '%s'", label)
-	}
-
-	// Use the template.
-	if err := t.Execute(w, data); err != nil {
-		return fmt.Errorf("can't execute template under label '%s': %w", label, err)
-	}
-
-	return nil
 }
