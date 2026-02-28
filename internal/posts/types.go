@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// FrontmatterData is used for unmarshalling blog post frontmatter.
-type FrontmatterData struct {
+// Frontmatter is used for unmarshalling blog post frontmatter.
+type Frontmatter struct {
 	// Title is the blog post's title.
 	Title string `toml:"title"`
 
@@ -22,6 +22,6 @@ type FrontmatterData struct {
 }
 
 type Post struct {
-	FrontmatterData
+	Frontmatter
 	Content template.HTML
 }

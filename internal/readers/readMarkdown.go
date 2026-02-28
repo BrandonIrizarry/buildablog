@@ -14,10 +14,10 @@ import (
 )
 
 // ReadMarkdown returns blog post data as two separate parts: frontmatter
-// (as a [posts.FrontmatterData] struct) and content (as a
+// (as a [posts.Frontmatter] struct) and content (as a
 // [template.HTML] string.)
 func ReadMarkdown(pathPrefix, basename string) (posts.Post, error) {
-	var fmdata posts.FrontmatterData
+	var fmdata posts.Frontmatter
 
 	path := fmt.Sprintf("%s/%s", pathPrefix, basename)
 	f, err := os.Open(path)
@@ -58,8 +58,8 @@ func ReadMarkdown(pathPrefix, basename string) (posts.Post, error) {
 	}
 
 	postData := posts.Post{
-		FrontmatterData: fmdata,
-		Content:         template.HTML(buf.String()),
+		Frontmatter: fmdata,
+		Content:     template.HTML(buf.String()),
 	}
 
 	return postData, nil
