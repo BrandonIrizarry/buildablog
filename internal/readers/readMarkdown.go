@@ -7,23 +7,19 @@ import (
 	"os"
 
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/projects"
+	"github.com/BrandonIrizarry/buildablog/internal/types"
 	"github.com/adrg/frontmatter"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
-type Frontmatter interface {
-	posts.Frontmatter | projects.Frontmatter
-}
-
 // ReadFrontmatter reads the frontmatter and content of a blog post
 // from pathPrefix/basename, and returns them.
 //
 // Currently, only Markdown posts with TOML frontmatter are
 // recognized for reading.
-func ReadFrontmatter[F Frontmatter](pathPrefix, basename string) (F, []byte, error) {
+func ReadFrontmatter[F types.Frontmatter](pathPrefix, basename string) (F, []byte, error) {
 	path := fmt.Sprintf("%s/%s", pathPrefix, basename)
 	f, err := os.Open(path)
 	if err != nil {
