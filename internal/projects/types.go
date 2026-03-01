@@ -2,6 +2,7 @@ package projects
 
 import (
 	"html/template"
+	"time"
 )
 
 // Frontmatter is used for unmarshalling project post frontmatter.
@@ -24,6 +25,12 @@ type Frontmatter struct {
 	// Thumbnail is the path to the thumbnail used for display
 	// with the project.
 	Thumbnail string `toml:"thumbnail"`
+
+	Date time.Time `toml:"date"`
+}
+
+func (f Frontmatter) GetDate() time.Time {
+	return f.Date
 }
 
 type Post struct {

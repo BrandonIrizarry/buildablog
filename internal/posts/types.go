@@ -21,6 +21,10 @@ type Frontmatter struct {
 	Date time.Time `toml:"date"`
 }
 
+func (f Frontmatter) GetDate() time.Time {
+	return f.Date
+}
+
 type Post struct {
 	Frontmatter
 	Content template.HTML
