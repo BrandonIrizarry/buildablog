@@ -7,11 +7,71 @@ import (
 	"os"
 
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/projects"
 	"github.com/adrg/frontmatter"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
+
+type Frontmatter interface {
+	posts.Frontmatter | projects.Frontmatter
+}
+
+// ReadFrontmatter wraps around [frontmatter.Parse], also specializing
+// on our frontmatter types instead of using [any]. It returns the
+// [byte] slice corresponding to a blog post's content.
+//
+// Currently, only Markdown posts with TOML frontmatter are
+// recognized.
+func ReadFrontmatter[F Frontmatter](fmdata *F, pathPrefix, basename string) ([]byte, error) {
+	path := fmt.Sprintf("%s/%s", pathPrefix, basename)
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	content, err := frontmatter.Parse(f, &fmdata)
+	if err != nil {
+		return nil, err
+	}
+
+	return content, nil
+}
+
+// ConvertToHTML converts the given article's content, a byte slice,
+// to [template.HTML], which is then returned with an error.
+//
+// Syntax highlighting is also added.
+//
+// For available styles, see https://github.com/alecthomas/chroma/tree/master/styles
+//
+// See also https://xyproto.github.io/splash/docs/ for a list
+// of canonical themes (though some may not be available here;
+// try 'go get -u' to update chroma etc. to fetch the latest
+// styles.)
+func ConvertToHTML(content []byte) (template.HTML, error) {
+	syntaxStyle := "catppuccin-macchiato"
+
+	mdRenderer := goldmark.New(
+		goldmark.WithExtensions(hl.NewHighlighting(
+			hl.WithStyle(syntaxStyle),
+			hl.WithFormatOptions(
+				chromahtml.WithLineNumbers(true),
+				chromahtml.ClassPrefix("content"),
+			),
+		)),
+	)
+
+	// Render Markdown as HTML.
+	var buf bytes.Buffer
+	if err := mdRenderer.Convert(content, &buf); err != nil {
+		return "", err
+	}
+
+	return template.HTML(buf.String()), nil
+}
 
 // ReadMarkdown returns blog post data as two separate parts: frontmatter
 // (as a [posts.Frontmatter] struct) and content (as a
