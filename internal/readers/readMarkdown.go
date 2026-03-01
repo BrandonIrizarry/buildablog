@@ -18,26 +18,26 @@ type Frontmatter interface {
 	posts.Frontmatter | projects.Frontmatter
 }
 
-// ReadFrontmatter wraps around [frontmatter.Parse], also specializing
-// on our frontmatter types instead of using [any]. It returns the
-// [byte] slice corresponding to a blog post's content.
+// ReadFrontmatter reads the frontmatter and content of a blog post
+// from pathPrefix/basename, and returns them.
 //
 // Currently, only Markdown posts with TOML frontmatter are
-// recognized.
-func ReadFrontmatter[F Frontmatter](fmdata *F, pathPrefix, basename string) ([]byte, error) {
+// recognized for reading.
+func ReadFrontmatter[F Frontmatter](pathPrefix, basename string) (F, []byte, error) {
 	path := fmt.Sprintf("%s/%s", pathPrefix, basename)
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return *new(F), nil, err
 	}
 	defer f.Close()
 
+	var fmdata F
 	content, err := frontmatter.Parse(f, &fmdata)
 	if err != nil {
-		return nil, err
+		return *new(F), nil, err
 	}
 
-	return content, nil
+	return fmdata, content, nil
 }
 
 // ConvertToHTML converts the given article's content, a byte slice,
