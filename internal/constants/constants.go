@@ -15,14 +15,6 @@ var (
 	BlogDir string
 )
 
-func GenrePublished(genre string) string {
-	return fmt.Sprintf("%s/published/%s", BlogDir, genre)
-}
-
-func GenreDrafts(genre string) string {
-	return fmt.Sprintf("%s/drafts/%s", BlogDir, genre)
-}
-
 func init() {
 	var err error
 
