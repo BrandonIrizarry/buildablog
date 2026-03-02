@@ -10,6 +10,7 @@ import (
 
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/projects"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
@@ -18,6 +19,10 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	if err := publish[posts.Frontmatter](); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := publish[projects.Frontmatter](); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -70,12 +75,12 @@ func allDrafts[F types.Frontmatter]() (map[string]F, error) {
 	var fileData = make(map[string]F)
 
 	for _, e := range entries {
-		fmdata, _, err := readers.ReadFrontmatter[F](draftsDir, e.Name())
+		article, err := readers.ReadArticle[F](draftsDir, e.Name())
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", e.Name(), err)
 		}
 
-		fileData[e.Name()] = fmdata
+		fileData[e.Name()] = article.Frontmatter
 	}
 
 	return fileData, nil

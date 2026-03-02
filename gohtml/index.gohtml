@@ -7,7 +7,7 @@
         <!-- By convention, the first element of the Posts slice is the host page's own material,
              and the rest of the slice comprises any listing of posts to be included (either in their entirety or else in
              summary form.) -->
-        <title>{{ (index . 0).Title }}</title>
+        <title>{{ (index . 0).Frontmatter.Title }}</title>
     </head>
     <body>
         {{ template "nav.html" . }}
@@ -17,7 +17,8 @@
             <section>
                 {{ range (slice . 1) }}
                     <details class="published">
-                        <summary>
+                        {{ with .Frontmatter }}
+                            <summary>
                             <span class="created">{{ (humanReadable .Date) }}: </span>
                             <a href="posts/{{ (humanReadable .Date) }}">{{ .Title }}</a>
                         </summary>
@@ -36,6 +37,7 @@
                                 </div>
                             {{ end }}
                         </div>
+                        {{ end }}
                     </details>
                 {{ end }}
             </section>

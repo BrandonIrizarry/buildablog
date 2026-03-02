@@ -7,10 +7,11 @@ import (
 
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
+	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
-	ps, err := readers.AllPosts(nil)
+	ps, err := readers.AllArticles[posts.Frontmatter](nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -21,8 +22,8 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 	tag := r.FormValue("tag")
 
 	if tag != "" {
-		ps = slices.DeleteFunc(ps, func(p posts.Post) bool {
-			return !slices.Contains(p.Tags, tag)
+		ps = slices.DeleteFunc(ps, func(p types.Article[posts.Frontmatter]) bool {
+			return !slices.Contains(p.Frontmatter.Tags, tag)
 		})
 	}
 

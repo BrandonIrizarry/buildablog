@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/rss"
 )
@@ -25,7 +26,7 @@ func (cfg rssConfig) getRSS(w http.ResponseWriter, r *http.Request) {
 		siteURL = "https://brandonirizarry.xyz"
 	}
 
-	ps, err := readers.AllPosts(nil)
+	ps, err := readers.AllArticles[posts.Frontmatter](nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -34,11 +35,12 @@ func (cfg rssConfig) getRSS(w http.ResponseWriter, r *http.Request) {
 
 	var items []rss.Item
 	for _, post := range ps {
-		link := fmt.Sprintf("%s/posts/%s", siteURL, post.Date.Format(time.DateOnly))
-		pubDate := post.Date.Format(time.RFC1123)
+		date := post.Frontmatter.Date
+		link := fmt.Sprintf("%s/posts/%s", siteURL, date.Format(time.DateOnly))
+		pubDate := date.Format(time.RFC1123)
 
 		item := rss.Item{
-			Title:   post.Title,
+			Title:   post.Frontmatter.Title,
 			Link:    link,
 			GUID:    link,
 			PubDate: pubDate,

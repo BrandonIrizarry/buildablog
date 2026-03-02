@@ -7,10 +7,12 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
+	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func getIndex(w http.ResponseWriter, r *http.Request) {
-	frontPage, err := readers.ReadMarkdown(constants.BlogDir, "index.md")
+	// For now, parse the index.md page as if it were a post.
+	frontPage, err := readers.ReadArticle[posts.Frontmatter](constants.BlogDir, "index.md")
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -21,18 +23,16 @@ func getIndex(w http.ResponseWriter, r *http.Request) {
 	//
 	// FIXME: make the argument to AllPosts here
 	// configurable somehow.
-	recentPosts, err := readers.AllPosts(new(3))
+	recentPosts, err := readers.AllArticles[posts.Frontmatter](new(3))
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// For simplicity, reuse the same [posts.Post] slice
-	// datatype, just as we do for the GET /posts
-	// endpoint. The template code will know how to
-	// interpret this ad-hoc scheme.
-	ps := append([]posts.Post{frontPage}, recentPosts...)
+	// The template code will know how to interpret this ad-hoc
+	// scheme.
+	ps := append([]types.Article[posts.Frontmatter]{frontPage}, recentPosts...)
 
 	if err := feedTemplate(w, "index", ps); err != nil {
 		log.Printf("%v", err)

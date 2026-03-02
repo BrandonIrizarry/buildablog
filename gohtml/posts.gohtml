@@ -13,6 +13,7 @@
             <section>
                 <!-- Range over the slice of posts provided here, which may or may not have been first filtered by tag. -->
                 {{ range . }}
+                    {{ with .Frontmatter }}
                     <details class="published">
                         <summary>
                             <span class="created">{{ (humanReadable .Date) }}: </span>
@@ -34,6 +35,7 @@
                             {{ end }}
                         </div>
                     </details>
+                    {{ end }}
                 {{ end }}
             </section>
         </main>
