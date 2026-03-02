@@ -33,6 +33,10 @@ func (f Frontmatter) GetDate() time.Time {
 	return f.Date
 }
 
+func (f Frontmatter) Genre() string {
+	return "projects"
+}
+
 type Post struct {
 	Frontmatter
 	Content template.HTML
