@@ -11,7 +11,7 @@ import (
 )
 
 func AllArticles[F types.Frontmatter](numPosts *int) ([]types.Article[F], error) {
-	publishedDir := fmt.Sprintf("%s/published/%s", constants.BlogDir, (*new(F)).Genre())
+	publishedDir := GenrePublished((*new(F)).Genre())
 
 	entries, err := os.ReadDir(publishedDir)
 	if err != nil {

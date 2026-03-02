@@ -8,7 +8,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/projects"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
@@ -45,8 +44,10 @@ func publish[F types.Frontmatter]() error {
 		}
 
 		date := fmdata.GetDate().Format(time.DateOnly)
-		symlinkTarget := fmt.Sprintf("%s/drafts/%s/%s", constants.BlogDir, fmdata.Genre(), originalFilename)
-		publishedName := fmt.Sprintf("%s/published/%s/%s", constants.BlogDir, fmdata.Genre(), date)
+		draftsDir := readers.GenreDrafts(fmdata.Genre())
+		publishedDir := readers.GenrePublished(fmdata.Genre())
+		symlinkTarget := fmt.Sprintf("%s/%s", draftsDir, originalFilename)
+		publishedName := fmt.Sprintf("%s/%s", publishedDir, date)
 
 		if err := os.Symlink(symlinkTarget, publishedName); err != nil {
 			if errors.Is(err, fs.ErrExist) {
@@ -64,7 +65,8 @@ func publish[F types.Frontmatter]() error {
 }
 
 func allDrafts[F types.Frontmatter]() (map[string]F, error) {
-	draftsDir := fmt.Sprintf("%s/drafts/%s", constants.BlogDir, (*new(F)).Genre())
+	draftsDir := readers.GenreDrafts((*new(F)).Genre())
+
 	entries, err := os.ReadDir(draftsDir)
 	if err != nil {
 		return nil, fmt.Errorf("can't read %s directory: %w", draftsDir, err)
