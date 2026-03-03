@@ -88,6 +88,11 @@ func main() {
 	// Static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	// The server assumes the responsibility of serving any assets
+	// defined locally inside the blog repo itself.
+	blogAssetsDir := fmt.Sprintf("%s/assets", cfg.BlogDir)
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(blogAssetsDir))))
+
 	// Launch the server.
 	log.Print("Killing any previous server instance; starting server on port 3030")
 
