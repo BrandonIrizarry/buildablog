@@ -14,7 +14,7 @@
                     <a href="{{ .HostURL }}" target="blank">
                         <section class="project-entry">
                             <h2 class="meta">{{ .Name }}</h2>
-                            <img src="static/github_white.svg" width="50" height="50" alt="GitHub link" class="repo-icon">
+                            <img src="{{ .Thumbnail }}" width="50" height="50" alt="GitHub link" class="repo-icon">
                             {{ $numStack := (len .Stack) }}
                             <div>
                                 {{ range $i, $stack := .Stack }}
