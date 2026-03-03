@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 // tpls maps template basenames to actual templates. This is so that
@@ -17,8 +19,8 @@ import (
 var tpls = make(map[string]*template.Template)
 
 type rssConfig struct {
-	flagLocal bool
-	handler   http.HandlerFunc
+	siteURL string
+	handler http.HandlerFunc
 }
 
 func main() {
@@ -31,6 +33,11 @@ func main() {
 	defer logFile.Close()
 	log.SetOutput(logFile)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	env, err := godotenv.Read()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Flags: if -flagLocal is specified, set RSS siteURL to
 	// localhost:PORT.
@@ -81,7 +88,7 @@ func main() {
 	// we're going to pass state to the handler now. Hopefully in
 	// production we won't need anything like this.
 	rssCfg := rssConfig{
-		flagLocal: flagLocal,
+		siteURL: env["SITEURL"],
 	}
 
 	mux.HandleFunc("GET /rss", rssCfg.getRSS)

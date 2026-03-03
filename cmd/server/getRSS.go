@@ -15,16 +15,7 @@ import (
 
 func (cfg rssConfig) getRSS(w http.ResponseWriter, r *http.Request) {
 	siteTitle := "Biome of Ideas"
-	var siteURL string
-
-	// Use flagLocal to set the correct siteURL for
-	// purposes of testing the RSS feed locally with
-	// something like newsboat.
-	if cfg.flagLocal {
-		siteURL = "http://localhost:3030"
-	} else {
-		siteURL = "https://brandonirizarry.xyz"
-	}
+	siteURL := cfg.siteURL
 
 	ps, err := readers.AllArticles[posts.Frontmatter](nil)
 	if err != nil {
