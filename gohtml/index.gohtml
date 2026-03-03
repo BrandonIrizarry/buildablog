@@ -12,10 +12,10 @@
     <body>
         {{ template "nav.html" . }}
         <main>
-            <h1 class="page-title">Welcome</h1>
-            <section class="post-content">
+            <h1 class="page-title">{{ (index . 0).Frontmatter.Title }}</h1>
+            <div class="post-content">
                 {{ (index . 0).Content }}
-            </section>
+            </div>
             <section>
                 {{ range (slice . 1) }}
                     <details class="published">
