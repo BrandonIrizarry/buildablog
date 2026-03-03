@@ -8,7 +8,7 @@ import (
 // Frontmatter is used for unmarshalling project post frontmatter.
 type Frontmatter struct {
 	// Name is the name of the project.
-	Name string `toml:"title"`
+	Name string `toml:"name"`
 
 	// HostURL is the project repo's Web URL (i.e. where it's
 	// hosted for viewing, contributing, etc.)
