@@ -18,7 +18,8 @@ even add a few that made sense (e.g. cyan.)
     --gorgeous-contrast-7: #e9e9e9;
     --gorgeous-contrast-8: #49c5b6;
     --gorgeous-contrast-9: cyan;
-    --gorgeous-contrast-10: magenta;
+    --gorgeous-contrast-10: hsl(300deg 100% 50%);
+    --gorgeous-contrast-11: hsl(300deg 100% 50% / .4);
     --flower: "🙦";
 }
 
@@ -176,10 +177,11 @@ main.project-gallery {
     border-color: var(--gorgeous-contrast-10);
     padding: 1rem;
     transition: 0.2s background linear;
+    background: var(--gorgeous-contrast-11);
 }
 
 .project-entry:hover {
-    background: var(--gorgeous-contrast-4);
+    background: var(--gorgeous-contrast-10);
 }
 
 .project-entry > h2 {
