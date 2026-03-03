@@ -13,11 +13,12 @@
                 {{ with .Frontmatter }}
                     <section class="project-entry">
                         <h2 class="meta">{{ .Name }}</h2>
-                        <ul>
-                            {{ range .Stack }}
-                                <li>{{ . }}</li>
+                        {{ $numStack := (len .Stack) }}
+                        <div>
+                            {{ range $i, $stack := .Stack }}
+                                <span class="meta">{{ $stack }}</span>{{ if (lt $i (dec $numStack)) }}<span class="meta">,</span>{{ end }}
                             {{ end }}
-                        </ul>
+                        </div>
                         <p>{{ .Synopsis }}</p>
                     </section>
                 {{ end }}
