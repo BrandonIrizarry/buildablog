@@ -4,19 +4,24 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/static/styles.css">
-        <title>Archives</title>
+        <title>Projects</title>
     </head>
     <body>
         {{ template "nav.html" . }}
         <main class="project-gallery">
-            <section class="project-entry">
-                <h2 class="meta">Project 1</h2>
-                <p>blah blah blah</p>
-            </section>
-            <section class="project-entry">
-                <h2 class="meta">Project 2</h2>
-                <p>blah blah blah</p>
-            </section>
+            {{ range . }}
+                {{ with .Frontmatter }}
+                    <section class="project-entry">
+                        <h2 class="meta">{{ .Name }}</h2>
+                        <ul>
+                            {{ range .Stack }}
+                                <li>{{ . }}</li>
+                            {{ end }}
+                        </ul>
+                        <p>{{ .Synopsis }}</p>
+                    </section>
+                {{ end }}
+            {{ end }}
         </main>
     </body>
 </html>
