@@ -12,7 +12,7 @@
             {{ range . }}
                 {{ with .Frontmatter }}
                     <section class="project-entry">
-                        <h2 class="meta">{{ .Name }}</h2>
+                        <h2 class="meta"><a href="{{ .HostURL }}" target="blank">{{ .Name }}</a></h2>
                         {{ $numStack := (len .Stack) }}
                         <div>
                             {{ range $i, $stack := .Stack }}
