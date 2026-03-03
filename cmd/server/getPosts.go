@@ -10,7 +10,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func getPosts(w http.ResponseWriter, r *http.Request) {
+func (cfg config) getPosts(w http.ResponseWriter, r *http.Request) {
 	ps, err := readers.AllArticles[posts.Frontmatter](nil)
 	if err != nil {
 		log.Printf("%v", err)

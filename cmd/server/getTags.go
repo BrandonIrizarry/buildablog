@@ -8,7 +8,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 )
 
-func getTags(w http.ResponseWriter, r *http.Request) {
+func (cfg config) getTags(w http.ResponseWriter, r *http.Request) {
 	posts, err := readers.AllArticles[posts.Frontmatter](nil)
 	if err != nil {
 		log.Printf("%v", err)

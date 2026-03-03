@@ -8,7 +8,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 )
 
-func getPostsDate(w http.ResponseWriter, r *http.Request) {
+func (cfg config) getPostsDate(w http.ResponseWriter, r *http.Request) {
 	date := r.PathValue("date")
 	postData, err := readers.ReadArticle[posts.Frontmatter](readers.GenrePublished("posts"), date)
 	if err != nil {

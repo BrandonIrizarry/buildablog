@@ -76,11 +76,11 @@ func main() {
 	// more or less obvious manner.
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /posts/{date}", getPostsDate)
-	mux.HandleFunc("GET /{$}", getIndex)
-	mux.HandleFunc("GET /posts", getPosts)
-	mux.HandleFunc("GET /tags", getTags)
-	mux.HandleFunc("GET /projects", getProjects)
+	mux.HandleFunc("GET /posts/{date}", cfg.getPostsDate)
+	mux.HandleFunc("GET /{$}", cfg.getIndex)
+	mux.HandleFunc("GET /posts", cfg.getPosts)
+	mux.HandleFunc("GET /tags", cfg.getTags)
+	mux.HandleFunc("GET /projects", cfg.getProjects)
 	mux.HandleFunc("GET /rss", cfg.getRSS)
 
 	// Static assets (CSS files etc.)

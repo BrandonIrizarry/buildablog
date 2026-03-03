@@ -10,7 +10,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func getIndex(w http.ResponseWriter, r *http.Request) {
+func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	// For now, parse the index.md page as if it were a post.
 	frontPage, err := readers.ReadArticle[posts.Frontmatter](constants.BlogDir, "index.md")
 	if err != nil {
