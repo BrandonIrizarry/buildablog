@@ -11,19 +11,19 @@
         <main class="project-gallery">
             {{ range . }}
                 {{ with .Frontmatter }}
-                    <section class="project-entry">
-                        <h2 class="meta"><a href="{{ .HostURL }}" target="blank">{{ .Name }}</a></h2>
-                        <a href="{{ .HostURL }}" target="blank">
+                    <a href="{{ .HostURL }}" target="blank">
+                        <section class="project-entry">
+                            <h2 class="meta">{{ .Name }}</h2>
                             <img src="static/github_white.svg" width="50" height="50" alt="GitHub link" class="repo-icon">
-                        </a>
-                        {{ $numStack := (len .Stack) }}
-                        <div>
-                            {{ range $i, $stack := .Stack }}
-                                <span class="meta">{{ $stack }}</span>{{ if (lt $i (dec $numStack)) }}<span class="meta">,</span>{{ end }}
-                            {{ end }}
-                        </div>
-                        <p>{{ .Synopsis }}</p>
-                    </section>
+                            {{ $numStack := (len .Stack) }}
+                            <div>
+                                {{ range $i, $stack := .Stack }}
+                                    <span class="meta">{{ $stack }}</span>{{ if (lt $i (dec $numStack)) }}<span class="meta">,</span>{{ end }}
+                                {{ end }}
+                            </div>
+                            <p>{{ .Synopsis }}</p>
+                        </section>
+                    </a>
                 {{ end }}
             {{ end }}
         </main>
