@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -43,12 +42,6 @@ func main() {
 	cfg := config{
 		siteURL: env["SITEURL"],
 	}
-
-	// Flags: if -flagLocal is specified, set RSS siteURL to
-	// localhost:PORT.
-	var flagLocal bool
-	flag.BoolVar(&flagLocal, "local", false, "Whether we're serving from localhost")
-	flag.Parse()
 
 	// Parse the templates up front.
 	funcMap := template.FuncMap{
