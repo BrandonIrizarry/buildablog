@@ -2,6 +2,7 @@ package readers
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"slices"
 	"time"
@@ -10,6 +11,8 @@ import (
 )
 
 func AllArticles[F types.Frontmatter](publishedDir string, numPosts *int, timezone string) ([]types.Article[F], error) {
+	log.Printf("Timezone is %s", timezone)
+
 	entries, err := os.ReadDir(publishedDir)
 	if err != nil {
 		return nil, fmt.Errorf("can't read %s: %w", publishedDir, err)
