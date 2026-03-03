@@ -15,6 +15,9 @@ import (
 //go:embed gohtml/*.gohtml
 var templateFS embed.FS
 
+//go:embed static/*
+var staticFS embed.FS
+
 var tpl *template.Template
 
 type config struct {
@@ -74,7 +77,7 @@ func main() {
 	mux.HandleFunc("GET /rss", cfg.getRSS)
 
 	// Static assets (CSS files etc.)
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	mux.Handle("/static/", http.FileServerFS(staticFS))
 
 	// The server assumes the responsibility of serving any assets
 	// defined locally inside the blog repo itself.
