@@ -34,7 +34,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	// scheme.
 	ps := append([]types.Article[posts.Frontmatter]{frontPage}, recentPosts...)
 
-	if err := feedTemplate(w, "index", ps); err != nil {
+	if err := tpl.ExecuteTemplate(w, "index", ps); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

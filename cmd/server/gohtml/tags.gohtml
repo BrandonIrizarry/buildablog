@@ -1,3 +1,5 @@
+{{ define "tags" }}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,7 +9,7 @@
         <title>Archives</title>
     </head>
     <body>
-        {{ template "nav.html" . }}
+        {{ template "nav" . }}
         <main>
             <h1 class="page-title">Tags</h1>
             <ul>
@@ -18,3 +20,5 @@
         </main>
     </body>
 </html>
+
+{{ end }}

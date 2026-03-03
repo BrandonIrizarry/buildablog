@@ -32,7 +32,7 @@ func (cfg config) getTags(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Tag set: %v", tagSet)
 
-	if err := feedTemplate(w, "tags", tagSet); err != nil {
+	if err := tpl.ExecuteTemplate(w, "tags", tagSet); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

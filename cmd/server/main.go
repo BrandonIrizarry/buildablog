@@ -1,21 +1,21 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/environment"
 )
 
-// tpls maps template basenames to actual templates. This is so that
-// we can parse all our templates up front, as opposed to parsing them
-// on each request.
-var tpls = make(map[string]*template.Template)
+//go:embed gohtml/*.gohtml
+var templateFS embed.FS
+
+var tpl *template.Template
 
 type config struct {
 	environment.Env
@@ -55,21 +55,9 @@ func main() {
 		},
 	}
 
-	gohtmlFiles, err := filepath.Glob("gohtml/*")
+	tpl, err = template.New("global").Funcs(funcMap).ParseFS(templateFS, "gohtml/*.gohtml")
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	for _, file := range gohtmlFiles {
-		log.Printf("Parsing template file '%s'", file)
-
-		name := filepath.Base(file)
-		tpl, err := template.New(name).Funcs(funcMap).ParseFiles(file, "html/nav.html")
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		tpls[name] = tpl
 	}
 
 	// Set up the server.

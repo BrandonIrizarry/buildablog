@@ -29,7 +29,7 @@ func (cfg config) getPosts(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	if err := feedTemplate(w, "posts", ps); err != nil {
+	if err := tpl.ExecuteTemplate(w, "posts", ps); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

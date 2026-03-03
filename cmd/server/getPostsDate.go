@@ -17,7 +17,7 @@ func (cfg config) getPostsDate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := feedTemplate(w, "post", postData); err != nil {
+	if err := tpl.ExecuteTemplate(w, "post", postData); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

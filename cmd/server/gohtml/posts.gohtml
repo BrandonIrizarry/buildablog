@@ -1,3 +1,5 @@
+{{ define "posts" }}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,7 +9,7 @@
         <title>Archives</title>
     </head>
     <body>
-        {{ template "nav.html" . }}
+        {{ template "nav" . }}
         <main>
             <h1 class="page-title"><a href="posts">Posts</a></h1>
             <section>
@@ -41,3 +43,5 @@
         </main>
     </body>
 </html>
+
+{{ end }}

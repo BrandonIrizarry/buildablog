@@ -1,3 +1,5 @@
+{{ define "projects" }}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,7 +9,7 @@
         <title>Projects</title>
     </head>
     <body>
-        {{ template "nav.html" . }}
+        {{ template "nav" . }}
         <main class="project-gallery">
             {{ range . }}
                 {{ with .Frontmatter }}
@@ -29,3 +31,5 @@
         </main>
     </body>
 </html>
+
+{{ end }}

@@ -1,3 +1,5 @@
+{{ define "index" }}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -10,7 +12,7 @@
         <title>{{ (index . 0).Frontmatter.Title }}</title>
     </head>
     <body>
-        {{ template "nav.html" . }}
+        {{ template "nav" . }}
         <main>
             <h1 class="page-title">{{ (index . 0).Frontmatter.Title }}</h1>
             <div class="post-content">
@@ -46,3 +48,5 @@
         </main>
     </body>
 </html>
+
+{{ end }}
