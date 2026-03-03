@@ -175,6 +175,11 @@ main.project-gallery {
     border-radius: 10px;
     border-color: var(--gorgeous-contrast-10);
     padding: 1rem;
+    transition: 0.2s background linear;
+}
+
+.project-entry:hover {
+    background: var(--gorgeous-contrast-4);
 }
 
 .project-entry > h2 {
