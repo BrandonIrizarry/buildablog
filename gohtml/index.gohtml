@@ -13,7 +13,9 @@
         {{ template "nav.html" . }}
         <main>
             <h1 class="page-title">Welcome</h1>
-            {{ (index . 0).Content }}
+            <section class="post-content">
+                {{ (index . 0).Content }}
+            </section>
             <section>
                 {{ range (slice . 1) }}
                     <details class="published">
