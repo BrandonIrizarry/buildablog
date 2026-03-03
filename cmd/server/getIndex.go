@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
@@ -12,7 +11,7 @@ import (
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	// For now, parse the index.md page as if it were a post.
-	frontPage, err := readers.ReadArticle[posts.Frontmatter](constants.BlogDir, "index.md")
+	frontPage, err := readers.ReadArticle[posts.Frontmatter](cfg.blogDir, "index.md")
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -23,7 +22,8 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	//
 	// FIXME: make the argument to AllPosts here
 	// configurable somehow.
-	recentPosts, err := readers.AllArticles[posts.Frontmatter](new(3))
+	genre := (*new(posts.Frontmatter)).Genre()
+	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.publishedDir(genre), new(3))
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

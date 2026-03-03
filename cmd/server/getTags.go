@@ -9,7 +9,9 @@ import (
 )
 
 func (cfg config) getTags(w http.ResponseWriter, r *http.Request) {
-	posts, err := readers.AllArticles[posts.Frontmatter](nil)
+	genre := (*new(posts.Frontmatter)).Genre()
+
+	posts, err := readers.AllArticles[posts.Frontmatter](cfg.publishedDir(genre), nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

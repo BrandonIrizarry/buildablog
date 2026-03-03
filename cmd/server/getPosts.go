@@ -11,7 +11,9 @@ import (
 )
 
 func (cfg config) getPosts(w http.ResponseWriter, r *http.Request) {
-	ps, err := readers.AllArticles[posts.Frontmatter](nil)
+	genre := (*new(posts.Frontmatter)).Genre()
+
+	ps, err := readers.AllArticles[posts.Frontmatter](cfg.publishedDir(genre), nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

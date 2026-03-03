@@ -10,7 +10,7 @@ import (
 
 func (cfg config) getPostsDate(w http.ResponseWriter, r *http.Request) {
 	date := r.PathValue("date")
-	postData, err := readers.ReadArticle[posts.Frontmatter](readers.GenrePublished("posts"), date)
+	postData, err := readers.ReadArticle[posts.Frontmatter](cfg.publishedDir("posts"), date)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

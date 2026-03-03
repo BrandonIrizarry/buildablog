@@ -10,9 +10,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func AllArticles[F types.Frontmatter](numPosts *int) ([]types.Article[F], error) {
-	publishedDir := GenrePublished((*new(F)).Genre())
-
+func AllArticles[F types.Frontmatter](publishedDir string, numPosts *int) ([]types.Article[F], error) {
 	entries, err := os.ReadDir(publishedDir)
 	if err != nil {
 		return nil, fmt.Errorf("can't read %s: %w", publishedDir, err)
