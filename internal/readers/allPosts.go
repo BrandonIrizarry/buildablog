@@ -6,11 +6,10 @@ import (
 	"slices"
 	"time"
 
-	"github.com/BrandonIrizarry/buildablog/internal/constants"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func AllArticles[F types.Frontmatter](publishedDir string, numPosts *int) ([]types.Article[F], error) {
+func AllArticles[F types.Frontmatter](publishedDir string, numPosts *int, timezone string) ([]types.Article[F], error) {
 	entries, err := os.ReadDir(publishedDir)
 	if err != nil {
 		return nil, fmt.Errorf("can't read %s: %w", publishedDir, err)
@@ -36,7 +35,12 @@ func AllArticles[F types.Frontmatter](publishedDir string, numPosts *int) ([]typ
 
 		filename := e.Name()
 
-		filenameDate, err := time.ParseInLocation(time.DateOnly, filename, constants.TZOffset)
+		tzOffset, err := time.LoadLocation(timezone)
+		if err != nil {
+			return nil, fmt.Errorf("can't load location: %w", err)
+		}
+
+		filenameDate, err := time.ParseInLocation(time.DateOnly, filename, tzOffset)
 		if err != nil {
 			return nil, fmt.Errorf("%s isn't in YYYY-MM-DD format: %w", filename, err)
 		}

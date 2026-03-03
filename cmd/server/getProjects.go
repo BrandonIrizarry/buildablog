@@ -11,7 +11,7 @@ import (
 func (cfg config) getProjects(w http.ResponseWriter, r *http.Request) {
 	genre := (*new(projects.Frontmatter)).Genre()
 
-	ps, err := readers.AllArticles[projects.Frontmatter](cfg.PublishedDir(genre), nil)
+	ps, err := readers.AllArticles[projects.Frontmatter](cfg.PublishedDir(genre), nil, cfg.Timezone)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

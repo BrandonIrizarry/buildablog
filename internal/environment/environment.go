@@ -10,6 +10,7 @@ var expectedEnv = []string{
 	"BLOGDIR",
 	"PORT",
 	"SITEURL",
+	"TIMEZONE",
 }
 
 func New() (Env, error) {
@@ -30,9 +31,10 @@ func New() (Env, error) {
 	}
 
 	env := Env{
-		SiteURL: envMap["SITEURL"],
-		Port:    envMap["PORT"],
-		BlogDir: envMap["BLOGDIR"],
+		SiteURL:  envMap["SITEURL"],
+		Port:     envMap["PORT"],
+		BlogDir:  envMap["BLOGDIR"],
+		Timezone: envMap["TIMEZONE"],
 	}
 
 	return env, nil

@@ -23,7 +23,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	// FIXME: make the argument to AllPosts here
 	// configurable somehow.
 	genre := (*new(posts.Frontmatter)).Genre()
-	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), new(3))
+	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), new(3), cfg.Timezone)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
