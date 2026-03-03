@@ -13,7 +13,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/rss"
 )
 
-func (cfg rssConfig) getRSS(w http.ResponseWriter, r *http.Request) {
+func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	siteTitle := "Biome of Ideas"
 	siteURL := cfg.siteURL
 

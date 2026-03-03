@@ -18,7 +18,7 @@ import (
 // on each request.
 var tpls = make(map[string]*template.Template)
 
-type rssConfig struct {
+type config struct {
 	siteURL string
 	handler http.HandlerFunc
 }
@@ -37,6 +37,11 @@ func main() {
 	env, err := godotenv.Read()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// cfg is for passing state to the various handlers.
+	cfg := config{
+		siteURL: env["SITEURL"],
 	}
 
 	// Flags: if -flagLocal is specified, set RSS siteURL to
@@ -83,15 +88,7 @@ func main() {
 	mux.HandleFunc("GET /posts", getPosts)
 	mux.HandleFunc("GET /tags", getTags)
 	mux.HandleFunc("GET /projects", getProjects)
-
-	// Serve the RSS feed. For now we need this "config" trick if
-	// we're going to pass state to the handler now. Hopefully in
-	// production we won't need anything like this.
-	rssCfg := rssConfig{
-		siteURL: env["SITEURL"],
-	}
-
-	mux.HandleFunc("GET /rss", rssCfg.getRSS)
+	mux.HandleFunc("GET /rss", cfg.getRSS)
 
 	// Static assets (CSS files etc.)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
