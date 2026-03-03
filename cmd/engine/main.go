@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/BrandonIrizarry/buildablog/internal/environment"
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/projects"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
@@ -16,12 +17,16 @@ import (
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-
-	if err := publish[posts.Frontmatter](); err != nil {
+	env, err := environment.New()
+	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := publish[projects.Frontmatter](); err != nil {
+	if err := publish[posts.Frontmatter](env); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := publish[projects.Frontmatter](env); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -30,8 +35,8 @@ func main() {
 // appropriate format (YYYY-MM-DD) if it doesn't exist already. A post
 // is considered dated if its frontmatter's 'date' field is non-zero
 // (i.e. the user has signed it off with a publishing date.)
-func publish[F types.Frontmatter]() error {
-	fileData, err := allDrafts[F]()
+func publish[F types.Frontmatter](env environment.Env) error {
+	fileData, err := allDrafts[F](env)
 	if err != nil {
 		return err
 	}
@@ -44,8 +49,8 @@ func publish[F types.Frontmatter]() error {
 		}
 
 		date := fmdata.GetDate().Format(time.DateOnly)
-		draftsDir := readers.GenreDrafts(fmdata.Genre())
-		publishedDir := readers.GenrePublished(fmdata.Genre())
+		draftsDir := env.DraftsDir(fmdata.Genre())
+		publishedDir := env.PublishedDir(fmdata.Genre())
 		symlinkTarget := fmt.Sprintf("%s/%s", draftsDir, originalFilename)
 		publishedName := fmt.Sprintf("%s/%s", publishedDir, date)
 
@@ -64,8 +69,8 @@ func publish[F types.Frontmatter]() error {
 	return nil
 }
 
-func allDrafts[F types.Frontmatter]() (map[string]F, error) {
-	draftsDir := readers.GenreDrafts((*new(F)).Genre())
+func allDrafts[F types.Frontmatter](env environment.Env) (map[string]F, error) {
+	draftsDir := env.DraftsDir((*new(F)).Genre())
 
 	entries, err := os.ReadDir(draftsDir)
 	if err != nil {

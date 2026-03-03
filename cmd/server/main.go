@@ -9,20 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/BrandonIrizarry/buildablog/internal/environment"
 )
-
-const (
-	envBlogDir = "BLOGDIR"
-	envPort    = "PORT"
-	envSiteURL = "SITEURL"
-)
-
-var expectedEnv = []string{
-	envBlogDir,
-	envPort,
-	envSiteURL,
-}
 
 // tpls maps template basenames to actual templates. This is so that
 // we can parse all our templates up front, as opposed to parsing them
@@ -30,18 +18,8 @@ var expectedEnv = []string{
 var tpls = make(map[string]*template.Template)
 
 type config struct {
-	siteURL string
-	blogDir string
-	port    string
+	environment.Env
 	handler http.HandlerFunc
-}
-
-func (cfg config) draftsDir(genre string) string {
-	return fmt.Sprintf("%s/drafts/%s", cfg.blogDir, genre)
-}
-
-func (cfg config) publishedDir(genre string) string {
-	return fmt.Sprintf("%s/published/%s", cfg.blogDir, genre)
 }
 
 func main() {
@@ -55,25 +33,16 @@ func main() {
 	log.SetOutput(logFile)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	// Load environment data into the program, and make sure they
-	// all exist and are nonempty.
-	env, err := godotenv.Read()
+	// Load environment variables. Embed these into the config
+	// struct so that the handlers can use them.
+	env, err := environment.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, v := range expectedEnv {
-		_, ok := env[v]
-		if !ok {
-			log.Fatalf("Missing environment variable %s", v)
-		}
-	}
-
 	// cfg is for passing state to the various handlers.
 	cfg := config{
-		siteURL: env[envSiteURL],
-		port:    env[envPort],
-		blogDir: env[envBlogDir],
+		Env: env,
 	}
 
 	// Parse the templates up front.

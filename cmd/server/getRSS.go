@@ -15,10 +15,10 @@ import (
 
 func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	siteTitle := "Biome of Ideas"
-	siteURL := cfg.siteURL
+	siteURL := cfg.SiteURL
 	genre := (*new(posts.Frontmatter)).Genre()
 
-	ps, err := readers.AllArticles[posts.Frontmatter](cfg.publishedDir(genre), nil)
+	ps, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
