@@ -78,6 +78,9 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 		return item1.Date().Compare(item2.Date())
 	})
 
+	// List RSS items in descending date order.
+	slices.Reverse(items)
+
 	image := rss.Image{
 		Title:  siteTitle,
 		Link:   siteURL,
