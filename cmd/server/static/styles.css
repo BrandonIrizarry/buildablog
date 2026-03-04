@@ -39,6 +39,10 @@ html {
     font-family: sans-serif;
     font-size: 1.2rem;
     font-family: Helvetica;
+
+    @media (max-width: 67em) {
+        font-size: 1rem;
+    }
 }
 
 p {
@@ -113,6 +117,7 @@ section {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-left: 1rem;
 }
 
 details {
