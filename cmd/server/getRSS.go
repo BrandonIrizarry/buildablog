@@ -11,7 +11,34 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/rss"
+	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
+
+func rssItems[F types.Frontmatter](siteURL string, articles []types.Article[F]) []rss.Item {
+	genre := (*new(posts.Frontmatter)).Genre()
+
+	var items []rss.Item
+	for _, article := range articles {
+		date := article.Frontmatter.GetDate()
+		pubDate := date.Format(time.RFC1123)
+		link := fmt.Sprintf("%s/%s/%s", siteURL, genre, date.Format(time.DateOnly))
+
+		item := rss.Item{
+			Title:   article.Frontmatter.GetTitle(),
+			Link:    link,
+			GUID:    link,
+			PubDate: pubDate,
+			Description: rss.Description{
+				Type: "html",
+				Text: article.Content,
+			},
+		}
+
+		items = append(items, item)
+	}
+
+	return items
+}
 
 func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	siteTitle := "Biome of Ideas"
@@ -25,25 +52,7 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var items []rss.Item
-	for _, post := range ps {
-		date := post.Frontmatter.GetDate()
-		link := fmt.Sprintf("%s/posts/%s", siteURL, date.Format(time.DateOnly))
-		pubDate := date.Format(time.RFC1123)
-
-		item := rss.Item{
-			Title:   post.Frontmatter.GetTitle(),
-			Link:    link,
-			GUID:    link,
-			PubDate: pubDate,
-			Description: rss.Description{
-				Type: "html",
-				Text: post.Content,
-			},
-		}
-
-		items = append(items, item)
-	}
+	items := rssItems(siteURL, ps)
 
 	image := rss.Image{
 		Title:  siteTitle,
