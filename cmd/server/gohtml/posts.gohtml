@@ -13,32 +13,7 @@
         <main>
             <h1 class="page-title"><a href="posts">Posts</a></h1>
             <section>
-                <!-- Range over the slice of posts provided here, which may or may not have been first filtered by tag. -->
-                {{ range . }}
-                    {{ with .Frontmatter }}
-                    <details class="published">
-                        <summary>
-                            <span class="created">{{ (humanReadable .Date) }}: </span>
-                            <a href="posts/{{ (humanReadable .Date) }}">{{ .Title }}</a>
-                        </summary>
-
-                        <!-- Content of the details element, where we display the summary of the blog post and so forth. -->
-                        <div>
-                            <p class="summary">{{ .Summary }} <a href="posts/{{ (humanReadable .Date) }}">(more)</a></p>
-                            {{  if (gt (len .Tags) 0) }}
-                                {{ $numTags := (len .Tags) }}
-                                <div class="tags">
-                                    <span class="meta">Tags: </span>
-
-                                    {{ range $i, $tag := .Tags }}
-                                        <a href="posts?tag={{ $tag }}"><span class="tag">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
-                                    {{ end }}
-                                </div>
-                            {{ end }}
-                        </div>
-                    </details>
-                    {{ end }}
-                {{ end }}
+                {{ template "post-listing" . }}
             </section>
         </main>
     </body>
