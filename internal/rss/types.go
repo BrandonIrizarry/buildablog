@@ -3,6 +3,7 @@ package rss
 import (
 	"encoding/xml"
 	"html/template"
+	"time"
 )
 
 // Channel is used for marshalling data into the blog's RSS feed.
@@ -27,6 +28,9 @@ type Item struct {
 	GUID        string      `xml:"guid"`
 	PubDate     string      `xml:"pubDate"`
 	Description Description `xml:"description"`
+
+	// Used for sorting slices of [Item].
+	date time.Time
 }
 
 // Image is used to display an image when aggregators present a field.

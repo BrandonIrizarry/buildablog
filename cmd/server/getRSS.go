@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/projects"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/rss"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
@@ -19,20 +21,19 @@ func rssItems[F types.Frontmatter](siteURL string, articles []types.Article[F]) 
 
 	var items []rss.Item
 	for _, article := range articles {
+		// Define these up front for readability
+		title := article.Frontmatter.GetTitle()
 		date := article.Frontmatter.GetDate()
-		pubDate := date.Format(time.RFC1123)
 		link := fmt.Sprintf("%s/%s/%s", siteURL, genre, date.Format(time.DateOnly))
+		content := article.Content
 
-		item := rss.Item{
-			Title:   article.Frontmatter.GetTitle(),
-			Link:    link,
-			GUID:    link,
-			PubDate: pubDate,
-			Description: rss.Description{
-				Type: "html",
-				Text: article.Content,
-			},
-		}
+		item := rss.NewItem(
+			title,
+			link,
+			link,
+			content,
+			date,
+		)
 
 		items = append(items, item)
 	}
@@ -43,8 +44,10 @@ func rssItems[F types.Frontmatter](siteURL string, articles []types.Article[F]) 
 func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	siteTitle := "Biome of Ideas"
 	siteURL := cfg.SiteURL
-	genre := (*new(posts.Frontmatter)).Genre()
+	var genre string
 
+	// Scan all posts.
+	genre = (*new(posts.Frontmatter)).Genre()
 	ps, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), nil, cfg.Timezone)
 	if err != nil {
 		log.Printf("%v", err)
@@ -52,7 +55,32 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	items := rssItems(siteURL, ps)
+	psItems := rssItems(siteURL, ps)
+
+	// Scan all projects.
+	genre = (*new(projects.Frontmatter)).Genre()
+	projs, err := readers.AllArticles[projects.Frontmatter](cfg.PublishedDir(genre), nil, cfg.Timezone)
+	if err != nil {
+		log.Printf("%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	projsItems := rssItems(siteURL, projs)
+
+	// Gather all RSS items in one place and then sort them by
+	// date.
+	items := []rss.Item{}
+	items = append(items, psItems...)
+	items = append(items, projsItems...)
+
+	for _, item := range items {
+		log.Printf("RSS Item date: %s", item.Date())
+	}
+
+	slices.SortFunc(items, func(item1 rss.Item, item2 rss.Item) int {
+		return item1.Date().Compare(item2.Date())
+	})
 
 	image := rss.Image{
 		Title:  siteTitle,
