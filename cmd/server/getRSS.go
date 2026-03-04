@@ -74,10 +74,6 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	items = append(items, psItems...)
 	items = append(items, projsItems...)
 
-	for _, item := range items {
-		log.Printf("RSS Item date: %s", item.Date())
-	}
-
 	slices.SortFunc(items, func(item1 rss.Item, item2 rss.Item) int {
 		return item1.Date().Compare(item2.Date())
 	})
