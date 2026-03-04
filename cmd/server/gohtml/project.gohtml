@@ -11,7 +11,7 @@
     <body>
          {{ template "nav" . }}
         <main class="post-content">
-            <h1 class="meta">{{ .Frontmatter.Name }}</h1>
+            <h1 class="meta">{{ .Frontmatter.Title }}</h1>
             <hr>
             <a href="{{ .Frontmatter.HostURL }}"><h2 class="meta">{{ .Frontmatter.HostURL }}</h2></a>
             {{ .Content }}
