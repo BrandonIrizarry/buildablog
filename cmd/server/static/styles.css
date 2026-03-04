@@ -80,7 +80,7 @@ nav ul {
     padding: 0px;
 }
 
-h1 {
+h1, h2 {
     color: var(--gorgeous-contrast-2)
 }
 
