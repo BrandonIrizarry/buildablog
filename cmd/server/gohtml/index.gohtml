@@ -20,6 +20,7 @@
                 </div>
                 <section>
                     <ul class="listing">
+                        <!-- (slice . 1) refers to the rest of the posts. -->
                         {{ range (slice . 1) }}
                             {{ with .Frontmatter }}
                                 <li><div>
