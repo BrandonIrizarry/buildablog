@@ -28,10 +28,9 @@
 
                                     <p class="summary">{{ .Summary }} <a href="posts/{{ (humanReadable .Date) }}">(more)</a></p>
                                     {{  if (gt (len .Tags) 0) }}
-                                        {{ $numTags := (len .Tags) }}
                                         <div>
                                             <span class="meta">Tags: </span>
-
+                                            {{ $numTags := (len .Tags) }}
                                             {{ range $i, $tag := .Tags }}
                                                 <a href="posts?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
                                             {{ end }}
