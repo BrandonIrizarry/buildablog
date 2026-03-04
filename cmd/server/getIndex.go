@@ -5,11 +5,14 @@ import (
 	"net/http"
 
 	"github.com/BrandonIrizarry/buildablog/internal/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/projects"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
+	var genre string
+
 	// For now, parse the index.md page as if it were a post.
 	frontPage, err := readers.ReadArticle[posts.Frontmatter](cfg.BlogDir, "index.md")
 	if err != nil {
@@ -22,7 +25,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	//
 	// FIXME: make the argument to AllPosts here
 	// configurable somehow.
-	genre := (*new(posts.Frontmatter)).Genre()
+	genre = (*new(posts.Frontmatter)).Genre()
 	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), new(3), cfg.Timezone)
 	if err != nil {
 		log.Printf("%v", err)
@@ -30,11 +33,28 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// The template code will know how to interpret this ad-hoc
-	// scheme.
-	ps := append([]types.Article[posts.Frontmatter]{frontPage}, recentPosts...)
+	// Fetch the top three most recent projects.
+	genre = (*new(projects.Frontmatter)).Genre()
+	recentProjects, err := readers.AllArticles[projects.Frontmatter](cfg.PublishedDir(genre), new(3), cfg.Timezone)
+	if err != nil {
+		log.Printf("%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	if err := tpl.ExecuteTemplate(w, "index", ps); err != nil {
+	type payload struct {
+		Intro    types.Article[posts.Frontmatter]
+		Posts    []types.Article[posts.Frontmatter]
+		Projects []types.Article[projects.Frontmatter]
+	}
+
+	pld := payload{
+		Intro:    frontPage,
+		Posts:    recentPosts,
+		Projects: recentProjects,
+	}
+
+	if err := tpl.ExecuteTemplate(w, "index", pld); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

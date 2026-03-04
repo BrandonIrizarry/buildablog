@@ -9,19 +9,18 @@
             <!-- By convention, the first element of the Posts slice is the host page's own material,
                  and the rest of the slice comprises any listing of posts to be included (either in their entirety or else in
                  summary form.) -->
-            <title>{{ (index . 0).Frontmatter.Title }}</title>
+            <title>{{ .Intro.Frontmatter.Title }}</title>
         </head>
         <body>
             {{ template "nav" . }}
             <main>
-                <h1 class="page-title">{{ (index . 0).Frontmatter.Title }}</h1>
+                <h1 class="page-title">{{ .Intro.Frontmatter.Title }}</h1>
                 <div class="post-content">
-                    {{ (index . 0).Content }}
+                    {{ .Intro.Content }}
                 </div>
                 <section>
                     <p> Some recent posts: </p>
-                    <!-- (slice . 1) refers to the rest of the posts, like saying 'coolSlice[1:]'. -->
-                    {{ template "post-listing" (slice . 1) }}
+                    {{ template "post-listing" .Posts }}
                 </section>
             </main>
         </body>
