@@ -126,10 +126,10 @@ details {
     padding: 5px;
 }
 
-details > div {
+ul.listing {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
 details:hover {
