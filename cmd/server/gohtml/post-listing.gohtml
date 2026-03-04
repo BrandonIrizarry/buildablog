@@ -9,10 +9,10 @@
                     <a href="posts/{{ (humanReadable .Date) }}">{{ .Title }}</a>
 
                     {{  if (gt (len .Tags) 0) }}
-                        <div>
+                        <div class="tags">
                             {{ $numTags := (len .Tags) }}
                             {{ range $i, $tag := .Tags }}
-                                <a href="posts?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
+                                <a href="posts?tag={{ $tag }}"><span class="tag">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
                             {{ end }}
                         </div>
                     {{ end }}

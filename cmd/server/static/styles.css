@@ -158,9 +158,13 @@ li.published {
     font-style: italic;
 }
 
-.tags {
+.tag {
     color: var(--gorgeous-contrast-6);
     text-decoration: underline;
+}
+
+div.tags {
+    margin-bottom: 10px;
 }
 
 /* We don't want the Archives title text to turn blue just because
