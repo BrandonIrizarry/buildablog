@@ -10,6 +10,9 @@ type Frontmatter struct {
 	// Name is the name of the project.
 	Name string `toml:"name"`
 
+	// Title is used for the accompanying post.
+	Title string `toml:"title"`
+
 	// HostURL is the project repo's Web URL (i.e. where it's
 	// hosted for viewing, contributing, etc.)
 	HostURL string `toml:"host_url"`
