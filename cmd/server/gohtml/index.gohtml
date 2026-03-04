@@ -26,7 +26,6 @@
                                     <span class="created">{{ (humanReadable .Date) }}: </span>
                                     <a href="posts/{{ (humanReadable .Date) }}">{{ .Title }}</a>
 
-                                    <p class="summary">{{ .Summary }} <a href="posts/{{ (humanReadable .Date) }}">(more)</a></p>
                                     {{  if (gt (len .Tags) 0) }}
                                         <div>
                                             <span class="meta">Tags: </span>
@@ -36,6 +35,8 @@
                                             {{ end }}
                                         </div>
                                     {{ end }}
+
+                                    <p class="summary">{{ .Summary }} <a href="posts/{{ (humanReadable .Date) }}">(more)</a></p>
                                 </div></li>
                             {{ end }}
                     </details>
