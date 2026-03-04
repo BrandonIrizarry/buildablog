@@ -19,6 +19,7 @@
                     {{ (index . 0).Content }}
                 </div>
                 <section>
+                    <p> Some recent posts: </p>
                     <!-- (slice . 1) refers to the rest of the posts, like saying 'coolSlice[1:]'. -->
                     {{ template "post-listing" (slice . 1) }}
                 </section>
