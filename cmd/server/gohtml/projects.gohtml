@@ -18,7 +18,7 @@
                     <details class="published">
                         <summary>
                             <span class="created">{{ (humanReadable .Date) }}: </span>
-                            <a href="posts/{{ (humanReadable .Date) }}">{{ .Name }}</a>
+                            <a href="projects/{{ (humanReadable .Date) }}">{{ .Name }}</a>
                         </summary>
 
                         <!-- Content of the details element, where we display the summary of the blog post and so forth. -->
@@ -26,8 +26,6 @@
                             <p class="summary">{{ .Synopsis }} <a href="projects/{{ (humanReadable .Date) }}">(more)</a></p>
                             {{ $numStack := (len .Stack) }}
                                 <div>
-                                    <span class="meta">Stack: </span>
-
                                     {{ range $i, $stack:= .Stack }}
                                         <span class="meta">{{ $stack }}</span></a>{{ if (lt $i (dec $numStack)) }}<span class="meta">,</span>{{ end }}
                                     {{ end }}

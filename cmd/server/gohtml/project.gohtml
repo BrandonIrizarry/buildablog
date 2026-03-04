@@ -11,7 +11,9 @@
     <body>
          {{ template "nav" . }}
         <main class="post-content">
-           {{ .Frontmatter.Content }}
+            <h1 class="meta">{{ .Frontmatter.Name }}</h1>
+            <hr>
+            {{ .Content }}
         </main>
     </body>
 </html>

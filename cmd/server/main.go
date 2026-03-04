@@ -73,6 +73,7 @@ func main() {
 	mux.HandleFunc("GET /{$}", cfg.getIndex)
 	mux.HandleFunc("GET /posts", cfg.getPosts)
 	mux.HandleFunc("GET /tags", cfg.getTags)
+	mux.HandleFunc("GET /projects/{date}", cfg.getProjectsDate)
 	mux.HandleFunc("GET /projects", cfg.getProjects)
 	mux.HandleFunc("GET /rss", cfg.getRSS)
 
