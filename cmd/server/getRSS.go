@@ -32,7 +32,7 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 		pubDate := date.Format(time.RFC1123)
 
 		item := rss.Item{
-			Title:   post.Frontmatter.Title,
+			Title:   post.Frontmatter.GetTitle(),
 			Link:    link,
 			GUID:    link,
 			PubDate: pubDate,
