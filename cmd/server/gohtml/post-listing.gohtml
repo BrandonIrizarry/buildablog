@@ -10,7 +10,6 @@
 
                     {{  if (gt (len .Tags) 0) }}
                         <div>
-                            <span class="meta">Tags: </span>
                             {{ $numTags := (len .Tags) }}
                             {{ range $i, $tag := .Tags }}
                                 <a href="posts?tag={{ $tag }}"><span class="tags">{{ $tag }}</span></a>{{ if (lt $i (dec $numTags)) }}<span class="meta">,</span>{{ end }}
