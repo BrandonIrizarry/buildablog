@@ -1,7 +1,6 @@
 package posts
 
 import (
-	"html/template"
 	"time"
 )
 
@@ -31,9 +30,4 @@ func (f Frontmatter) GetTitle() string {
 
 func (f Frontmatter) Genre() string {
 	return "posts"
-}
-
-type Post struct {
-	Frontmatter
-	Content template.HTML
 }
