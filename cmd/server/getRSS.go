@@ -27,7 +27,7 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 
 	var items []rss.Item
 	for _, post := range ps {
-		date := post.Frontmatter.Date
+		date := post.Frontmatter.GetDate()
 		link := fmt.Sprintf("%s/posts/%s", siteURL, date.Format(time.DateOnly))
 		pubDate := date.Format(time.RFC1123)
 
