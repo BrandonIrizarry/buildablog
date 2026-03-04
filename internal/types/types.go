@@ -11,6 +11,7 @@ import (
 type Frontmatter interface {
 	posts.Frontmatter | projects.Frontmatter
 	GetDate() time.Time
+	GetTitle() string
 	Genre() string
 }
 
