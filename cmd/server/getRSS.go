@@ -17,7 +17,7 @@ import (
 )
 
 func rssItems[F types.Frontmatter](siteURL string, articles []types.Article[F]) []rss.Item {
-	genre := (*new(posts.Frontmatter)).Genre()
+	genre := (*new(F)).Genre()
 
 	var items []rss.Item
 	for _, article := range articles {
