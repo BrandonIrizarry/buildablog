@@ -3,8 +3,12 @@
 Buildablog is an HTTP server which serves a collection of blog posts
 as static content.
 
+More specifically, it allows the author to use various frontmatter
+layouts: currently, there is one for ordinary blog posts, and one for
+software projects.
+
 It takes Jon Calhoun's [Building a Blog Exercise](https://www.calhoun.io/building-a-blog-exercise/) as its starting
-point.
+point, though it has evolved way past that point.
 
 # Copyright and Licensing
 
