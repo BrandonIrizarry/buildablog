@@ -1,42 +1,41 @@
 {{ define "projects" }}
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/static/styles.css">
-        <title>Projects</title>
-    </head>
-    <body>
-        {{ template "nav" . }}
-        <main>
-            <section>
-                <!-- Range over the slice of projects -->
-                {{ range . }}
-                    {{ with .Frontmatter }}
-                    <details class="published">
-                        <summary>
-                            <span class="created">{{ (humanReadable .Date) }}: </span>
-                            <a href="projects/{{ (humanReadable .Date) }}">{{ .Name }}</a>
-                        </summary>
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="/static/styles.css">
+            <title>Projects</title>
+        </head>
+        <body>
+            {{ template "nav" . }}
+            <main>
+                <section>
+                    <!-- Range over the slice of projects -->
+                    {{ range . }}
+                        {{ with .Frontmatter }}
+                            <details class="published">
+                                <summary>
+                                    <span class="created">{{ (humanReadable .Date) }}: </span>
+                                    <a href="projects/{{ (humanReadable .Date) }}">{{ .Name }}</a>
+                                </summary>
 
-                        <!-- Content of the details element, where we display the summary of the blog post and so forth. -->
-                        <div>
-                            <p class="summary">{{ .Synopsis }} <a href="projects/{{ (humanReadable .Date) }}">(more)</a></p>
-                            {{ $numStack := (len .Stack) }}
+                                <!-- Content of the details element, where we display the summary of the blog post and so forth. -->
                                 <div>
-                                    {{ range $i, $stack:= .Stack }}
-                                        <span class="meta">{{ $stack }}</span></a>{{ if (lt $i (dec $numStack)) }}<span class="meta">,</span>{{ end }}
-                                    {{ end }}
-                                </div>
-                        </div>
-                    </details>
+                                    {{ $numStack := (len .Stack) }}
+                                    <div>
+                                        {{ range $i, $stack:= .Stack }}
+                                            <span class="meta">{{ $stack }}</span></a>{{ if (lt $i (dec $numStack)) }}<span class="meta">,</span>{{ end }}
+                                        {{ end }}
+                                    </div>
+                                    <p class="summary">{{ .Synopsis }} <a href="projects/{{ (humanReadable .Date) }}">(more)</a></p>
+                            </details>
+                        {{ end }}
                     {{ end }}
-                {{ end }}
-            </section>
-        </main>
-    </body>
-</html>
+                </section>
+            </main>
+        </body>
+    </html>
 
 {{ end }}
