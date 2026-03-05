@@ -62,10 +62,6 @@ main, footer {
     margin: 1rem auto;
 }
 
-footer {
-    margin: 1rem;
-}
-
 .footer-content {
     display: flex;
     flex-direction: column;
