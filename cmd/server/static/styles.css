@@ -57,9 +57,15 @@ ul li::marker {
     color: var(--gorgeous-contrast-2);
 }
 
-main {
+main, footer {
     max-width: 35em;
     margin: 1rem auto;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 nav {
