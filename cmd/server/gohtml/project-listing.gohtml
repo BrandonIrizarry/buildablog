@@ -5,7 +5,7 @@
             {{ with .Frontmatter }}
                 <li><div>
                     <span class="created">{{ (humanReadable .Date) }}: </span>
-                    <a href="posts/{{ (humanReadable .Date) }}">{{ .Name }}</a>
+                    <a href="projects/{{ (humanReadable .Date) }}">{{ .Name }}</a>
 
                     {{  if (gt (len .Stack) 0) }}
                         <div class="tags">
