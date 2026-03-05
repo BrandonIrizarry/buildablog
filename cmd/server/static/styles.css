@@ -127,29 +127,11 @@ section {
     margin-left: 1rem;
 }
 
-details {
-    transition: 0.2s background linear;
-    border-radius: 5px;
-    padding: 5px;
-}
 
 ul.listing {
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-details:hover {
-  background: var(--gorgeous-contrast-4);
-}
-
-details > summary {
-    list-style-image: url("/static/flower.svg");
-    transition: 1s;
-}
-
-details > summary::marker {
-    color: var(--gorgeous-contrast-2);
 }
 
 /* Custom classes */
