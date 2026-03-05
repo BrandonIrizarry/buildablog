@@ -20,7 +20,6 @@ even add a few that made sense (e.g. cyan.)
     --gorgeous-contrast-9: cyan;
     --gorgeous-contrast-10: hsl(300deg 100% 50%);
     --gorgeous-contrast-11: hsl(300deg 100% 50% / .4);
-    --flower: "🙦";
 }
 
 /* Reset all margins, since this affects how the nav is displayed,
@@ -50,7 +49,7 @@ p {
 }
 
 ul li {
-    list-style-type: var(--flower);
+    list-style-image: url("/static/flower.svg");
     padding-left: 5px;
 }
 
@@ -145,7 +144,7 @@ details:hover {
 }
 
 details > summary {
-    list-style-type: var(--flower);
+    list-style-image: url("/static/flower.svg");
     transition: 1s;
 }
 
