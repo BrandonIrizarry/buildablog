@@ -59,7 +59,7 @@ ul li::marker {
 }
 
 main {
-    max-width: 40em;
+    max-width: 35em;
     margin: 1rem auto;
 }
 
@@ -67,10 +67,6 @@ nav {
     position: fixed;
     @media (max-width: 67em) {
         position: static;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 }
 
@@ -78,6 +74,18 @@ nav ul {
     margin: 10px;
     margin-left: 20px;
     padding: 0px;
+
+    @media (max-width: 67em) {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-around;
+    }
+}
+
+nav li {
+    @media (max-width: 67em) {
+        list-style: none;
+    }
 }
 
 h1, h2 {
