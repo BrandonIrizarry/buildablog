@@ -16,6 +16,7 @@
             <a href="{{ .Frontmatter.HostURL }}"><h2 class="meta">{{ .Frontmatter.HostURL }}</h2></a>
             {{ .Content }}
         </main>
+        {{ template "footer" . }}
     </body>
 </html>
 
