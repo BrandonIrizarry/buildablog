@@ -101,6 +101,10 @@ li {
     color: var(--gorgeous-contrast-7);
 }
 
+pre {
+    overflow-x: auto;
+}
+
 pre, code {
     color: var(--gorgeous-contrast-6);
 }
