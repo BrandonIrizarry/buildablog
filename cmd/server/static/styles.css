@@ -66,6 +66,8 @@ main, footer {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center;
+    margin: 3rem;
 }
 
 nav {
