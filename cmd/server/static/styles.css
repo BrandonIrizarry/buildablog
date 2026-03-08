@@ -24,7 +24,7 @@ even add a few that made sense (e.g. cyan.)
 
 /* Reset all margins, since this affects how the nav is displayed,
    depending on the page. */
-body, ul, p, span, h1 {
+body, ul, p, span, h1, h2 {
     margin: 0;
 }
 
@@ -103,6 +103,11 @@ li {
 
 pre {
     overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+code {
+    white-space: pre;
 }
 
 pre, code {
@@ -175,7 +180,7 @@ h1.page-title > a {
 /* Posts are allowed to have more conventional, often default styles
    applied to them, since they don't fall under any special UI
    concern; they're just text for mere mortals to consume. */
-.post-content p, h1, ul {
+.post-content p, h1, h2, ul, pre {
     margin: 1rem;
 }
 
