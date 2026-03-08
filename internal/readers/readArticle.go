@@ -13,29 +13,31 @@ import (
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
-// ReadArticle returns the article found at pathPrefix/basename.
-//
-// Currently, only Markdown posts with TOML frontmatter are
-// recognized for reading.
-func ReadArticle[F types.Frontmatter](pathPrefix, basename string) (types.Article[F], error) {
-	var zeroArticle types.Article[F]
+// ReadArticle reads the Markdown file basename found inside relpath,
+// for example '/home/user/blog/published/2025-12-03.md'. In this
+// example, relpath is 'published' while basename is '2025-12-03.md'.
+func ReadArticle[F types.Frontmatter](blogDir, basename string) (types.Article[F], error) {
+	var zero types.Article[F]
+	var err error
 
-	path := fmt.Sprintf("%s/%s", pathPrefix, basename)
-	f, err := os.Open(path)
+	genre := zero.Frontmatter.Genre()
+	readingPath := fmt.Sprintf("%s/%s/%s", blogDir, genre, basename)
+
+	f, err := os.Open(readingPath)
 	if err != nil {
-		return zeroArticle, err
+		return zero, err
 	}
 	defer f.Close()
 
 	var fmdata F
 	content, err := frontmatter.Parse(f, &fmdata)
 	if err != nil {
-		return zeroArticle, err
+		return zero, err
 	}
 
 	htmlContent, err := convertToHTML(content)
 	if err != nil {
-		return zeroArticle, err
+		return zero, err
 	}
 
 	article := types.Article[F]{

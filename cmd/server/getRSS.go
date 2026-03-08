@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BrandonIrizarry/buildablog/internal/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/projects"
+	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/genres/projects"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/rss"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
@@ -44,11 +44,9 @@ func rssItems[F types.Frontmatter](siteURL string, articles []types.Article[F]) 
 func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	siteTitle := "Biome of Ideas"
 	siteURL := cfg.SiteURL
-	var genre string
 
 	// Scan all posts.
-	genre = (*new(posts.Frontmatter)).Genre()
-	ps, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), nil, cfg.Timezone)
+	ps, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir, nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -58,8 +56,7 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	psItems := rssItems(siteURL, ps)
 
 	// Scan all projects.
-	genre = (*new(projects.Frontmatter)).Genre()
-	projs, err := readers.AllArticles[projects.Frontmatter](cfg.PublishedDir(genre), nil, cfg.Timezone)
+	projs, err := readers.AllArticles[projects.Frontmatter](cfg.BlogDir, nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

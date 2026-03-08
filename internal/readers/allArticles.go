@@ -5,24 +5,18 @@ import (
 	"log"
 	"os"
 	"slices"
-	"time"
 
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func AllArticles[F types.Frontmatter](publishedDir string, numPosts *int, timezone string) ([]types.Article[F], error) {
-	log.Printf("Timezone is %s", timezone)
+func AllArticles[F types.Frontmatter](blogDir string, numPosts *int) ([]types.Article[F], error) {
+	genre := (*new(F)).Genre()
+	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
 
-	entries, err := os.ReadDir(publishedDir)
+	entries, err := os.ReadDir(genreDir)
 	if err != nil {
-		return nil, fmt.Errorf("can't read %s: %w", publishedDir, err)
+		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
 	}
-
-	// The nice thing is that, thanks to [time.DateOnly], posts
-	// are already sorted on the filesystem in order from oldest
-	// to newest. However, for display in Posts, RSS, etc., posts
-	// should appear from newest to oldest.
-	slices.Reverse(entries)
 
 	if numPosts == nil {
 		numPosts = new(len(entries))
@@ -31,37 +25,38 @@ func AllArticles[F types.Frontmatter](publishedDir string, numPosts *int, timezo
 	// Accumulate the return value into this list.
 	var articles []types.Article[F]
 
-	for i, e := range entries {
+	// Increment i only when the article is published, that is, it
+	// has a date field. Hence we can't use the i that comes with
+	// the for-loop here.
+	var i int
+
+	for _, e := range entries {
+		log.Printf("entry: %s", e)
 		if i >= *numPosts {
 			break
 		}
 
-		filename := e.Name()
-
-		tzOffset, err := time.LoadLocation(timezone)
+		article, err := ReadArticle[F](blogDir, e.Name())
 		if err != nil {
-			return nil, fmt.Errorf("can't load location: %w", err)
+			return nil, fmt.Errorf("can't read markdown file %s: %w", e.Name(), err)
 		}
 
-		filenameDate, err := time.ParseInLocation(time.DateOnly, filename, tzOffset)
-		if err != nil {
-			return nil, fmt.Errorf("%s isn't in YYYY-MM-DD format: %w", filename, err)
+		// An article is published whenever the date field is
+		// filled out.
+		if !article.Frontmatter.GetDate().IsZero() {
+			articles = append(articles, article)
+			i++
 		}
-
-		article, err := ReadArticle[F](publishedDir, filename)
-		if err != nil {
-			return nil, fmt.Errorf("can't read markdown file %s: %w", filename, err)
-		}
-
-		//  The frontmatter date and the symlink name should
-		//  correspond by definition.
-		date := article.Frontmatter.GetDate()
-		if !date.Equal(filenameDate) {
-			return nil, fmt.Errorf("filename %s doesn't match frontmatter date %s", filenameDate, date)
-		}
-
-		articles = append(articles, article)
 	}
+
+	// Sort the articles by date, in reverse order (most recent
+	// posts first.)
+	slices.SortFunc(articles, func(a1, a2 types.Article[F]) int {
+		date1 := a1.Frontmatter.GetDate()
+		date2 := a2.Frontmatter.GetDate()
+
+		return date2.Compare(date1)
+	})
 
 	return articles, nil
 }

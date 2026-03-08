@@ -39,11 +39,3 @@ func New() (Env, error) {
 
 	return env, nil
 }
-
-func (env Env) DraftsDir(genre string) string {
-	return fmt.Sprintf("%s/drafts/%s", env.BlogDir, genre)
-}
-
-func (env Env) PublishedDir(genre string) string {
-	return fmt.Sprintf("%s/published/%s", env.BlogDir, genre)
-}

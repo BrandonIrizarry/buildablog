@@ -4,17 +4,16 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BrandonIrizarry/buildablog/internal/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/projects"
+	"github.com/BrandonIrizarry/buildablog/internal/genres/index"
+	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/genres/projects"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
-	var genre string
-
-	// For now, parse the index.md page as if it were a post.
-	frontPage, err := readers.ReadArticle[posts.Frontmatter](cfg.BlogDir, "index.md")
+	// FIXME: For now, parse the index.md page as if it were a post.
+	frontPage, err := readers.ReadArticle[index.Frontmatter](cfg.BlogDir, "index.md")
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -25,8 +24,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	//
 	// FIXME: make the argument to AllPosts here
 	// configurable somehow.
-	genre = (*new(posts.Frontmatter)).Genre()
-	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), new(3), cfg.Timezone)
+	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir, new(3))
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -34,8 +32,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the top three most recent projects.
-	genre = (*new(projects.Frontmatter)).Genre()
-	recentProjects, err := readers.AllArticles[projects.Frontmatter](cfg.PublishedDir(genre), new(3), cfg.Timezone)
+	recentProjects, err := readers.AllArticles[projects.Frontmatter](cfg.BlogDir, new(3))
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -43,7 +40,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	type payload struct {
-		Intro    types.Article[posts.Frontmatter]
+		Intro    types.Article[index.Frontmatter]
 		Posts    []types.Article[posts.Frontmatter]
 		Projects []types.Article[projects.Frontmatter]
 	}

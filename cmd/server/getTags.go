@@ -4,14 +4,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BrandonIrizarry/buildablog/internal/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 )
 
 func (cfg config) getTags(w http.ResponseWriter, r *http.Request) {
-	genre := (*new(posts.Frontmatter)).Genre()
-
-	posts, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), nil, cfg.Timezone)
+	posts, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir, nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

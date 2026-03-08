@@ -5,15 +5,13 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/BrandonIrizarry/buildablog/internal/posts"
+	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func (cfg config) getPosts(w http.ResponseWriter, r *http.Request) {
-	genre := (*new(posts.Frontmatter)).Genre()
-
-	ps, err := readers.AllArticles[posts.Frontmatter](cfg.PublishedDir(genre), nil, cfg.Timezone)
+	ps, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir, nil)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
