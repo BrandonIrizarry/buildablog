@@ -2,7 +2,6 @@ package readers
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"slices"
 
@@ -31,7 +30,6 @@ func AllArticles[F types.Frontmatter](blogDir string, numPosts *int) ([]types.Ar
 	var i int
 
 	for _, e := range entries {
-		log.Printf("entry: %s", e)
 		if i >= *numPosts {
 			break
 		}
