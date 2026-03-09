@@ -15,14 +15,14 @@ point, though it has evolved way past that point.
 # How It Works
 
 Requests are served on `localhost` (for example, `localhost:3030`) on
-a VPS. Nginx then serves the content to the Web via reverse-proxy; the
+a VPS. Nginx then serves the content to the Web via reverse-proxy. The
 site is currently viewable at <https://brandonirizarry.xyz>.
 
 ## Directory Layout
 
 The blog itself lives in a separate directory on the same VPS
-filesystem, which the SSG knows about through an environment variable
-(see below.) The blog itself has a peculiar layout which the server
+filesystem, which the SSG knows about through an environment
+variable. The blog itself has a peculiar layout which the server
 expects to see:
 
 ```
@@ -85,6 +85,16 @@ type Frontmatter interface {
 	Genre() string
 }
 ```
+
+## RSS
+
+RSS turned out to be surprisingly easy to implement, once you learn
+the ropes. These two resources were helpful in pointing me in the
+right direction:
+
+1. [How to Create an RSS Feed](https://www.wikihow.com/Create-an-RSS-Feed)
+
+2. [Build Your Own RSS Feed Generator in Go](https://www.youtube.com/watch?v=b2E1JpC38Pg) 
 
 ## Configuration
 
