@@ -14,6 +14,35 @@ point, though it has evolved way past that point.
 
 # How It Works
 
+## Deployment
+
+Thanks to Go's relatively painless package system, deployment is as
+simple as
+
+`go install github.com/BrandonIrizarry/buildablog/cmd/server@<latest commit>`
+
+while logged into my VPS. A `systemd` service, `buildablog.service`
+ensures that the server will restart on reboot:
+
+```desktop
+[Unit]
+Description=buildablog
+After=network.target
+
+[Service]
+User=bci
+ExecStart=/home/bci/go/bin/server
+WorkingDirectory=/home/bci
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Updating the server therefore amounts to performing a `go install`
+with the latest commit, followed by restarting the buildablog service.
+
+## Serving Requests
+
 Requests are served on `localhost` (for example, `localhost:3030`) on
 a VPS. Nginx then serves the content to the Web via reverse-proxy. The
 site is currently viewable at <https://brandonirizarry.xyz>.
@@ -25,16 +54,22 @@ filesystem, which the SSG knows about through an environment
 variable. The blog itself has a peculiar layout which the server
 expects to see:
 
-```
+```dircolors
 blog/
     assets/
-        <site-wide images appearing in the various posts>
+        image1
+        image2
+        etc.
     index/
-        <the site's front page>
+        site-front-page.md
     posts/
-        <blog posts>
+        post1
+        post2
+        etc.
     projects/
-        <project posts>
+        project1
+        project2
+        etc.
 ```
 
 ## Frontmatter and Publishing
