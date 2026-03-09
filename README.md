@@ -14,20 +14,21 @@ point, though it has evolved way past that point.
 
 # How It Works
 
-Requests are served on `localhost` on a VPS. Nginx then serves the
-content to the Web via reverse-proxy; the site is currently viewable
-at <https://brandonirizarry.xyz>.
+Requests are served on `localhost` (for example, `localhost:3030`) on
+a VPS. Nginx then serves the content to the Web via reverse-proxy; the
+site is currently viewable at <https://brandonirizarry.xyz>.
+
+## Directory Layout
 
 The blog itself lives in a separate directory on the same VPS
-filesystem. The blog itself has a peculiar layout which the server
+filesystem, which the SSG knows about through an environment variable
+(see below.) The blog itself has a peculiar layout which the server
 expects to see:
 
 ```
 blog/
     assets/
         <site-wide images appearing in the various posts>
-    .git
-    .gitignore
     index/
         <the site's front page>
     posts/
@@ -36,11 +37,56 @@ blog/
         <project posts>
 ```
 
+## Frontmatter and Publishing
+
 A post is served whenever its date frontmatter field has been filled
 out. Internally, the SSG looks for a non-zero value of the date's
 corresponding `time.Time` value.
 
-# Configuration
+Generics are used heavily to support handling a variety of frontmatter
+layouts (represented as structs) without much code duplication. For
+example, a post frontmatter section looks like this:
+
+```toml
++++
+title = "Adding a CGit Subdomain To My Site"
+tags = ["linux", "nginx", "certbot", "cgit"]
+summary = "Setting up CGit on my VPS."
+date = 2026-03-06
++++
+```
+
+A project frontmatter section looks like this:
+
+```toml
++++
+name = "buildablog"
+title = "Building My Own SSG"
+host_url = "https://github.com/BrandonIrizarry/buildablog"
+synopsis = "The SSG used to build this site."
+stack = ["Go", "HTML", "CSS"]
+thumbnail = "assets/github-white.svg"
+date = 2026-03-01
++++
+```
+
+Adding a new frontmatter type is a matter of adding the requisite
+struct type, implementing a few interface functions on it, and then
+adding it as a supported type:
+
+```go
+type Frontmatter interface {
+    // Our registered frontmatter types.
+	posts.Frontmatter | projects.Frontmatter | index.Frontmatter
+    
+    // A few basic interface methods.
+	GetDate() time.Time
+	GetTitle() string
+	Genre() string
+}
+```
+
+## Configuration
 
 The SSG can be configured with an `.env` file at the project
 top-level. An example `.env` might look like this:
@@ -51,15 +97,15 @@ SITEURL="https://brandonirizarry.xyz"
 PORT="3030"
 ```
 
-## BLOGDIR
+### BLOGDIR
 
 Used to identify the root directory of the user's blog content.
 
-## SITEURL
+### SITEURL
 
-This is used mainly for testing the generated RSS feed locally.
+Used mainly for testing the generated RSS feed locally.
 
-## PORT
+### PORT
 
 Used to specify the port on which to launch the SSG server.
 
