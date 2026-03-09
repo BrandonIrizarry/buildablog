@@ -86,9 +86,10 @@ func main() {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(blogAssetsDir))))
 
 	// Launch the server.
-	log.Print("Killing any previous server instance; starting server on port 3030")
+	port := cfg.Port
+	log.Printf("Killing any previous server instance; starting server on port %s", port)
 
-	if err := http.ListenAndServe(":3030", mux); err != nil {
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
 		log.Fatal(err)
 	}
 }
