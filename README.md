@@ -107,6 +107,21 @@ SITEURL="https://brandonirizarry.xyz"
 PORT="3030"
 ```
 
+## Frontend
+
+When a request for a page is received, the SSG fetches some Markdown,
+converts it into a Go data structure, and then feeds it into the
+appropriate Go template. The template in turn is then styled by some
+hand-written plain CSS.
+
+I took inspiration from various blogs for my styling:
+
+1. [Maurycy's Blog](https://maurycyz.com/)
+
+    I took this site as a starting point for my own site's CSS.
+
+2. [elly.town](https://elly.town/)
+
 ### BLOGDIR
 
 Used to identify the root directory of the user's blog content.
