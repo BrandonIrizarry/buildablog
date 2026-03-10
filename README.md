@@ -190,6 +190,18 @@ Used mainly for testing the generated RSS feed locally.
 
 Used to specify the port on which to launch the SSG server.
 
+# Motivation
+
+My blog was initially generated using [Eleventy](https://www.11ty.dev/). When revisting my
+blog after a hiatus, I had actually forgotten how to deploy my blog! I
+used this as an excuse to try out a different SSG. When searching my
+Web for one, I ran into Calhoun's tutorial and found it really
+interesting, and so starting chiseling away at it. I had already
+become of the opinion that writing my own SSG is only marginally more
+complicated than figuring out how to use an existing one, and comes
+with the benefit of infinitely flexible customization. So I plunged
+head on, and now I have a blog again, whose inner workings and
+conventions I understand 360.
 
 # Copyright and Licensing
 
