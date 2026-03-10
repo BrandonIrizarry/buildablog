@@ -21,8 +21,8 @@ simple as
 
 `go install github.com/BrandonIrizarry/buildablog/cmd/server@<latest commit>`
 
-while logged into my VPS. A `systemd` service, `buildablog.service`
-ensures that the server will restart on reboot:
+A `systemd` service, `buildablog.service`, ensures that the Buildablog
+server will restart on reboot:
 
 ```desktop
 [Unit]
@@ -38,21 +38,26 @@ WorkingDirectory=/home/bci
 WantedBy=multi-user.target
 ```
 
-Updating the server therefore amounts to performing a `go install`
-with the latest commit, followed by restarting the buildablog service.
+Updating the live version of Buildablog therefore amounts to
+performing a `go install` with the latest commit, followed by
+restarting the buildablog service. Note that this is currently a
+manual process.
+
+The service file isn't a part of the repo. When testing Builablog
+locally, I restart the server using a Makefile, which is included in
+the repo.
 
 ## Serving Requests
 
-Requests are served on `localhost` (for example, `localhost:3030`) on
-a VPS. Nginx then serves the content to the Web via reverse-proxy. The
-site is currently viewable at <https://brandonirizarry.xyz>.
+Requests are served on `localhost` on a VPS. Nginx then serves the
+content to the Web via reverse-proxy. The site is currently viewable
+at <https://brandonirizarry.xyz>.
 
 ## Directory Layout
 
-The blog itself lives in a separate directory on the same VPS
-filesystem, which the SSG knows about through an environment
-variable. The blog itself has a peculiar layout which the server
-expects to see:
+The blog content itself lives in a separate directory, which the SSG
+knows about through an environment variable. The blog itself has a
+peculiar layout which the server expects to see:
 
 ```dircolors
 blog/
@@ -74,8 +79,8 @@ blog/
 
 ## Frontmatter
 
-Generics are used heavily to support handling a variety of frontmatter
-layouts (represented as structs) without much code duplication.
+Generics are used to support handling a variety of frontmatter layouts
+without much code duplication.
 
 For example, blog posts use a frontmatter section that looks like
 this:
