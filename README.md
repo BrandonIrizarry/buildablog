@@ -77,6 +77,13 @@ blog/
         etc.
 ```
 
+Currently, all images used by posts are served from the `assets`
+directory. All other directories correspond to the various genres of
+posts (a concept which I'll discuss shortly.) In order for the SSG to
+serve Markdown in a uniform manner, all content, including the site's
+front page, needs to belong to a genre, hence the use of a bespoke
+"index" genre for the front page.
+
 ## Frontmatter
 
 Generics are used to support handling a variety of frontmatter layouts
