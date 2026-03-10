@@ -80,7 +80,9 @@ blog/
 ## Frontmatter
 
 Generics are used to support handling a variety of frontmatter layouts
-without much code duplication.
+without much code duplication. The project refers to these various
+layouts as *genres*, since they ultimately define the end-purpose of
+the corresponding post.
 
 For example, blog posts use a frontmatter section that looks like
 this:
@@ -95,8 +97,8 @@ date = 2026-03-06
 ```
 
 I decided to add the concept of a *project* post, which is more or
-less like a blog post except that it's dedicated to showcasing a
-project I've written. As such, it uses a different set of frontmatter
+less like a blog post except that it's meant to showcase an entry in
+my projects portfolio. As such, it uses a different set of frontmatter
 fields than blog posts, which the example below demonstrates:
 
 ```toml
@@ -132,10 +134,10 @@ functions on it, and then adding it as a supported type.
 
 ## Articles
 
-The concept of an *article* subsumes the various genres — blog post,
-project, and whatever else you define! It simply wraps the generic
-frontmatter type with the content itself, which is always of type
-`template.HTML`:
+The concept of an *article* subsumes the various genres of post: blog
+post, project post, and whatever else you define! It simply wraps the
+generic frontmatter type with the content itself, which is always of
+type `template.HTML`:
 
 ```go
 type Article[F Frontmatter] struct {
@@ -153,6 +155,9 @@ these to the corresponding Go template.
 A post is served whenever its date frontmatter field has been filled
 out. Internally, the SSG looks for a non-zero value of the date's
 corresponding `time.Time` value.
+
+This is helpful for quickly viewing a draft post locally, so that I
+can, for example, verify that CSS styling is being applied correctly.
 
 ## RSS
 
