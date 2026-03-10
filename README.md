@@ -72,15 +72,13 @@ blog/
         etc.
 ```
 
-## Frontmatter and Publishing
-
-A post is served whenever its date frontmatter field has been filled
-out. Internally, the SSG looks for a non-zero value of the date's
-corresponding `time.Time` value.
+## Frontmatter
 
 Generics are used heavily to support handling a variety of frontmatter
-layouts (represented as structs) without much code duplication. For
-example, a post frontmatter section looks like this:
+layouts (represented as structs) without much code duplication.
+
+For example, blog posts use a frontmatter section that looks like
+this:
 
 ```toml
 +++
@@ -91,7 +89,10 @@ date = 2026-03-06
 +++
 ```
 
-A project frontmatter section looks like this:
+I decided to add the concept of a *project* post, which is more or
+less like a blog post except that it's dedicated to showcasing a
+project I've written. As such, it uses a different set of frontmatter
+fields than blog posts, which the example below demonstrates:
 
 ```toml
 +++
@@ -105,9 +106,8 @@ date = 2026-03-01
 +++
 ```
 
-Adding a new frontmatter type is a matter of adding the requisite
-struct type, implementing a few interface functions on it, and then
-adding it as a supported type:
+The frontmatter interface, used as the generic type in this case,
+looks like this:
 
 ```go
 type Frontmatter interface {
@@ -120,6 +120,34 @@ type Frontmatter interface {
 	Genre() string
 }
 ```
+
+As implied by this example, adding a new frontmatter type is a matter
+of adding the requisite struct type, implementing a few interface
+functions on it, and then adding it as a supported type.
+
+## Articles
+
+The concept of an *article* subsumes the various genres — blog post,
+project, and whatever else you define! It simply wraps the generic
+frontmatter type with the content itself, which is always of type
+`template.HTML`:
+
+```go
+type Article[F Frontmatter] struct {
+	Frontmatter F
+	Content     template.HTML
+}
+```
+
+The various server REST endpoints, at their core, simply unmarshal
+post content into `Article` structs one way or another, and feeds
+these to the corresponding Go template.
+
+## Publishing
+
+A post is served whenever its date frontmatter field has been filled
+out. Internally, the SSG looks for a non-zero value of the date's
+corresponding `time.Time` value.
 
 ## RSS
 
@@ -144,18 +172,11 @@ PORT="3030"
 
 ## Frontend
 
-When a request for a page is received, the SSG fetches some Markdown,
-converts it into a Go data structure, and then feeds it into the
-appropriate Go template. The template in turn is then styled by some
-hand-written plain CSS.
-
-I took inspiration from various blogs for my styling:
-
-1. [Maurycy's Blog](https://maurycyz.com/)
-
-    I took this site as a starting point for my own site's CSS.
-
-2. [elly.town](https://elly.town/)
+As mentioned earlier, when a request for a page is received, the SSG
+fetches some Markdown, converts it into a Go data structure, and then
+feeds it into the appropriate Go template. The template in turn is
+then styled by some hand-written plain CSS, much of it taken from
+other blogs on the Web, especially <https://maurycyz.com/>.
 
 ### BLOGDIR
 
