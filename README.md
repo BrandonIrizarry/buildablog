@@ -145,7 +145,7 @@ type Article[F Frontmatter] struct {
 ```
 
 The various server REST endpoints, at their core, simply unmarshal
-post content into `Article` structs one way or another, and feeds
+post content into `Article` structs one way or another, and then feed
 these to the corresponding Go template.
 
 ## Publishing
