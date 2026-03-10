@@ -62,18 +62,18 @@ peculiar layout which the server expects to see:
 ```dircolors
 blog/
     assets/
-        image1
-        image2
+        image1.png
+        image2.jpg
         etc.
     index/
         site-front-page.md
     posts/
-        post1
-        post2
+        post1.md
+        post2.md
         etc.
     projects/
-        project1
-        project2
+        project1.md
+        project2.md
         etc.
 ```
 
