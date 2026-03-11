@@ -20,11 +20,11 @@
                 </div>
                 <section>
                     <h2> Recent posts: </h2>
-                    {{ template "post-listing" .Posts }}
+                    {{ template "post-listing" (slice .Posts 0 (min (len .Posts) 3)) }}
                 </section>
                 <section>
                     <h2> Recent projects: </h2>
-                    {{ template "project-listing" .Projects }}
+                    {{ template "project-listing" (slice .Projects 0 (min (len .Projects) 3)) }}
                 </section>
             </main>
             {{ template "footer" . }}

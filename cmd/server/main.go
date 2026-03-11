@@ -56,6 +56,9 @@ func main() {
 		"humanReadable": func(t time.Time) string {
 			return t.Format(time.DateOnly)
 		},
+		"min": func(a, b int) int {
+			return min(a, b)
+		},
 	}
 
 	tpl, err = template.New("global").Funcs(funcMap).ParseFS(templateFS, "gohtml/*.gohtml")
