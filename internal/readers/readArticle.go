@@ -13,9 +13,8 @@ import (
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
-// ReadArticle reads the Markdown file basename found inside relpath,
-// for example '/home/user/blog/published/2025-12-03.md'. In this
-// example, relpath is 'published' while basename is '2025-12-03.md'.
+// ReadArticle reads the Markdown file 'basename' under blogDir/genre,
+// where genre belongs to the [types.Frontmatter] set by the caller.
 func ReadArticle[F types.Frontmatter](blogDir, basename string) (types.Article[F], error) {
 	var zero types.Article[F]
 	var err error
