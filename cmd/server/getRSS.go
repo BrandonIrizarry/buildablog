@@ -46,7 +46,7 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	siteURL := cfg.SiteURL
 
 	// Scan all posts.
-	ps, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir, nil)
+	ps, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -56,7 +56,7 @@ func (cfg config) getRSS(w http.ResponseWriter, r *http.Request) {
 	psItems := rssItems(siteURL, ps)
 
 	// Scan all projects.
-	projs, err := readers.AllArticles[projects.Frontmatter](cfg.BlogDir, nil)
+	projs, err := readers.AllArticles[projects.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -8,17 +8,13 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func AllArticles[F types.Frontmatter](blogDir string, numPosts *int) ([]types.Article[F], error) {
+func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error) {
 	genre := (*new(F)).Genre()
 	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
 
 	entries, err := os.ReadDir(genreDir)
 	if err != nil {
 		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
-	}
-
-	if numPosts == nil {
-		numPosts = new(len(entries))
 	}
 
 	// Accumulate the return value into this list.
@@ -30,10 +26,6 @@ func AllArticles[F types.Frontmatter](blogDir string, numPosts *int) ([]types.Ar
 	var i int
 
 	for _, e := range entries {
-		if i >= *numPosts {
-			break
-		}
-
 		article, err := ReadArticle[F](blogDir, e.Name())
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", e.Name(), err)

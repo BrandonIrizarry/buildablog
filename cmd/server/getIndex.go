@@ -24,7 +24,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	//
 	// FIXME: make the argument to AllPosts here
 	// configurable somehow.
-	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir, new(3))
+	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -32,7 +32,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the top three most recent projects.
-	recentProjects, err := readers.AllArticles[projects.Frontmatter](cfg.BlogDir, new(3))
+	recentProjects, err := readers.AllArticles[projects.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
