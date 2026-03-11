@@ -8,6 +8,8 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
+// AllArticles returns all [types.Article] from the blog directory,
+// which is read directly from the local filesystem.
 func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error) {
 	genre := (*new(F)).Genre()
 	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
