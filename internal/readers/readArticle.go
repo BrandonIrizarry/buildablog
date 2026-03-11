@@ -13,9 +13,9 @@ import (
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
-// ReadArticle reads the Markdown file 'basename' under blogDir/genre,
+// readArticle reads the Markdown file 'basename' under blogDir/genre,
 // where genre belongs to the [types.Frontmatter] set by the caller.
-func ReadArticle[F types.Frontmatter](blogDir, basename string) (types.Article[F], error) {
+func readArticle[F types.Frontmatter](blogDir, basename string) (types.Article[F], error) {
 	var zero types.Article[F]
 	var err error
 

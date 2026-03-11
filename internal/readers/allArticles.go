@@ -28,7 +28,7 @@ func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 	var i int
 
 	for _, e := range entries {
-		article, err := ReadArticle[F](blogDir, e.Name())
+		article, err := readArticle[F](blogDir, e.Name())
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", e.Name(), err)
 		}
