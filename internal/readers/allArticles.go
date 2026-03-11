@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"io"
 	"os"
 	"slices"
 
@@ -34,7 +35,15 @@ func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 	var i int
 
 	for _, e := range entries {
-		article, err := readArticle[F](blogDir, e.Name())
+		readingPath := fmt.Sprintf("%s/%s/%s", blogDir, genre, e.Name())
+
+		f, err := os.Open(readingPath)
+		if err != nil {
+			return nil, err
+		}
+		defer f.Close()
+
+		article, err := readArticle[F](f)
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", e.Name(), err)
 		}
@@ -61,21 +70,11 @@ func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 
 // readArticle reads the Markdown file 'basename' under blogDir/genre,
 // where genre belongs to the [types.Frontmatter] set by the caller.
-func readArticle[F types.Frontmatter](blogDir, basename string) (types.Article[F], error) {
+func readArticle[F types.Frontmatter](r io.Reader) (types.Article[F], error) {
 	var zero types.Article[F]
-	var err error
-
-	genre := zero.Frontmatter.Genre()
-	readingPath := fmt.Sprintf("%s/%s/%s", blogDir, genre, basename)
-
-	f, err := os.Open(readingPath)
-	if err != nil {
-		return zero, err
-	}
-	defer f.Close()
-
 	var fmdata F
-	content, err := frontmatter.Parse(f, &fmdata)
+
+	content, err := frontmatter.Parse(r, &fmdata)
 	if err != nil {
 		return zero, err
 	}
