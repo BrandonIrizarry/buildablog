@@ -12,7 +12,6 @@ import (
 )
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
-	// FIXME: For now, parse the index.md page as if it were a post.
 	frontPage, err := readers.ReadArticle[index.Frontmatter](cfg.BlogDir, "index.md")
 	if err != nil {
 		log.Printf("%v", err)
@@ -21,9 +20,6 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the top three most recent posts.
-	//
-	// FIXME: make the argument to AllPosts here
-	// configurable somehow.
 	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
