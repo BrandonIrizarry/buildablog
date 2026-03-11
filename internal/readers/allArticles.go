@@ -21,7 +21,13 @@ func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 	genre := (*new(F)).Genre()
 	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
 
-	entries, err := os.ReadDir(genreDir)
+	dir, err := os.Open(genreDir)
+	if err != nil {
+		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
+	}
+	defer dir.Close()
+
+	entries, err := dir.Readdir(-1)
 	if err != nil {
 		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
 	}
