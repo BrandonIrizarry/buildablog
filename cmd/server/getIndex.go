@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,7 +13,20 @@ import (
 )
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
-	frontPage, err := readers.ReadArticle[index.Frontmatter](cfg.BlogDir, "index.md")
+	frontPages, err := readers.AllArticles[index.Frontmatter](cfg.BlogDir)
+
+	// We expect there for now, by suitable convention, to be only
+	// one front page; but let's still guard for any degenerate
+	// cases.
+	if len(frontPages) == 0 {
+		err := fmt.Errorf("no front page")
+		log.Printf("%v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	frontPage := frontPages[0]
+
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
