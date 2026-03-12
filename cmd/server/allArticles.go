@@ -15,9 +15,9 @@ import (
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
-// AllArticles returns all [types.Article] from the blog directory,
+// allArticles returns all [types.Article] from the blog directory,
 // which is read directly from the local filesystem.
-func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error) {
+func allArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error) {
 	genre := (*new(F)).Genre()
 	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
 

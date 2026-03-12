@@ -11,7 +11,7 @@ func findArticle[F types.Frontmatter](blogDir, date string) (types.Article[F], e
 	var zero types.Article[F]
 	var err error
 
-	articles, err := AllArticles[F](blogDir)
+	articles, err := allArticles[F](blogDir)
 	if err != nil {
 		return zero, err
 	}
