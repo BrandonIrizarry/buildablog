@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/genres/projects"
-	"github.com/BrandonIrizarry/buildablog/internal/rss"
-	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/posts"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/projects"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/rss"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/types"
 )
 
 func rssItems[F types.Frontmatter](siteURL string, articles []types.Article[F]) []rss.Item {

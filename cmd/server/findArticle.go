@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/types"
 )
 
 func findArticle[F types.Frontmatter](blogDir, date string) (types.Article[F], error) {

@@ -5,10 +5,10 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BrandonIrizarry/buildablog/internal/genres/index"
-	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/genres/projects"
-	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/index"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/posts"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/projects"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/types"
 )
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {

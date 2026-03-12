@@ -4,9 +4,9 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/BrandonIrizarry/buildablog/internal/genres/index"
-	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/genres/projects"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/index"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/posts"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/projects"
 )
 
 type Frontmatter interface {

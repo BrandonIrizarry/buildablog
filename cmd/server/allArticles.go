@@ -9,7 +9,7 @@ import (
 	"os"
 	"slices"
 
-	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/types"
 	"github.com/adrg/frontmatter"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/go-git/go-billy/v5"

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
-	"github.com/BrandonIrizarry/buildablog/internal/types"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/posts"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/types"
 )
 
 func (cfg config) getPosts(w http.ResponseWriter, r *http.Request) {

@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BrandonIrizarry/buildablog/internal/genres/projects"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/projects"
 )
 
 func (cfg config) getProjectsDate(w http.ResponseWriter, r *http.Request) {

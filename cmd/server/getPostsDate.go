@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
+	"github.com/BrandonIrizarry/buildablog/v2/internal/genres/posts"
 )
 
 func (cfg config) getPostsDate(w http.ResponseWriter, r *http.Request) {
