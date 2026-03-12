@@ -81,10 +81,10 @@ blog/
 
 Currently, all images used by posts are served from the `assets`
 directory. All other directories correspond to the various genres of
-posts (a concept which I'll discuss shortly.) In order for the SSG to
-serve Markdown in a uniform manner, all content, including the site's
-front page, needs to belong to a genre, hence the use of a bespoke
-"index" genre for the front page.
+posts (see [Frontmatter](#frontmatter)). In order for the SSG to serve Markdown
+in a uniform manner, all content, including the site's front page,
+needs to belong to a genre, hence the use of a bespoke "index" genre
+for the front page.
 
 ## Version Controlling the Blog Directory
 
