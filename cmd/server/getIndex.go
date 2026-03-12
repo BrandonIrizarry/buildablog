@@ -8,12 +8,11 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/genres/index"
 	"github.com/BrandonIrizarry/buildablog/internal/genres/posts"
 	"github.com/BrandonIrizarry/buildablog/internal/genres/projects"
-	"github.com/BrandonIrizarry/buildablog/internal/readers"
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
-	frontPages, err := readers.AllArticles[index.Frontmatter](cfg.BlogDir)
+	frontPages, err := AllArticles[index.Frontmatter](cfg.BlogDir)
 
 	// We expect there for now, by suitable convention, to be only
 	// one front page; but let's still guard for any degenerate
@@ -34,7 +33,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the top three most recent posts.
-	recentPosts, err := readers.AllArticles[posts.Frontmatter](cfg.BlogDir)
+	recentPosts, err := AllArticles[posts.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -42,7 +41,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the top three most recent projects.
-	recentProjects, err := readers.AllArticles[projects.Frontmatter](cfg.BlogDir)
+	recentProjects, err := AllArticles[projects.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
