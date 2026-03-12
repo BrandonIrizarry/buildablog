@@ -20,11 +20,6 @@ var staticFS embed.FS
 
 var tpl *template.Template
 
-type config struct {
-	environment.Env
-	handler http.HandlerFunc
-}
-
 func main() {
 	// Set up logging.
 	logFile, err := os.OpenFile("buildablog.log", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
