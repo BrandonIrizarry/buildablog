@@ -10,7 +10,7 @@ import (
 )
 
 func (cfg config) getPosts(w http.ResponseWriter, r *http.Request) {
-	ps, err := allArticles[posts.Frontmatter](cfg.BlogDir, cfg.IsRepo)
+	ps, err := allArticles[posts.Frontmatter](cfg.BlogDir)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -12,6 +12,7 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 	"github.com/adrg/frontmatter"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/storage/memory"
@@ -19,26 +20,28 @@ import (
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
-// allArticles returns all [types.Article] from the blog directory,
-// which is read directly from the local filesystem.
-func allArticles[F types.Frontmatter](blogDir string, isRepo bool) ([]types.Article[F], error) {
-	var err error
-	var entries []os.FileInfo
-
+// allArticles returns all [types.Article] from the blog repo.
+func allArticles[F types.Frontmatter](repo string) ([]types.Article[F], error) {
+	fs := memfs.New()
 	genre := (*new(F)).Genre()
-	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
 
-	if isRepo {
-		entries, err = getEntriesRepo(blogDir, genre)
-	} else {
-		entries, err = getEntriesDir(blogDir, genre)
+	_, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
+		URL: repo,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("can't clone repository %s: %w", repo, err)
 	}
 
+	log.Printf("Successfully cloned repository %s", repo)
+
+	entries, err := fs.ReadDir("./" + genre)
 	if err != nil {
 		return nil, err
 	}
 
-	articles, err := entriesToArticles[F](genreDir, entries)
+	log.Printf("Successfully fetched genre entries for '%s'", genre)
+
+	articles, err := entriesToArticles[F](fs, genre, entries)
 	if err != nil {
 		return nil, err
 	}
@@ -46,81 +49,35 @@ func allArticles[F types.Frontmatter](blogDir string, isRepo bool) ([]types.Arti
 	return articles, nil
 }
 
-func getEntriesDir(blogDir, genre string) ([]os.FileInfo, error) {
-	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
-
-	dir, err := os.Open(genreDir)
-	if err != nil {
-		return nil, fmt.Errorf("can't open directory %s: %w", genreDir, err)
-	}
-	defer dir.Close()
-
-	entries, err := dir.Readdir(-1)
-	if err != nil {
-		return nil, fmt.Errorf("can't read directory %s: %w", genreDir, err)
-	}
-
-	for _, e := range entries {
-		log.Printf("Entry: %v", e.Name())
-	}
-
-	return entries, nil
-}
-
-func getEntriesRepo(blogDir, genre string) ([]os.FileInfo, error) {
-	fs := memfs.New()
-
-	// FIXME: for now, blogDir can refer to both an
-	// ordinary directory, or else either a local or
-	// remote Git repo.
-	_, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
-		URL: blogDir,
-	})
-
-	if err != nil {
-		return nil, fmt.Errorf("can't clone repository %s: %w", blogDir, err)
-	}
-
-	log.Print("Successfully cloned repository")
-
-	// Note that, here, the Git repo doesn't know anything about
-	// my local home directory, even in the case where I simply
-	// cloned from there. So the following ends up being the
-	// correct way to read something from within the repo.
-	entries, err := fs.ReadDir("./" + genre)
-	if err != nil {
-		return nil, fmt.Errorf("can't read repository: %w", err)
-	}
-
-	for _, e := range entries {
-		log.Printf("Entry: %v", e.Name())
-	}
-
-	return entries, nil
-}
-
 // entriesToArticles converts [os.FileInfo] entries into
 // [types.Article], returning the slice of these along with an error.
-func entriesToArticles[F types.Frontmatter](genrePath string, entries []os.FileInfo) ([]types.Article[F], error) {
+func entriesToArticles[F types.Frontmatter](fs billy.Filesystem, genre string, entries []os.FileInfo) ([]types.Article[F], error) {
 	// Accumulate the return value into this list.
 	var articles []types.Article[F]
 
 	for _, e := range entries {
-		readingPath := fmt.Sprintf("%s/%s", genrePath, e.Name())
-		f, err := os.Open(readingPath)
+		path := fmt.Sprintf("%s/%s", genre, e.Name())
+		log.Printf("path: %s", path)
+		f, err := fs.Open(path)
 		if err != nil {
+			log.Printf("can't read article %s: %v", path, err)
 			return nil, err
 		}
 		defer f.Close()
+
+		log.Printf("Successfully opened %s", path)
 
 		article, err := readArticle[F](f)
 		if err != nil {
 			return nil, fmt.Errorf("can't read markdown file %s: %w", e.Name(), err)
 		}
 
+		log.Printf("Successfully fetched article: %v", article)
+
 		// An article is published whenever the date field is
 		// filled out.
 		if !article.Frontmatter.GetDate().IsZero() {
+			log.Printf("Adding %s to published articles", e.Name())
 			articles = append(articles, article)
 		}
 	}

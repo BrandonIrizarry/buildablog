@@ -9,7 +9,7 @@ import (
 
 func (cfg config) getProjectsDate(w http.ResponseWriter, r *http.Request) {
 	var err error
-	article, err := findArticle[projects.Frontmatter](cfg.BlogDir, r.PathValue("date"), cfg.IsRepo)
+	article, err := findArticle[projects.Frontmatter](cfg.BlogDir, r.PathValue("date"))
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusNotFound)

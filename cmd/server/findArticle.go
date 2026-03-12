@@ -7,11 +7,11 @@ import (
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 )
 
-func findArticle[F types.Frontmatter](blogDir, date string, isRepo bool) (types.Article[F], error) {
+func findArticle[F types.Frontmatter](blogDir, date string) (types.Article[F], error) {
 	var zero types.Article[F]
 	var err error
 
-	articles, err := allArticles[F](blogDir, isRepo)
+	articles, err := allArticles[F](blogDir)
 	if err != nil {
 		return zero, err
 	}
