@@ -32,8 +32,7 @@ func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
 	}
 
-	genrePath := fmt.Sprintf("%s/%s", blogDir, genre)
-	articles, err := entriesToArticles[F](genrePath, entries)
+	articles, err := entriesToArticles[F](genreDir, entries)
 	if err != nil {
 		return nil, err
 	}
