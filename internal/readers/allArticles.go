@@ -32,6 +32,18 @@ func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
 	}
 
+	genrePath := fmt.Sprintf("%s/%s", blogDir, genre)
+	articles, err := entriesToArticles[F](genrePath, entries)
+	if err != nil {
+		return nil, err
+	}
+
+	return articles, nil
+}
+
+// entriesToArticles converts [os.FileInfo] entries into
+// [types.Article], returning the slice of these along with an error.
+func entriesToArticles[F types.Frontmatter](genrePath string, entries []os.FileInfo) ([]types.Article[F], error) {
 	// Accumulate the return value into this list.
 	var articles []types.Article[F]
 
@@ -41,8 +53,7 @@ func AllArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 	var i int
 
 	for _, e := range entries {
-		readingPath := fmt.Sprintf("%s/%s/%s", blogDir, genre, e.Name())
-
+		readingPath := fmt.Sprintf("%s/%s", genrePath, e.Name())
 		f, err := os.Open(readingPath)
 		if err != nil {
 			return nil, err
