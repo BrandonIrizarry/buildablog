@@ -5,31 +5,37 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"os"
 	"slices"
 
 	"github.com/BrandonIrizarry/buildablog/internal/types"
 	"github.com/adrg/frontmatter"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/go-git/go-billy/v5/memfs"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/storage/memory"
 	"github.com/yuin/goldmark"
 	hl "github.com/yuin/goldmark-highlighting/v2"
 )
 
 // allArticles returns all [types.Article] from the blog directory,
 // which is read directly from the local filesystem.
-func allArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error) {
+func allArticles[F types.Frontmatter](blogDir string, isRepo bool) ([]types.Article[F], error) {
+	var err error
+	var entries []os.FileInfo
+
 	genre := (*new(F)).Genre()
 	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
 
-	dir, err := os.Open(genreDir)
-	if err != nil {
-		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
+	if isRepo {
+		entries, err = getEntriesRepo(blogDir, genre)
+	} else {
+		entries, err = getEntriesDir(blogDir, genre)
 	}
-	defer dir.Close()
 
-	entries, err := dir.Readdir(-1)
 	if err != nil {
-		return nil, fmt.Errorf("can't read %s: %w", genreDir, err)
+		return nil, err
 	}
 
 	articles, err := entriesToArticles[F](genreDir, entries)
@@ -38,6 +44,59 @@ func allArticles[F types.Frontmatter](blogDir string) ([]types.Article[F], error
 	}
 
 	return articles, nil
+}
+
+func getEntriesDir(blogDir, genre string) ([]os.FileInfo, error) {
+	genreDir := fmt.Sprintf("%s/%s", blogDir, genre)
+
+	dir, err := os.Open(genreDir)
+	if err != nil {
+		return nil, fmt.Errorf("can't open directory %s: %w", genreDir, err)
+	}
+	defer dir.Close()
+
+	entries, err := dir.Readdir(-1)
+	if err != nil {
+		return nil, fmt.Errorf("can't read directory %s: %w", genreDir, err)
+	}
+
+	for _, e := range entries {
+		log.Printf("Entry: %v", e.Name())
+	}
+
+	return entries, nil
+}
+
+func getEntriesRepo(blogDir, genre string) ([]os.FileInfo, error) {
+	fs := memfs.New()
+
+	// FIXME: for now, blogDir can refer to both an
+	// ordinary directory, or else either a local or
+	// remote Git repo.
+	_, err := git.Clone(memory.NewStorage(), fs, &git.CloneOptions{
+		URL: blogDir,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("can't clone repository %s: %w", blogDir, err)
+	}
+
+	log.Print("Successfully cloned repository")
+
+	// Note that, here, the Git repo doesn't know anything about
+	// my local home directory, even in the case where I simply
+	// cloned from there. So the following ends up being the
+	// correct way to read something from within the repo.
+	entries, err := fs.ReadDir("./" + genre)
+	if err != nil {
+		return nil, fmt.Errorf("can't read repository: %w", err)
+	}
+
+	for _, e := range entries {
+		log.Printf("Entry: %v", e.Name())
+	}
+
+	return entries, nil
 }
 
 // entriesToArticles converts [os.FileInfo] entries into

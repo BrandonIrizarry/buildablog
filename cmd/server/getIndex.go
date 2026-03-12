@@ -12,7 +12,7 @@ import (
 )
 
 func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
-	frontPages, err := allArticles[index.Frontmatter](cfg.BlogDir)
+	frontPages, err := allArticles[index.Frontmatter](cfg.BlogDir, cfg.IsRepo)
 
 	// We expect there for now, by suitable convention, to be only
 	// one front page; but let's still guard for any degenerate
@@ -33,7 +33,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the top three most recent posts.
-	recentPosts, err := allArticles[posts.Frontmatter](cfg.BlogDir)
+	recentPosts, err := allArticles[posts.Frontmatter](cfg.BlogDir, cfg.IsRepo)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -41,7 +41,7 @@ func (cfg config) getIndex(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch the top three most recent projects.
-	recentProjects, err := allArticles[projects.Frontmatter](cfg.BlogDir)
+	recentProjects, err := allArticles[projects.Frontmatter](cfg.BlogDir, cfg.IsRepo)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

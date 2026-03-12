@@ -8,7 +8,7 @@ import (
 )
 
 func (cfg config) getTags(w http.ResponseWriter, r *http.Request) {
-	posts, err := allArticles[posts.Frontmatter](cfg.BlogDir)
+	posts, err := allArticles[posts.Frontmatter](cfg.BlogDir, cfg.IsRepo)
 	if err != nil {
 		log.Printf("%v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

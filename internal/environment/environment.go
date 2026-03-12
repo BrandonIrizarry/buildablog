@@ -11,6 +11,7 @@ var expectedEnv = []string{
 	"PORT",
 	"SITEURL",
 	"TIMEZONE",
+	"IS_REPO",
 }
 
 func New() (Env, error) {
@@ -30,11 +31,23 @@ func New() (Env, error) {
 		}
 	}
 
+	var isRepo bool
+
+	switch envMap["IS_REPO"] {
+	case "true":
+		isRepo = true
+	case "false":
+		isRepo = false
+	default:
+		return Env{}, fmt.Errorf("Invalid IS_REPO configuration (should be 'true' or 'false')")
+	}
+
 	env := Env{
 		SiteURL:  envMap["SITEURL"],
 		Port:     envMap["PORT"],
 		BlogDir:  envMap["BLOGDIR"],
 		Timezone: envMap["TIMEZONE"],
+		IsRepo:   isRepo,
 	}
 
 	return env, nil
