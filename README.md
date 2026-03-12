@@ -19,7 +19,7 @@ point, though it has evolved way past that point.
 Thanks to Go's relatively painless package system, deployment is as
 simple as
 
-`go install github.com/BrandonIrizarry/buildablog/cmd/server@<latest commit>`
+`go install github.com/BrandonIrizarry/buildablog/cmd/server@<desired ref>`
 
 A `systemd` service, `buildablog.service`, ensures that the Buildablog
 server will restart on reboot:
@@ -53,11 +53,13 @@ Requests are served on `localhost` on a VPS. Nginx then serves the
 content to the Web via reverse-proxy. The site is currently viewable
 at <https://brandonirizarry.xyz>.
 
-## Directory Layout
+## The Blog Directory
 
-The blog content itself lives in a separate directory, which the SSG
-knows about through an environment variable. The blog itself has a
-peculiar layout which the server expects to see:
+The blog content itself lives in a separate directory outside of
+Buildablog, which the SSG knows about through an environment
+variable (see [Configuration](#configuration).)
+
+The blog itself has a peculiar layout which the server expects to see:
 
 ```dircolors
 blog/
@@ -83,6 +85,28 @@ posts (a concept which I'll discuss shortly.) In order for the SSG to
 serve Markdown in a uniform manner, all content, including the site's
 front page, needs to belong to a genre, hence the use of a bespoke
 "index" genre for the front page.
+
+## Version Controlling the Blog Directory
+
+The blog's top-level directory (the `blog` directory in the previous
+example) must be version-controlled using Git, since articles are read
+from it after cloning the repo in memory using
+[go-git](https://go-git.github.io/docs/). Previously, in order to update a blog it was necessary to
+visit the remote and manually pull the changes in. Not so
+anymore. Instead, the following blogging workflow suffices:
+
+1. Edit your blog content locally.
+2. Push these changes to your remote.
+3. Your blog is now updated.
+
+The blog directory can even be a remote repo, for example
+`https://github.com/user/users_blog`. Currently, this isn't
+recommended, since this introduces noticeable network latency every
+time a page is loaded.
+
+For my own blog, Buildablog is configured via an environment variable
+(see [Configuration](#configuration)) to clone a local repo which I push to from my
+local machine.
 
 ## Frontmatter
 
@@ -187,23 +211,20 @@ SITEURL="https://brandonirizarry.xyz"
 PORT="3030"
 ```
 
-## Frontend
+### `BLOGDIR`
 
-As mentioned earlier, when a request for a page is received, the SSG
-fetches some Markdown, converts it into a Go data structure, and then
-feeds it into the appropriate Go template. The template in turn is
-then styled by some hand-written plain CSS, much of it taken from
-other blogs on the Web, especially <https://maurycyz.com/>.
+Used to identify the repo, local or remote, where the user's blog
+content is hosted, for example:
 
-### BLOGDIR
+- `/var/git/blog`
+- `/home/user/my_blog`
+- `https://github.com/user/users_blog`
 
-Used to identify the root directory of the user's blog content.
-
-### SITEURL
+### `SITEURL`
 
 Used mainly for testing the generated RSS feed locally.
 
-### PORT
+### `PORT`
 
 Used to specify the port on which to launch the SSG server.
 
