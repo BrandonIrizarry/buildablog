@@ -47,11 +47,6 @@ func entriesToArticles[F types.Frontmatter](genrePath string, entries []os.FileI
 	// Accumulate the return value into this list.
 	var articles []types.Article[F]
 
-	// Increment i only when the article is published, that is, it
-	// has a date field. Hence we can't use the i that comes with
-	// the for-loop here.
-	var i int
-
 	for _, e := range entries {
 		readingPath := fmt.Sprintf("%s/%s", genrePath, e.Name())
 		f, err := os.Open(readingPath)
@@ -69,7 +64,6 @@ func entriesToArticles[F types.Frontmatter](genrePath string, entries []os.FileI
 		// filled out.
 		if !article.Frontmatter.GetDate().IsZero() {
 			articles = append(articles, article)
-			i++
 		}
 	}
 
